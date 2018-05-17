@@ -1,9 +1,8 @@
 "use strict";
 
 // Tree configuration
-const da = 0.5; // Angle delta
+const da = 0.4; // Angle delta
 const dl = 0.85; // Length delta (factor)
-const ar = 0.7; // Randomness
 const maxDepth = 45;
 
 let totalSamples = null;
@@ -23,6 +22,7 @@ function loadForest() {
 
 /**
  * Internal tree data structure
+ * The methods branchify() and toBranch() are just messy workarounds and should be refactored at some point
  */
 class Node {
 	constructor(height, samples, impurity, impurityDrop, feature) {
@@ -34,11 +34,17 @@ class Node {
 		this.children = [];
 	}
 
+	/**
+	 * Adds a child node
+	 */
 	add(node) {
 		if(this.children.length >= 2) throw `Node ${this} already has two children`;
 		this.children.push(node);
 	}
 
+	/**
+	 * Adds branch information to the node 
+	 */
 	branchify(index, x, y, angle, length, depth, parent) {
 		this.index = index
 		this.x = x
@@ -49,6 +55,13 @@ class Node {
 		this.parent = parent
 	}
 
+	// This function should rather return the node itself without references to child nodes
+	// This function is used to construct a set of branches that are to render
+	// - x and y are the start coordinates
+	// - angle and length are used to draw the line
+	// - samples are used for the thickness
+	// - impurity is used for the color
+	// - index, depth and parent are currently unused
 	toBranch() {
 		return {
 			index: this.index,
@@ -65,7 +78,7 @@ class Node {
 }
 
 /**
- * Messy function for transforming the list of node parameters to an actuall tree data structure
+ * Messy function for transforming the list of node parameters to an actual tree data structure
  * @param {*} tree 
  */
 function transformNodesInPlace(tree) {
@@ -103,7 +116,7 @@ function transformNodesInPlace(tree) {
 function generateBranches(tree) {
 	const branches = [];
 
-	// recursive function
+	// recursive function that adds branch objects to "branches"
 	function branch(node) {
 		if (node.depth === maxDepth)
 			return;
@@ -124,7 +137,7 @@ function generateBranches(tree) {
 			branch(rightChild);
 		}
 	}
-	
+	// Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
 	tree.baseNode.branchify(0, 500, 600, 0, 100, 0, null)
 	branch(tree.baseNode);
 
@@ -148,32 +161,32 @@ function highlightParents(d) {
 	}	
 }*/
 
+// ------------------------------- //
+// This is where the magic happens //
+// ------------------------------- //
 function draw(branches) {
-	
+	// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
 	const color = d3.scaleLinear()
 		.domain([0, 1])
 		.range(["green", "brown"]);
 	
+	// Linear scale that maps the number of samples in a branch to a certain number of pixels
 	const thickness = d3.scaleLinear()
 		.domain([1, totalSamples])
 		.range([1, 15]);
 
 	d3.select('svg')
 		.selectAll('line')
-		.data(branches)
+		.data(branches)  // This is where we feed the data to the visualization
 		.enter()
 		.append('line')
 		.attr('x1', d => d.x)
 		.attr('y1', d => d.y)
 		.attr('x2', d => endPt(d).x)
 		.attr('y2', d => endPt(d).y)
-		.style('stroke-width', function(d) {
-        return thickness(d.samples) + 'px';
-    })
-  	.style('stroke', function(d) {
-        return color(d.impurity);
-    })
-		.attr('id', function(d) {return 'id-'+d.index;});
+		.style('stroke-width', d => thickness(d.samples) + 'px')
+		.style('stroke', d => color(d.impurity))
+		.attr('id', d => 'id-' + d.index);  // This attr is currently not used
 }
 
 main();
