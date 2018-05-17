@@ -1,1 +1,3 @@
-# random-forest-visualization
+# Random Forest Visualization
+
+![Tree](tree.png)
