@@ -4,7 +4,9 @@
 const da = 0.5; // Angle delta
 const dl = 0.85; // Length delta (factor)
 const ar = 0.7; // Randomness
-const maxDepth = 20;
+const maxDepth = 45;
+
+let totalSamples = null;
 
 function main() {
 	const forest = loadForest();
@@ -56,7 +58,8 @@ class Node {
 			length: this.length,
 			depth: this.depth,
 			parent: this.parent,
-
+			samples: this.samples,
+			impurity: this.impurity
 		}
 	}
 }
@@ -67,7 +70,8 @@ class Node {
  */
 function transformNodesInPlace(tree) {
 
-    const baseNode = new Node(...tree.nodes[0]);
+	const baseNode = new Node(...tree.nodes[0]);
+	totalSamples = baseNode.samples;
     let stack = [baseNode];
 
     for (let nodeParameters of tree.nodes.slice(1)) {
@@ -94,8 +98,6 @@ function transformNodesInPlace(tree) {
     delete tree.nodes;
     tree.baseNode = baseNode;
 }
-
-///////////////////////
 
 // Tree creation functions
 function generateBranches(tree) {
@@ -136,16 +138,6 @@ function endPt(b) {
 	return {x: x, y: y};
 }
 
-// D3 functions
-const color = d3.scaleLinear()
-    .domain([0, maxDepth])
-    .range(["black","purple"]);
-
-// D3 functions
-const color = d3.scaleLinear()
-    .domain([0, maxDepth])
-    .range(["black","purple"]);
-
 /*
 function highlightParents(d) {  
 	const colour = d3.event.type === 'mouseover' ? 'green' : color(d.d);
@@ -157,6 +149,15 @@ function highlightParents(d) {
 }*/
 
 function draw(branches) {
+	
+	const color = d3.scaleLinear()
+		.domain([0, 1])
+		.range(["green", "brown"]);
+	
+	const thickness = d3.scaleLinear()
+		.domain([1, totalSamples])
+		.range([1, 15]);
+
 	d3.select('svg')
 		.selectAll('line')
 		.data(branches)
@@ -167,11 +168,10 @@ function draw(branches) {
 		.attr('x2', d => endPt(d).x)
 		.attr('y2', d => endPt(d).y)
 		.style('stroke-width', function(d) {
-        const t = parseInt(maxDepth*.2 +1 - d.depth*.2);
-        return  t + 'px';
+        return thickness(d.samples) + 'px';
     })
   	.style('stroke', function(d) {
-        return color(d.depth);
+        return color(d.impurity);
     })
 		.attr('id', function(d) {return 'id-'+d.index;});
 }
