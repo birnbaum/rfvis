@@ -1,15 +1,16 @@
 // Tree configuration
-var branches = [];
-var seed = {i: 0, x: 420, y: 600, a: 0, l: 100, d:0}; // a = angle, l = length, d = depth
-var da = 0.3; // Angle delta
-var dl = 0.85; // Length delta (factor)
-var ar = 0.7; // Randomness
-var maxDepth = 10;
+let branches = [];
+const seed = {i: 0, x: 420, y: 600, a: 0, l: 100, d:0}; // a = angle, l = length, d = depth
+const da = 0.3; // Angle delta
+const dl = 0.85; // Length delta (factor)
+const ar = 0.7; // Randomness
+const maxDepth = 10;
 
 
 // Tree creation functions
 function branch(b) {
-	var end = endPt(b), daR, newB;
+    const end = endPt(b);
+    let daR, newB;
 
 	branches.push(b);
 
@@ -51,28 +52,26 @@ function regenerate(initialise) {
 
 function endPt(b) {
 	// Return endpoint of branch
-	var x = b.x + b.l * Math.sin( b.a );
-	var y = b.y - b.l * Math.cos( b.a );
+	const x = b.x + b.l * Math.sin( b.a );
+	const y = b.y - b.l * Math.cos( b.a );
 	return {x: x, y: y};
 }
 
 
 // D3 functions
-var color = d3.scale.linear()
+const color = d3.scaleLinear()
     .domain([0, maxDepth])
     .range(["black","purple"]);
 
-function x1(d) {return d.x;}
-function y1(d) {return d.y;}
-function x2(d) {return endPt(d).x;}
-function y2(d) {return endPt(d).y;}
-function highlightParents(d) {
-  
-  
-  
-	var colour = d3.event.type === 'mouseover' ? 'green' : color(d.d);
-	var depth = d.d;
-	for(var i = 0; i <= depth; i++) {
+const x1 = d => d.x;
+const y1 = d => d.y;
+const x2 = d => endPt(d).x;
+const y2 = d => endPt(d).y;
+
+function highlightParents(d) {  
+	const colour = d3.event.type === 'mouseover' ? 'green' : color(d.d);
+	const depth = d.d;
+	for(const i = 0; i <= depth; i++) {
 		d3.select('#id-'+parseInt(d.i)).style('stroke', colour);
 		d = branches[d.parent];
 	}	
@@ -89,7 +88,7 @@ function create() {
 		.attr('x2', x2)
 		.attr('y2', y2)
 		.style('stroke-width', function(d) {
-        var t = parseInt(maxDepth*.5 +1 - d.d*.5);
+        const t = parseInt(maxDepth*.5 +1 - d.d*.5);
         return  t + 'px';
     })
   	.style('stroke', function(d) {
