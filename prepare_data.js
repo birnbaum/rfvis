@@ -83,8 +83,8 @@ function parseStatisticsContent(text) {
         return [
             Number.parseInt(fields[0]),  // height
             Number.parseInt(fields[1]),  // samples
-            Number.parseInt(fields[2]),  // impurity
-            Number.parseInt(fields[9]),  // impurityDrop
+            Number.parseFloat(fields[2]),  // impurity
+            Number.parseFloat(fields[9]),  // impurityDrop
             Number.parseInt(fields[3]),  // feature
         ]
     });
