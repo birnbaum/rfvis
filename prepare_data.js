@@ -78,7 +78,7 @@ function parseCorrelationMatrix(text) {
  * @returns {int[]} 
  */
 function parseStatisticsContent(text) {
-    return text.split("\n").map(line => {
+    return text.trim().split("\n").map(line => {
         const fields = line.split(";");
         return [
             Number.parseInt(fields[0]),  // height
