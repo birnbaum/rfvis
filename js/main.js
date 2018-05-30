@@ -7,19 +7,6 @@ const maxDepth = 45;
 
 let totalSamples = null;
 
-function main() {
-	const forest = loadForest();
-	const tree = forest.trees[0];
-	const branches = generateBranches(tree);
-	draw(branches);
-}
-
-function loadForest() {
-	// Here is the only point we access the hacky global variable FOREST
-	FOREST.trees.forEach(tree => transformNodesInPlace(tree))
-	return FOREST;
-}
-
 /**
  * Internal tree data structure
  * The methods branchify() and toBranch() are just messy workarounds and should be refactored at some point
@@ -77,6 +64,8 @@ class Node {
 	}
 }
 
+const forest = loadForest();
+
 /**
  * Messy function for transforming the list of node parameters to an actual tree data structure
  * @param {*} tree 
@@ -91,7 +80,7 @@ function transformNodesInPlace(tree) {
         // console.log(nodeParameters[0], "X".repeat(stack.length))
         let latest = stack[stack.length - 1];
         const node = new Node(...nodeParameters);
-    
+	
         if (node.height === latest.height + 1) {  // Child Node
             // Do nothing
         } else if (node.height === latest.height) {  // Sibling Node
@@ -118,27 +107,46 @@ function generateBranches(tree) {
 
 	// recursive function that adds branch objects to "branches"
 	function branch(node) {
-		if (node.depth === maxDepth)
-			return;
+		if (node.depth === maxDepth) return;
 		
 		const end = endPt(node);
-
 		branches.push(node.toBranch());
+		
+		if (node.children.length === 0) return;
 
-		const leftChild = node.children[0];
+		let leftChild, rightChild;
+		leftChild = node.children[0];
+		rightChild = node.children[1];
+
+		// Strategy for always drawing the mightier branch towards the sky
+		/*
+		const firstBiggerThanSecond = (node.children[0].samples / node.samples) >= 0.5;
+		const leftBound = node.angle < 0;
+		if (firstBiggerThanSecond && leftBound) {
+			leftChild = node.children[1];
+			rightChild = node.children[0];
+		} else if (!firstBiggerThanSecond && leftBound) {
+			leftChild = node.children[0];
+			rightChild = node.children[1];
+		} else if (firstBiggerThanSecond && !leftBound) {
+			leftChild = node.children[0];
+			rightChild = node.children[1];
+		} else {
+			leftChild = node.children[1];
+			rightChild = node.children[0];
+		}*/
+
 		if (leftChild !== undefined) {
 			leftChild.branchify(branches.length, end.x, end.y, node.angle - da, node.length * dl, node.depth + 1, node.index);
 			branch(leftChild);
 		}
-
-		const rightChild = node.children[1];
 		if (rightChild !== undefined) {
 			rightChild.branchify(branches.length, end.x, end.y, node.angle + da, node.length * dl, node.depth + 1, node.index);
 			branch(rightChild);
 		}
 	}
 	// Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-	tree.baseNode.branchify(0, 500, 600, 0, 100, 0, null)
+	tree.baseNode.branchify(0, 500, 800, 0, 100, 0, null)
 	branch(tree.baseNode);
 
 	return branches;
@@ -161,19 +169,22 @@ function highlightParents(d) {
 	}	
 }*/
 
+	
+	// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
+const impurityColor = d3.scaleLinear()
+	.domain([0, 1])
+	.range(["green", "brown"]);
+
+// Linear scale that maps the number of samples in a branch to a certain number of pixels
+const thickness = d3.scaleLinear()
+	.domain([1, totalSamples])
+	.range([1, 15]);
+
 // ------------------------------- //
 // This is where the magic happens //
 // ------------------------------- //
 function draw(branches) {
-	// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
-	const color = d3.scaleLinear()
-		.domain([0, 1])
-		.range(["green", "brown"]);
-	
-	// Linear scale that maps the number of samples in a branch to a certain number of pixels
-	const thickness = d3.scaleLinear()
-		.domain([1, totalSamples])
-		.range([1, 15]);
+	console.log(branches)
 
 	d3.select('svg')
 		.selectAll('line')
@@ -185,8 +196,27 @@ function draw(branches) {
 		.attr('x2', d => endPt(d).x)
 		.attr('y2', d => endPt(d).y)
 		.style('stroke-width', d => thickness(d.samples) + 'px')
-		.style('stroke', d => color(d.impurity))
+		.style('stroke', d => impurityColor(d.impurity))
 		.attr('id', d => 'id-' + d.index);  // This attr is currently not used
 }
 
-main();
+function drawTree(n) {
+	const tree = forest.trees[n];
+	const branches = generateBranches(tree);
+	draw(branches);
+}
+
+function loadForest() {
+	// Here is the only point we access the hacky global variable FOREST
+	FOREST.trees.forEach(tree => transformNodesInPlace(tree))
+	return FOREST;
+}
+
+d3.selectAll('.next')
+	.on('click', next);
+
+function next() {
+	drawTree(1);
+}
+
+drawTree(0);
