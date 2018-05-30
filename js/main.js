@@ -3,7 +3,7 @@
 // Tree configuration
 const da = 0.4; // Angle delta
 const dl = 0.85; // Length delta (factor)
-const maxDepth = 45;
+const maxDepth = 1000;
 
 let totalSamples = null;
 const forest = loadForest();  // On load, construct the node structure
@@ -53,6 +53,7 @@ function transformNodesInPlace(tree) {
 // Tree creation functions
 function generateBranches(tree) {
 	const branches = [];
+	const leafs = [];
 
 	// recursive function that adds branch objects to "branches"
 	function branch(node) {
@@ -61,7 +62,15 @@ function generateBranches(tree) {
 		const end = endPt(node);
 		branches.push(node.toBranch());
 		
-		if (node.children.length === 0) return;
+		if (node.children.length === 0) {
+			leafs.push({
+				x: end.x,
+				y: end.y,
+				impurity: node.impurity,
+				samples: node.samples
+			})
+			return;  // End of recursion
+		}
 
 		let leftChild, rightChild;
 		leftChild = node.children[0];
@@ -98,7 +107,7 @@ function generateBranches(tree) {
 	tree.baseNode.branchify(0, 500, 800, 0, 100, 0, null)
 	branch(tree.baseNode);
 
-	return branches;
+	return {branches, leafs};
 }
 
 function endPt(b) {
@@ -118,25 +127,37 @@ function highlightParents(d) {
 	}	
 }*/
 	
-	// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
-const impurityColor = d3.scaleLinear()
+// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
+const branchImpurityColor = d3.scaleLinear()
 	.domain([0, 1])
 	.range(["green", "brown"]);
 
 // Linear scale that maps the number of samples in a branch to a certain number of pixels
-const thickness = d3.scaleLinear()
+const branchThickness = d3.scaleLinear()
 	.domain([1, totalSamples])
 	.range([1, 15]);
+
+	
+const leafImpurityColor = d3.scaleLinear()
+	.domain([0, 0.5])
+	.range(["green", "brown"]);
+	
+const leafSize = d3.scaleLinear()
+	.domain([1, 100])
+	.range([1, 10]);
 
 // ------------------------------- //
 // This is where the magic happens //
 // ------------------------------- //
 function drawTree(update=false) {
 	const tree = forest.trees[treeId];
-	const branches = generateBranches(tree);
+	const {branches, leafs} = generateBranches(tree);
 	
 	// Clear previous tree
-	if (update) d3.select('#tree').selectAll('line').remove();
+	if (update) {
+		d3.select('#tree').selectAll('line').remove();
+		d3.select('#tree').selectAll('circle').remove();
+	}
 
 	d3.select('#tree')
 		.selectAll('line')
@@ -147,14 +168,22 @@ function drawTree(update=false) {
 		.attr('y1', d => d.y)
 		.attr('x2', d => endPt(d).x)
 		.attr('y2', d => endPt(d).y)
-		.style('stroke-width', d => thickness(d.samples) + 'px')
-		.style('stroke', d => impurityColor(d.impurity))
+		.style('stroke-width', d => branchThickness(d.samples) + 'px')
+		.style('stroke', d => branchImpurityColor(d.impurity))
 		.attr('id', d => 'id-' + d.index);  // This attr is currently not used
-
-	d3.select("#tree").append("image")
-		.attr("xlink:href","images/leaf.svg")
-		.attr("width", 100)
-		.attr("height", 100)
+	
+	d3.select("#tree")
+		.selectAll('circle')
+		.data(leafs)  // This is where we feed the data to the visualization
+		.enter()
+		.append("circle")
+		.attr("cx", d => d.x)
+		.attr("cy", d => d.y)
+		.attr("r", d => leafSize(d.samples))
+		.style("fill", d => {
+			if(d.impurity > 0.5) return "red";
+			return leafImpurityColor(d.impurity)
+		});
 }
 
 
