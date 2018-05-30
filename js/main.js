@@ -6,65 +6,14 @@ const dl = 0.85; // Length delta (factor)
 const maxDepth = 45;
 
 let totalSamples = null;
+const forest = loadForest();  // On load, construct the node structure
+let treeId = 0;
 
-/**
- * Internal tree data structure
- * The methods branchify() and toBranch() are just messy workarounds and should be refactored at some point
- */
-class Node {
-	constructor(height, samples, impurity, impurityDrop, feature) {
-		this.height = height;
-		this.samples = samples;
-		this.impurity = impurity;
-		this.impurityDrop = impurityDrop; 
-		this.feature = feature;
-		this.children = [];
-	}
-
-	/**
-	 * Adds a child node
-	 */
-	add(node) {
-		if(this.children.length >= 2) throw `Node ${this} already has two children`;
-		this.children.push(node);
-	}
-
-	/**
-	 * Adds branch information to the node 
-	 */
-	branchify(index, x, y, angle, length, depth, parent) {
-		this.index = index
-		this.x = x
-		this.y = y
-		this.angle = angle
-		this.length = length
-		this.depth = depth
-		this.parent = parent
-	}
-
-	// This function should rather return the node itself without references to child nodes
-	// This function is used to construct a set of branches that are to render
-	// - x and y are the start coordinates
-	// - angle and length are used to draw the line
-	// - samples are used for the thickness
-	// - impurity is used for the color
-	// - index, depth and parent are currently unused
-	toBranch() {
-		return {
-			index: this.index,
-			x: this.x,
-			y: this.y,
-			angle: this.angle,
-			length: this.length,
-			depth: this.depth,
-			parent: this.parent,
-			samples: this.samples,
-			impurity: this.impurity
-		}
-	}
+function loadForest() {
+    // Here is the only point we access the hacky global variable FOREST
+    FOREST.trees.forEach(tree => transformNodesInPlace(tree))
+    return FOREST;
 }
-
-const forest = loadForest();
 
 /**
  * Messy function for transforming the list of node parameters to an actual tree data structure
@@ -168,7 +117,6 @@ function highlightParents(d) {
 		d = branches[d.parent];
 	}	
 }*/
-
 	
 	// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
 const impurityColor = d3.scaleLinear()
@@ -183,10 +131,14 @@ const thickness = d3.scaleLinear()
 // ------------------------------- //
 // This is where the magic happens //
 // ------------------------------- //
-function draw(branches) {
-	console.log(branches)
+function drawTree(update=false) {
+	const tree = forest.trees[treeId];
+	const branches = generateBranches(tree);
+	
+	// Clear previous tree
+	if (update) d3.select('#tree').selectAll('line').remove();
 
-	d3.select('svg')
+	d3.select('#tree')
 		.selectAll('line')
 		.data(branches)  // This is where we feed the data to the visualization
 		.enter()
@@ -198,25 +150,25 @@ function draw(branches) {
 		.style('stroke-width', d => thickness(d.samples) + 'px')
 		.style('stroke', d => impurityColor(d.impurity))
 		.attr('id', d => 'id-' + d.index);  // This attr is currently not used
+
+	d3.select("#tree").append("image")
+		.attr("xlink:href","images/leaf.svg")
+		.attr("width", 100)
+		.attr("height", 100)
 }
 
-function drawTree(n) {
-	const tree = forest.trees[n];
-	const branches = generateBranches(tree);
-	draw(branches);
-}
 
-function loadForest() {
-	// Here is the only point we access the hacky global variable FOREST
-	FOREST.trees.forEach(tree => transformNodesInPlace(tree))
-	return FOREST;
-}
 
-d3.selectAll('.next')
-	.on('click', next);
+d3.selectAll('.next').on('click', () => {
+	if (treeId === forest.trees.length-1) return alert("Last");
+	treeId++;
+	drawTree(true);
+});
 
-function next() {
-	drawTree(1);
-}
+d3.selectAll('.previous').on('click', () => {
+	if (treeId === 0) return alert("First");
+	treeId--;
+	drawTree(true);
+});
 
-drawTree(0);
+drawTree();
