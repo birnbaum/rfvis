@@ -2,13 +2,23 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/skeleton.min.css">
   </head>
   <body>
-    <div id="navigation">
-      <button class="next">Next tree</button>
-    </div>
-    <div id="chart">
-      <svg></svg>
+    <div class="container">
+      <div class="row">
+        <div class="two columns">
+            <div id="navigation">
+              <div><h4>NAVIGATION</h4></div>
+              <button class="next">Next tree</button>
+            </div>          
+        </div>
+        <div class="ten columns">
+            <div id="chart">
+              <svg></svg>
+            </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
