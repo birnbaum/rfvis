@@ -1,3 +1,5 @@
+export {Node}
+
 /**
  * Internal tree data structure
  * The methods branchify() and toBranch() are just messy workarounds and should be refactored at some point

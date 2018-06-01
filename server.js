@@ -1,13 +1,21 @@
 const fs = require("fs");
 const path = require("path");
+const express = require('express')
+const app = express()
 
-const SUMMARY_FILE = "./data/summary.txt";
-const STATISTICS_DIR = "./data/statistics";
-const OUT_FILE = "js/forest_data.js"
+if(process.argv.length !== 3) {
+    throw "Usage: node server.js <data_folder>";
+}
 
-const forest = createForest(SUMMARY_FILE, STATISTICS_DIR);
-const content = "FOREST = " + JSON.stringify(forest);
-fs.writeFileSync(OUT_FILE, content, "utf-8");
+const statisticsDir = process.argv[2] + "/statistics";
+const summaryFile = process.argv[2] + "/summary.txt";
+
+app.get('/',     (req, res) => res.sendFile(path.join(__dirname + "/index.html")));
+app.get('/data', (req, res) => res.json(createForest(summaryFile, statisticsDir)));
+app.use(express.static('public'));
+
+app.listen(3000, () => console.log('Example app listening on port 3000!'))
+
 
 /**
  * Reads the provided txt files and construcs a forest object of the following form:
@@ -40,8 +48,8 @@ function createForest(summaryFile, statisticsDirectory) {
     if (treeFiles.length !== treeStrengths.length) {
         console.log(treeFiles, treeStrengths)
         console.log(treeFiles.length, treeStrengths.length)
-        throw `Number of trees noted in ${summaryFile} (${treeFiles.length}) is inconsistend to 
-               the amount of files in ${statisticsDirectory} (${treeStrengths.length})`;
+        throw `Number of trees noted in ${summaryFile} (${treeFiles.length}) is inconsistend ` +
+              `to the amount of files in ${statisticsDirectory} (${treeStrengths.length})`;
     }
 
     const trees = treeFiles.map((treeFile, index) => {

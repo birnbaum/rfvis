@@ -1,54 +1,16 @@
 "use strict";
 
+import {getForest} from "./forest.js";
+
+
 // Tree configuration
 const da = 0.4; // Angle delta
 const dl = 0.85; // Length delta (factor)
 const maxDepth = 1000;
 
 let totalSamples = null;
-const forest = loadForest();  // On load, construct the node structure
 let treeId = 0;
 
-function loadForest() {
-    // Here is the only point we access the hacky global variable FOREST
-    FOREST.trees.forEach(tree => transformNodesInPlace(tree))
-    return FOREST;
-}
-
-/**
- * Messy function for transforming the list of node parameters to an actual tree data structure
- * @param {*} tree 
- */
-function transformNodesInPlace(tree) {
-
-	const baseNode = new Node(...tree.nodes[0]);
-	totalSamples = baseNode.samples;
-    let stack = [baseNode];
-
-    for (let nodeParameters of tree.nodes.slice(1)) {
-        // console.log(nodeParameters[0], "X".repeat(stack.length))
-        let latest = stack[stack.length - 1];
-        const node = new Node(...nodeParameters);
-	
-        if (node.height === latest.height + 1) {  // Child Node
-            // Do nothing
-        } else if (node.height === latest.height) {  // Sibling Node
-            stack.pop();
-        } else if (node.height < latest.height) {
-            stack = stack.slice(0, node.height)
-        } else {
-            throw "No no no no no"
-        }
-        
-        latest = stack[stack.length - 1];
-        latest.add(node);
-        stack.push(node);
-    }
-
-    // Modify object inplace
-    delete tree.nodes;
-    tree.baseNode = baseNode;
-}
 
 // Tree creation functions
 function generateBranches(tree) {
@@ -149,7 +111,10 @@ const leafSize = d3.scaleLinear()
 // ------------------------------- //
 // This is where the magic happens //
 // ------------------------------- //
-function drawTree(update=false) {
+async function drawTree(update=false) {
+	const forest = await getForest();
+	totalSamples = forest.totalSamples;
+	console.log(forest)
 	const tree = forest.trees[treeId];
 	const {branches, leafs} = generateBranches(tree);
 	
@@ -185,8 +150,6 @@ function drawTree(update=false) {
 			return leafImpurityColor(d.impurity)
 		});
 }
-
-
 
 d3.selectAll('.next').on('click', () => {
 	if (treeId === forest.trees.length-1) return alert("Last");

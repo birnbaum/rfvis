@@ -1,0 +1,14 @@
+{
+  "name": "random-forest-visualization",
+  "scripts": {
+    "build": "rollup ./app/main.js --file ./public/js/main.js --format iife",
+    "watch": "rollup ./app/main.js --file ./public/js/main.js --format iife --sourcemap --watch"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.5",
+    "rollup": "^0.59.4"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
