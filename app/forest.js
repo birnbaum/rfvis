@@ -2,13 +2,10 @@ import {Node} from "./classes.js";
 export {getForest};
 
 async function getForest() {
-    const client = new HttpClient();
-    await client.get("http://localhost:3000/data", async res => {
-        const forest = JSON.parse(res);
-        forest.trees.forEach(tree => transformNodesInPlace(tree))
-        forest.totalSamples = forest.trees[0].baseNode.samples;
-        await forest;
-    });
+    const forest = await (await fetch("http://localhost:3000/data")).json()
+    forest.trees.forEach(tree => transformNodesInPlace(tree))
+    forest.totalSamples = forest.trees[0].baseNode.samples;
+    return forest;
 }
 
 /**
@@ -43,16 +40,4 @@ function transformNodesInPlace(tree) {
     // Modify object inplace
     delete tree.nodes;
     tree.baseNode = baseNode;
-}
-
-class HttpClient {
-    get(aUrl, aCallback) {
-        const anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
-                aCallback(anHttpRequest.responseText);
-        }
-        anHttpRequest.open( "GET", aUrl, true );            
-        anHttpRequest.send( null );
-    }
 }

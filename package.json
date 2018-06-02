@@ -1,11 +1,13 @@
 {
   "name": "random-forest-visualization",
   "scripts": {
-    "build": "rollup ./app/main.js --file ./public/js/main.js --format iife",
-    "watch": "rollup ./app/main.js --file ./public/js/main.js --format iife --sourcemap --watch"
+    "watch": "parallelshell \"npm run watch:js\" \"npm run watch:server\"",
+    "watch:js": "rollup ./app/main.js --file ./public/js/main.js --format iife --sourcemap --watch",
+    "watch:server": "nodemon server.js data"
   },
   "devDependencies": {
     "nodemon": "^1.17.5",
+    "parallelshell": "^3.0.2",
     "rollup": "^0.59.4"
   },
   "dependencies": {

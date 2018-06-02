@@ -8,7 +8,7 @@ const da = 0.4; // Angle delta
 const dl = 0.85; // Length delta (factor)
 const maxDepth = 1000;
 
-let totalSamples = null;
+let forest = null;
 let treeId = 0;
 
 
@@ -88,36 +88,38 @@ function highlightParents(d) {
 		d = branches[d.parent];
 	}	
 }*/
-	
-// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
-const branchImpurityColor = d3.scaleLinear()
-	.domain([0, 1])
-	.range(["green", "brown"]);
-
-// Linear scale that maps the number of samples in a branch to a certain number of pixels
-const branchThickness = d3.scaleLinear()
-	.domain([1, totalSamples])
-	.range([1, 15]);
-
-	
-const leafImpurityColor = d3.scaleLinear()
-	.domain([0, 0.5])
-	.range(["green", "brown"]);
-	
-const leafSize = d3.scaleLinear()
-	.domain([1, 100])
-	.range([1, 10]);
 
 // ------------------------------- //
 // This is where the magic happens //
 // ------------------------------- //
 async function drawTree(update=false) {
-	const forest = await getForest();
-	totalSamples = forest.totalSamples;
-	console.log(forest)
+	// TODO factor this out
+	if (forest === null) {
+		forest = await getForest();
+	}
 	const tree = forest.trees[treeId];
 	const {branches, leafs} = generateBranches(tree);
 	
+	// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
+	const branchImpurityColor = d3.scaleLinear()
+		.domain([0, 1])
+		.range(["green", "brown"]);
+
+	// Linear scale that maps the number of samples in a branch to a certain number of pixels
+	const branchThickness = d3.scaleLinear()
+		.domain([1, forest.totalSamples])
+		.range([1, 15]);
+
+	const leafImpurityColor = d3.scaleLinear()
+		.domain([0, 0.5])
+		.range(["green", "brown"]);
+		
+	const leafSize = d3.scaleLinear()
+		.domain([1, 100])
+		.range([1, 10]);
+
+
+
 	// Clear previous tree
 	if (update) {
 		d3.select('#tree').selectAll('line').remove();
