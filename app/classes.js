@@ -29,6 +29,8 @@ class Node {
 		this.index = index
 		this.x = x
 		this.y = y
+		this.x2 = x + length * Math.sin(angle);
+		this.y2 = y - length * Math.cos(angle);
 		this.angle = angle
 		this.length = length
 		this.depth = depth
@@ -43,16 +45,8 @@ class Node {
 	// - impurity is used for the color
 	// - index, depth and parent are currently unused
 	toBranch() {
-		return {
-			index: this.index,
-			x: this.x,
-			y: this.y,
-			angle: this.angle,
-			length: this.length,
-			depth: this.depth,
-			parent: this.parent,
-			samples: this.samples,
-			impurity: this.impurity
-		}
+		const thisCopy = Object.assign({}, this);
+		delete thisCopy.children;
+		return thisCopy;
 	}
 }
