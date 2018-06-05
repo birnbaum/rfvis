@@ -55,7 +55,7 @@ function generateTreeElements(tree) {
 			return;  // End of recursion
 		}
 
-		const {leftChild, rightChild} = mightyUpStrategy(node);
+		const {leftChild, rightChild} = simpleStrategy(node);
 
 		if (leftChild !== undefined) {
 			leftChild.branchify(branches.length, node.x2, node.y2, node.angle - da, node.length * dl, node.depth + 1, node.index);
@@ -75,42 +75,75 @@ function generateTreeElements(tree) {
 }
 
 
-// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
-const branchColorImpurity = () => branch => {
-	return d3.scaleLinear()
-		.domain([0, 1])
-		.range(["green", "brown"])
-		(branch.impurity);
-}
+class TreeConfig {
+	constructor({
+		totalSamples,
+		branchColor: _branchColor = "IMPURITY",
+		branchThickness: _branchThickness = "SAMPLES",
+		leafColor: _leafColor = "IMPURITY",
+		leafSize: _leafSize = "SAMPLES",
+	}) {
+		this.totalSamples = totalSamples;
+		this._branchColor = _branchColor;
+		this._branchThickness = _branchThickness;
+		this._leafColor = _leafColor;
+		this._leafSize = _leafSize;
+	}
 
-// Linear scale that maps the number of samples in a branch to a certain number of pixels
-const branchThicknessSamples = maxSamples => branch => {
-	return d3.scaleLinear()
-		.domain([1, maxSamples])
-		.range([1, 15])
-		(branch.samples) + 'px';
-}
+	branchColor(branch) {
+		if (this._branchColor === "IMPURITY") {
+			// Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
+			return d3.scaleLinear()
+				.domain([0, 1])
+				.range(["green", "brown"])
+				(branch.impurity);
+		}
+		console.log(this);
+		throw "Unsupported setting";
+	}
 
-const leafColorImpurity = () => leaf => {
-	if (leaf.impurity > 0.5) {
-		return "red";
-	} else {
-		return d3.scaleLinear()
-			.domain([0, 0.5])
-			.range(["green", "red"])
-			(leaf.impurity);
+	branchThickness(branch) {
+		if (this._branchThickness === "SAMPLES") {
+			// Linear scale that maps the number of samples in a branch to a certain number of pixels
+			return d3.scaleLinear()
+				.domain([1, this.totalSamples])
+				.range([1, 15])
+				(branch.samples) + 'px';
+		}
+		console.log(this);
+		throw "Unsupported setting";
+	}
+
+	leafColor(leaf) {
+		if (this._leafColor === "IMPURITY") {
+			if (leaf.impurity > 0.5) {
+				return "red";
+			} else {
+				return d3.scaleLinear()
+					.domain([0, 0.5])
+					.range(["green", "red"])
+					(leaf.impurity);
+			}
+		}
+		console.log(this);
+		throw "Unsupported setting";
+	}
+
+	leafSize(leaf) {
+		if (this._leafColor === "SAMPLES") {
+			return d3.scaleLinear()
+				.domain([1, 100])
+				.range([1, 10])
+				(leaf.samples)
+		}
+		console.log(this);
+		throw "Unsupported setting";
 	}
 }
 
-const leafSizeSamples = () => leaf => {
-	d3.scaleLinear()
-		.domain([1, 100])
-		.range([1, 10])
-		(leaf.impurity)
-}
 
-
-function drawTree(branches, leafs, branchColorFn, branchThicknessFn, leafColorFn, leafSizeFn) {
+function drawTree(branches, leafs, config) {
+	console.log(config)
 	d3.select('#tree')
 		.selectAll('line')
 		.data(branches)  // This is where we feed the data to the visualization
@@ -120,8 +153,8 @@ function drawTree(branches, leafs, branchColorFn, branchThicknessFn, leafColorFn
 		.attr('y1', d => d.y)
 		.attr('x2', d => d.x2)
 		.attr('y2', d => d.y2)
-		.style('stroke-width', branchThicknessFn)
-		.style('stroke', branchColorFn)
+		.style('stroke-width', config.branchThickness)
+		.style('stroke', config.branchColor)
 		.attr('id', d => 'id-' + d.index);  // This attr is currently not used
 	
 	d3.select("#tree")
@@ -131,8 +164,8 @@ function drawTree(branches, leafs, branchColorFn, branchThicknessFn, leafColorFn
 		.append("circle")
 		.attr("cx", d => d.x)
 		.attr("cy", d => d.y)
-		.attr("r", leafSizeFn)
-		.style("fill", leafColorFn);
+		.attr("r", config.leafSize)
+		.style("fill", config.leafColor);
 }
 
 function resetSvg() {
@@ -147,7 +180,8 @@ function resetSvg() {
 		resetSvg();
 		const tree = forest.trees[treeId];
 		const {branches, leafs} = generateTreeElements(tree);
-		drawTree(branches, leafs, branchColorImpurity(), branchThicknessSamples(forest.totalSamples), leafColorImpurity(), leafSizeSamples());
+		const config = new TreeConfig({totalSamples: forest.totalSamples})
+		drawTree(branches, leafs, config);
 	}
 
 	let treeId = 0;
