@@ -1,5 +1,5 @@
-import * as d3 from "./d3.js";
-import {assert} from "./util.js";
+import * as d3 from "d3";
+import {assert} from "./util.mjs";
 
 export {TreeVisualizationConfig, generateTreeElements, drawTree, resetTree};
 
@@ -152,8 +152,8 @@ function drawTree(branches, leafs, config) {
 		.attr('y1', d => d.y)
 		.attr('x2', d => d.x2)
 		.attr('y2', d => d.y2)
-		.style('stroke-width', config.branchThickness)
-		.style('stroke', config.branchColor)
+		.style('stroke-width', d => config.branchThickness(d))
+		.style('stroke', d => config.branchColor(d))
 		.attr('id', d => 'id-' + d.index);  // This attr is currently not used
 	
 	d3.select("#tree")
@@ -163,8 +163,8 @@ function drawTree(branches, leafs, config) {
 		.append("circle")
 		.attr("cx", d => d.x)
 		.attr("cy", d => d.y)
-		.attr("r", config.leafSize)
-		.style("fill", config.leafColor);
+		.attr("r", d => config.leafSize(d))
+		.style("fill", d => config.leafColor(d));
 }
 
 function resetTree() {

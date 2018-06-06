@@ -1,10 +1,10 @@
 "use strict";
 
-import getForest from "./forest.js";
-import * as d3 from "./d3.js";
+import getForest from "./forest.mjs";
+import * as d3 from "d3";
 
 
-import {TreeVisualizationConfig, generateTreeElements, drawTree, resetTree} from "./draw.js";
+import {TreeVisualizationConfig, generateTreeElements, drawTree, resetTree} from "./draw.mjs";
 
 (async function() {
 	const forest = await getForest();
