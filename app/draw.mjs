@@ -1,15 +1,10 @@
 import * as d3 from "d3";
 import {assert} from "./util.mjs";
 
-export {TreeVisualizationConfig, generateTreeElements, drawTree, resetTree};
+export {TreeVisualizationMapping, generateTreeElements, drawTree, resetTree};
 
-// Tree configuration
-// TODO encapsulate
-const da = 0.4; // Angle delta
-const dl = 0.85; // Length delta (factor)
-const maxDepth = 1000;
 
-class TreeVisualizationConfig {
+class TreeVisualizationMapping {
     constructor({
         totalSamples,
         branchColor: _branchColor = "IMPURITY",
@@ -77,35 +72,46 @@ class TreeVisualizationConfig {
     }
 }
 
-function generateTreeElements(tree) {
+
+/* ------ Tree construction strategies ------ */
+
+const simpleStrategy = node => {
+    const leftChild = node.children[0];
+    const rightChild = node.children[1];
+    return {leftChild, rightChild};
+};
+
+const mightyUpStrategy = node => {
+    const firstBiggerThanSecond = (node.children[0].samples / node.samples) >= 0.5;
+    const leftBound = node.angle < 0;
+    let leftChild, rightChild;
+    if (firstBiggerThanSecond && leftBound) {
+        leftChild = node.children[1];
+        rightChild = node.children[0];
+    } else if (!firstBiggerThanSecond && leftBound) {
+        leftChild = node.children[0];
+        rightChild = node.children[1];
+    } else if (firstBiggerThanSecond && !leftBound) {
+        leftChild = node.children[0];
+        rightChild = node.children[1];
+    } else {
+        leftChild = node.children[1];
+        rightChild = node.children[0];
+    }
+    return {leftChild, rightChild};
+};
+
+/* ---- End Tree construction strategies ---- */
+
+function generateTreeElements({
+    tree,
+    angleDelta = 0.4, // Angle delta
+    lengthDelta = 0.85, // Length delta (factor)
+    maxDepth = Number.POSITIVE_INFINITY,
+    strategy = simpleStrategy
+}) {
     const branches = [];
     const leafs = [];
-
-    const simpleStrategy = node => {
-        const leftChild = node.children[0];
-        const rightChild = node.children[1];
-        return {leftChild, rightChild};
-    };
-
-    const mightyUpStrategy = node => {
-        const firstBiggerThanSecond = (node.children[0].samples / node.samples) >= 0.5;
-        const leftBound = node.angle < 0;
-        let leftChild, rightChild;
-        if (firstBiggerThanSecond && leftBound) {
-            leftChild = node.children[1];
-            rightChild = node.children[0];
-        } else if (!firstBiggerThanSecond && leftBound) {
-            leftChild = node.children[0];
-            rightChild = node.children[1];
-        } else if (firstBiggerThanSecond && !leftBound) {
-            leftChild = node.children[0];
-            rightChild = node.children[1];
-        } else {
-            leftChild = node.children[1];
-            rightChild = node.children[0];
-        }
-        return {leftChild, rightChild};
-    };
 
     // recursive function that adds branch objects to "branches"
     function branch(node) {
@@ -123,14 +129,14 @@ function generateTreeElements(tree) {
             return;  // End of recursion
         }
 
-        const {leftChild, rightChild} = simpleStrategy(node);
+        const {leftChild, rightChild} = strategy(node);
 
         if (leftChild !== undefined) {
-            leftChild.branchify(branches.length, node.x2, node.y2, node.angle - da, node.length * dl, node.depth + 1, node.index);
+            leftChild.branchify(branches.length, node.x2, node.y2, node.angle - angleDelta, node.length * lengthDelta, node.depth + 1, node.index);
             branch(leftChild);
         }
         if (rightChild !== undefined) {
-            rightChild.branchify(branches.length, node.x2, node.y2, node.angle + da, node.length * dl, node.depth + 1, node.index);
+            rightChild.branchify(branches.length, node.x2, node.y2, node.angle + angleDelta, node.length * lengthDelta, node.depth + 1, node.index);
             branch(rightChild);
         }
     }

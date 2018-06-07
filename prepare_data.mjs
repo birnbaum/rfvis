@@ -1,21 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
-const app = express();
+import * as path from "path";
+import * as fs from "fs";
 
-if(process.argv.length !== 3) {
-    throw 'Usage: node server.js <data_folder>';
-}
-
-const statisticsDir = process.argv[2] + '/statistics';
-const summaryFile = process.argv[2] + '/summary.txt';
-
-app.get('/',     (req, res) => res.sendFile(path.join(__dirname + '/index.html')));
-app.get('/data', (req, res) => res.json(createForest(summaryFile, statisticsDir)));
-app.use(express.static('public'));
-
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
-
+export default createForest;
 
 /**
  * Reads the provided txt files and construcs a forest object of the following form:
