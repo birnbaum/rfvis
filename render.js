@@ -1,31 +1,16 @@
 const D3Node = require("d3-node");
 const fs = require("fs");
-const d3 = D3Node().d3;
+const util = require('util');
+const fs_writeFile = util.promisify(fs.writeFile);
 const svg2png = require("svg2png");
 
-function bar({
+const bar = ({
     data,
-    selector: _selector = "#chart",
-    container: _container = `<div id="chart"></div>`,
-    style: _style = "",
+    d3,
     width: _width = 960,
     height: _height = 500,
     margin: _margin = { top: 20, right: 20, bottom: 30, left: 40 },
-    barColor: _barColor = "steelblue",
-    barHoverColor: _barHoverColor = "brown",
-}) {
-    const _svgStyles = `
-        .bar { fill: ${_barColor}; }
-        .bar:hover { fill: ${_barHoverColor}; }
-    `;
-
-    const d3n = new D3Node({
-        selector: _selector,
-        styles: _svgStyles + _style,
-        container: _container
-    });
-
-    const d3 = d3n.d3;
+}) => {
 
     const width = _width - _margin.left - _margin.right;
     const height = _height - _margin.top - _margin.bottom;
@@ -62,15 +47,22 @@ function bar({
 
     // add the y Axis
     svg.append("g").call(d3.axisLeft(y));
-
-    return d3n;
-}
+};
 
 const csvString = fs.readFileSync("data/data.csv").toString();
+
+const d3n = new D3Node({
+    selector: "#chart",
+    // styles: _svgStyles + _style,
+    container: `<div id="chart"></div>`
+});
+
+const d3 = d3n.d3;
 const data = d3.csvParse(csvString);
+bar({ data: data, d3: d3 });
 
 // create output files
-output("./output", bar({ data: data }));
+output("./output", d3n);
 
 function output(outputName, d3n) {
 
@@ -87,7 +79,7 @@ function output(outputName, d3n) {
 
     const svgBuffer = new Buffer(d3n.svgString(), "utf-8");
     svg2png(svgBuffer)
-        .then(buffer => fs.writeFile(outputName+".png", buffer))
+        .then(buffer => fs_writeFile(outputName+".png", buffer))
         .catch(e => console.error("ERR:", e))
         .then(err => console.log(">> Exported: \""+outputName+".png\""));
 }
