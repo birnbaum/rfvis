@@ -1,11 +1,8 @@
-"use strict";
-
-import getForest from "./forest.mjs";
 import * as d3 from "d3";
 import {drawTree, resetTree} from "./draw.mjs";
 
 (async function() {
-	const forest = await getForest();
+    const forest = await (await fetch("http://localhost:3000/data")).json();
 
 	function updateTreeVisualization(treeId) {
         resetTree(d3);
