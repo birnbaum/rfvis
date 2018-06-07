@@ -3,6 +3,7 @@
   "scripts": {
     "watch": "parallelshell \"npm run watch:js\" \"npm run watch:server\"",
     "server": "node --experimental-modules server.mjs data",
+    "render": "node --experimental-modules render.mjs data",
     "watch:js": "rollup -c --sourcemap --watch",
     "watch:server": "nodemon server.js data"
   },

@@ -1,7 +1,9 @@
+import * as d3 from "d3";
+
 export {drawTree, resetTree};
 
 function drawTree({
-    d3,
+    svg,
     tree,
     totalSamples,
 
@@ -21,8 +23,7 @@ function drawTree({
     } = generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
 
     // Draw branches
-    d3.select('#tree')
-        .selectAll('line')
+    svg.selectAll('line')
         .data(branches)  // This is where we feed the data to the visualization
         .enter()
         .append('line')
@@ -35,8 +36,7 @@ function drawTree({
         .attr('id', d => 'id-' + d.index);  // This attr is currently not used
 
     // Draw leafs
-    d3.select("#tree")
-        .selectAll('circle')
+    svg.selectAll('circle')
         .data(leafs)  // This is where we feed the data to the visualization
         .enter()
         .append("circle")
@@ -46,9 +46,9 @@ function drawTree({
         .style("fill", d => leafColor(d, _leafColor, d3));
 }
 
-function resetTree(d3) {
-    d3.select('#tree').selectAll('line').remove();
-    d3.select('#tree').selectAll('circle').remove();
+function resetTree(svg) {
+    svg.selectAll('line').remove();
+    svg.selectAll('circle').remove();
 }
 
 function generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, strategy = simpleStrategy) {
