@@ -11,12 +11,12 @@ const maxDepth = 1000;
 
 class TreeVisualizationConfig {
     constructor({
-                    totalSamples,
-                    branchColor: _branchColor = "IMPURITY",
-                    branchThickness: _branchThickness = "SAMPLES",
-                    leafColor: _leafColor = "IMPURITY",
-                    leafSize: _leafSize = "SAMPLES",
-                }) {
+        totalSamples,
+        branchColor: _branchColor = "IMPURITY",
+        branchThickness: _branchThickness = "SAMPLES",
+        leafColor: _leafColor = "IMPURITY",
+        leafSize: _leafSize = "SAMPLES",
+    }) {
         assert(totalSamples > 0);
         this.totalSamples = totalSamples;
         // TODO assert for allowed Enum values
@@ -142,7 +142,11 @@ function generateTreeElements(tree) {
     return {branches, leafs};
 }
 
-function drawTree(branches, leafs, config) {
+function drawTree({
+    branches,
+    leafs,
+    config,
+}) {
     d3.select('#tree')
         .selectAll('line')
         .data(branches)  // This is where we feed the data to the visualization

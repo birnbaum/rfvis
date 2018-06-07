@@ -2,8 +2,6 @@
 
 import getForest from "./forest.mjs";
 import * as d3 from "d3";
-
-
 import {TreeVisualizationConfig, generateTreeElements, drawTree, resetTree} from "./draw.mjs";
 
 (async function() {
@@ -14,7 +12,7 @@ import {TreeVisualizationConfig, generateTreeElements, drawTree, resetTree} from
 		const tree = forest.trees[treeId];
 		const {branches, leafs} = generateTreeElements(tree);
 		const config = new TreeVisualizationConfig({totalSamples: forest.totalSamples});
-		drawTree(branches, leafs, config);
+		drawTree({branches, leafs, config});
 	}
 
 	let treeId = 0;
