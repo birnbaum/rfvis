@@ -121,6 +121,12 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
     const baseNode = addBranchInformation(tree.baseNode, 0, 400, 800, 0, 100, 0, null);
     branch(baseNode);
 
+    leafs.sort((a,b) => {
+        if (a.samples < b.samples) return -1;
+        if (a.samples > b.samples) return 1;
+        return 0;
+    });
+
     return {branches, leafs};
 }
 
