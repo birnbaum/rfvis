@@ -77,9 +77,21 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
 
     // recursive function that adds branch objects to "branches"
     function branch(node) {
+
         branches.push(removeChildReferences(node));
 
-        if (node.children.length === 0 || node.depth === maxDepth - 1) {
+        if (node.depth === maxDepth - 1) {
+            const {weightedAverage, histogram} = getLeafImpurities(node);
+            leafs.push({
+                x: node.x2,
+                y: node.y2,
+                impurity: weightedAverage,
+                samples: node.samples
+            });
+            return;  // End of recursion
+        }
+
+        if (node.children.length === 0) {
             leafs.push({
                 x: node.x2,
                 y: node.y2,
@@ -110,6 +122,29 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
     branch(baseNode);
 
     return {branches, leafs};
+}
+
+function getLeafImpurities(node) {
+    const leafNodes = [];
+
+    function searchLeafs(node) {
+        if (node.children.length === 0) {
+            leafNodes.push(node);
+        } else {
+            searchLeafs(node.children[0]);
+            searchLeafs(node.children[1]);
+        }
+    }
+    searchLeafs(node);
+
+    const leafImpurities = leafNodes.map(leaf => leaf.impurity);
+    const histogram = d3.histogram()(leafImpurities).map(h => h.length / node.samples);
+
+    const leafImpuritiesAndSamples = leafNodes.map(leaf => ({impurity: leaf.impurity, samples: leaf.samples}));
+    const weightedSum = leafImpuritiesAndSamples.reduce((acc, current) => acc + current.impurity * current.samples, 0);
+    const weightedAverage = weightedSum / leafNodes.length / node.samples;
+
+    return {weightedAverage, histogram};
 }
 
 // Tree construction strategies
