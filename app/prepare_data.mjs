@@ -114,7 +114,6 @@ function transformNodes(nodes) {
     let stack = [baseNode];
 
     for (let nodeParameters of nodes.slice(1)) {
-        // console.log(nodeParameters[0], "X".repeat(stack.length))
         let latest = stack[stack.length - 1];
         const node = new TreeNode(...nodeParameters);
 

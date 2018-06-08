@@ -8,7 +8,6 @@ function drawTree({
     totalSamples,
 
     maxDepth = Number.POSITIVE_INFINITY,
-    angleDelta = 0.4, // Angle delta
     lengthDelta = 0.85, // Length delta (factor)
     branchStrategy: _branchStrategy = "SIMPLE",
 
@@ -20,7 +19,7 @@ function drawTree({
     const {
         branches,
         leafs
-    } = generateTreeElements(tree, totalSamples, angleDelta, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
+    } = generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
 
     // Draw branches
     svg.selectAll('line')
@@ -31,8 +30,8 @@ function drawTree({
         .attr('y1', d => d.y)
         .attr('x2', d => d.x2)
         .attr('y2', d => d.y2)
-        .style('stroke-width', d => branchThickness(d, _branchThickness, d3, totalSamples))
-        .style('stroke', d => branchColor(d, _branchColor, d3))
+        .style('stroke-width', d => branchThickness(d, _branchThickness, totalSamples))
+        .style('stroke', d => branchColor(d, _branchColor))
         .attr('id', d => 'branch-' + d.index);  // This attr is currently not used
 
     // Draw leafs
@@ -42,8 +41,8 @@ function drawTree({
         .append("circle")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("r", d => leafSize(d, _leafSize, d3, totalSamples))
-        .style("fill", d => leafColor(d, _leafColor, d3));
+        .attr("r", d => leafSize(d, _leafSize, totalSamples))
+        .style("fill", d => leafColor(d, _leafColor));
 }
 
 function resetTree(svg) {
@@ -51,7 +50,7 @@ function resetTree(svg) {
     svg.selectAll('circle').remove();
 }
 
-function generateTreeElements(tree, totalSamples, angleDelta, lengthDelta, maxDepth, strategy = simpleStrategy) {
+function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strategy) {
     const branches = [];
     const leafs = [];
 
@@ -148,7 +147,7 @@ function branchStrategy(type) {
 
 /* ------- Tree mapping functions ------- */
 
-function branchColor(branch, type, d3) {
+function branchColor(branch, type) {
     if (type === "IMPURITY") {
         // Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
         return d3.scaleLinear()
@@ -160,7 +159,7 @@ function branchColor(branch, type, d3) {
     throw "Unsupported setting";
 }
 
-function branchThickness(branch, type, d3, totalSamples) {
+function branchThickness(branch, type, totalSamples) {
     if (type === "SAMPLES") {
         // Linear scale that maps the number of samples in a branch to a certain number of pixels
         return d3.scaleLinear()
@@ -172,7 +171,7 @@ function branchThickness(branch, type, d3, totalSamples) {
     throw "Unsupported setting";
 }
 
-function leafColor(leaf, type, d3) {
+function leafColor(leaf, type) {
     if (type === "IMPURITY") {
         if (leaf.impurity > 0.5) {
             return "red";
@@ -187,7 +186,7 @@ function leafColor(leaf, type, d3) {
     throw "Unsupported setting";
 }
 
-function leafSize(leaf, type, d3, totalSamples) {
+function leafSize(leaf, type, totalSamples) {
     const maxRadius = Math.sqrt(totalSamples / Math.PI);
     const radius = Math.sqrt(leaf.samples / Math.PI);
     if (type === "SAMPLES") {
