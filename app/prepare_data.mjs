@@ -1,6 +1,5 @@
 import * as path from "path";
 import * as fs from "fs";
-import TreeNode from "./TreeNode.mjs"
 
 /**
  * Reads the provided txt files and construcs a forest object of the following form:
@@ -83,6 +82,27 @@ function parseStatisticsContent(text) {
             Number.parseInt(fields[3]),  // feature
         ]
     });
+}
+
+/**
+ * Internal tree data structure
+ * The methods branchify() and toBranch() are just messy workarounds and should be refactored at some point
+ */
+class TreeNode {
+    constructor(height, samples, impurity, impurityDrop, feature, children = []) {
+        this.height = height;
+        this.samples = samples;
+        this.impurity = impurity;
+        this.impurityDrop = impurityDrop;
+        this.feature = feature;
+        this.children = children;
+    }
+
+    /** Adds a child node */
+    add(node) {
+        if(this.children.length >= 2) throw `Node ${this} already has two children`;
+        this.children.push(node);
+    }
 }
 
 /**

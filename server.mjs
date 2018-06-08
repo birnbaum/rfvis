@@ -1,6 +1,6 @@
 import * as path from "path";
 import express from "express";
-import createForest from "./prepare_data.mjs";
+import createForest from "./app/prepare_data.mjs";
 
 const app = express();
 

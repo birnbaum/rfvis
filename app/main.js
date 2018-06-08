@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {drawTree, resetTree} from "../draw.mjs";
+import {drawTree, resetTree} from "./draw.mjs";
 
 (async function() {
     const forest = await (await fetch("http://localhost:3000/data")).json();
