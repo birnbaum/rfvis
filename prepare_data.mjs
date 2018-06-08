@@ -40,12 +40,12 @@ export default function createForest(summaryFile, statisticsDirectory) {
     const trees = treeFiles.map((treeFile, index) => {
         const treeFilePath = path.resolve(statisticsDirectory, treeFile);
         const content = fs.readFileSync(treeFilePath, 'utf-8');
+        const nodes = parseStatisticsContent(content);
         return {
             strength: treeStrengths[index],
-            nodes: parseStatisticsContent(content)
+            baseNode: transformNodes(nodes)
         }
     });
-    trees.forEach(transformNodesInPlace);
 
     return {
         strength: totalStrength,
@@ -89,12 +89,11 @@ function parseStatisticsContent(text) {
  * Messy function for transforming the list of node parameters to an actual tree data structure
  * @param {*} tree
  */
-function transformNodesInPlace(tree) {
-
-    const baseNode = new TreeNode(...tree.nodes[0]);
+function transformNodes(nodes) {
+    const baseNode = new TreeNode(...nodes[0]);
     let stack = [baseNode];
 
-    for (let nodeParameters of tree.nodes.slice(1)) {
+    for (let nodeParameters of nodes.slice(1)) {
         // console.log(nodeParameters[0], "X".repeat(stack.length))
         let latest = stack[stack.length - 1];
         const node = new TreeNode(...nodeParameters);
@@ -114,7 +113,5 @@ function transformNodesInPlace(tree) {
         stack.push(node);
     }
 
-    // Modify object inplace
-    delete tree.nodes;
-    tree.baseNode = baseNode;
+    return baseNode;
 }

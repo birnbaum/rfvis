@@ -55,11 +55,32 @@ function generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, strategy 
     const branches = [];
     const leafs = [];
 
+    // Helper functions
+    const addBranchInformation = (treeNode, index, x, y, angle, length, depth, parent) => {
+        return Object.assign(treeNode, {
+            index,
+            x,
+            y,
+            x2: x + length * Math.sin(angle),
+            y2: y - length * Math.cos(angle),
+            angle,
+            length,
+            depth,
+            parent
+        })
+    };
+
+    const removeChildReferences = (node) => {
+        const nodeCopy = Object.assign({}, node);
+        delete nodeCopy.children;
+        return nodeCopy;
+    };
+
     // recursive function that adds branch objects to "branches"
     function branch(node) {
         if (node.depth === maxDepth) return;
 
-        branches.push(node.toBranch());
+        branches.push(removeChildReferences(node));
 
         if (node.children.length === 0) {
             leafs.push({
@@ -74,18 +95,16 @@ function generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, strategy 
         const {leftChild, rightChild} = strategy(node);
 
         if (leftChild !== undefined) {
-            leftChild.branchify(branches.length, node.x2, node.y2, node.angle - angleDelta, node.length * lengthDelta, node.depth + 1, node.index);
-            branch(leftChild);
+            branch(addBranchInformation(leftChild, branches.length, node.x2, node.y2, node.angle - angleDelta, node.length * lengthDelta, node.depth + 1, node.index));
         }
         if (rightChild !== undefined) {
-            rightChild.branchify(branches.length, node.x2, node.y2, node.angle + angleDelta, node.length * lengthDelta, node.depth + 1, node.index);
-            branch(rightChild);
+            branch(addBranchInformation(rightChild, branches.length, node.x2, node.y2, node.angle + angleDelta, node.length * lengthDelta, node.depth + 1, node.index));
         }
     }
 
     // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    tree.baseNode.branchify(0, 500, 800, 0, 100, 0, null);
-    branch(tree.baseNode);
+    const baseNode = addBranchInformation(tree.baseNode, 0, 500, 800, 0, 100, 0, null);
+    branch(baseNode);
 
     return {branches, leafs};
 }
