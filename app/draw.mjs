@@ -20,7 +20,7 @@ function drawTree({
     const {
         branches,
         leafs
-    } = generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
+    } = generateTreeElements(tree, totalSamples, angleDelta, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
 
     // Draw branches
     svg.selectAll('line')
@@ -33,7 +33,7 @@ function drawTree({
         .attr('y2', d => d.y2)
         .style('stroke-width', d => branchThickness(d, _branchThickness, d3, totalSamples))
         .style('stroke', d => branchColor(d, _branchColor, d3))
-        .attr('id', d => 'id-' + d.index);  // This attr is currently not used
+        .attr('id', d => 'branch-' + d.index);  // This attr is currently not used
 
     // Draw leafs
     svg.selectAll('circle')
@@ -42,7 +42,7 @@ function drawTree({
         .append("circle")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("r", d => leafSize(d, _leafSize, d3))
+        .attr("r", d => leafSize(d, _leafSize, d3, totalSamples))
         .style("fill", d => leafColor(d, _leafColor, d3));
 }
 
@@ -51,7 +51,7 @@ function resetTree(svg) {
     svg.selectAll('circle').remove();
 }
 
-function generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, strategy = simpleStrategy) {
+function generateTreeElements(tree, totalSamples, angleDelta, lengthDelta, maxDepth, strategy = simpleStrategy) {
     const branches = [];
     const leafs = [];
 
@@ -78,11 +78,9 @@ function generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, strategy 
 
     // recursive function that adds branch objects to "branches"
     function branch(node) {
-        if (node.depth === maxDepth) return;
-
         branches.push(removeChildReferences(node));
 
-        if (node.children.length === 0) {
+        if (node.children.length === 0 || node.depth === maxDepth - 1) {
             leafs.push({
                 x: node.x2,
                 y: node.y2,
@@ -93,17 +91,23 @@ function generateTreeElements(tree, angleDelta, lengthDelta, maxDepth, strategy 
         }
 
         const {leftChild, rightChild} = strategy(node);
+        //const length = node.length * lengthDelta;
+        const length1 = 4 + leftChild.samples / totalSamples * 100;
+        const length2 = 4 + rightChild.samples / totalSamples * 100;
+
+        const angle1 = node.angle - Math.abs(leftChild.samples / node.samples - 1);
+        const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
 
         if (leftChild !== undefined) {
-            branch(addBranchInformation(leftChild, branches.length, node.x2, node.y2, node.angle - angleDelta, node.length * lengthDelta, node.depth + 1, node.index));
+            branch(addBranchInformation(leftChild, branches.length, node.x2, node.y2, angle1, length1, node.depth + 1, node.index));
         }
         if (rightChild !== undefined) {
-            branch(addBranchInformation(rightChild, branches.length, node.x2, node.y2, node.angle + angleDelta, node.length * lengthDelta, node.depth + 1, node.index));
+            branch(addBranchInformation(rightChild, branches.length, node.x2, node.y2, angle2, length2, node.depth + 1, node.index));
         }
     }
 
     // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    const baseNode = addBranchInformation(tree.baseNode, 0, 500, 800, 0, 100, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, 0, 400, 800, 0, 100, 0, null);
     branch(baseNode);
 
     return {branches, leafs};
@@ -183,12 +187,14 @@ function leafColor(leaf, type, d3) {
     throw "Unsupported setting";
 }
 
-function leafSize(leaf, type, d3) {
+function leafSize(leaf, type, d3, totalSamples) {
+    const maxRadius = Math.sqrt(totalSamples / Math.PI);
+    const radius = Math.sqrt(leaf.samples / Math.PI);
     if (type === "SAMPLES") {
         return d3.scaleLinear()
-            .domain([1, 100])
-            .range([1, 10])
-            (leaf.samples)
+            .domain([1, maxRadius])
+            .range([1, 100])
+            (radius)
     }
     console.log(this);
     throw "Unsupported setting";

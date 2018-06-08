@@ -1,14 +1,11 @@
 {
   "name": "random-forest-visualization",
   "scripts": {
-    "watch": "parallelshell \"npm run watch:js\" \"npm run watch:server\"",
     "server": "node --experimental-modules server.mjs data",
     "cli": "node --experimental-modules cli.mjs data",
-    "watch:js": "rollup -c --sourcemap --watch",
-    "watch:server": "nodemon server.js data"
+    "watch:js": "rollup -c --sourcemap --watch"
   },
   "devDependencies": {
-    "nodemon": "^1.17.5",
     "rollup": "^0.59.4",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.3.0"
