@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import {drawPie} from "./pie.mjs";
 
 export {drawTree, resetTree};
 
@@ -43,6 +44,8 @@ function drawTree({
         .attr("cy", d => d.y)
         .attr("r", d => leafSize(d, _leafSize, totalSamples))
         .style("fill", d => leafColor(d, _leafColor));
+
+    drawPie(svg, 100, 100, 100, [1,2,3,4]);
 }
 
 function resetTree(svg) {
