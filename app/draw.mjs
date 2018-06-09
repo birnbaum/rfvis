@@ -103,6 +103,7 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
 
         const {leftChild, rightChild} = strategy(node);
         //const length = node.length * lengthDelta;
+        // TODO Logarithmic?
         const length1 = 4 + leftChild.samples / totalSamples * 100;
         const length2 = 4 + rightChild.samples / totalSamples * 100;
 
