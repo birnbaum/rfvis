@@ -3,34 +3,38 @@ import {component} from "d3-component";
 
 export {drawPie};
 
+const colorScale = d3.scaleLinear()
+    .domain([0, 1])
+    .range(["green", "red"]);
+
 const arc = d3.arc().innerRadius(0);
 const slice = component("path")
-    .render((selection, d) => {
+    .render((selection, slice) => {
         selection
-            .attr("d", arc(d))
-            .attr("fill", "#f4f4f4")
-            .attr("stroke", "#707070")
+            .attr("d", arc(slice))
+            .attr("fill", colorScale(slice.data.impurity))
+            .attr("stroke", "#fff")
             .attr("stroke-width", 1)
             .attr("stroke-linejoin", "round");
     });
 const pie = component("g")
     .render((selection, {
         radius,
-        sliceWeights,
+        slices,
     }) => {
-        const slices = d3.pie()
+        const d3Slices = d3.pie()
             .value(d => d.value)
-            (sliceWeights);
+            .sort((a, b) => { console.log(a); return a.impurity.localeCompare(b.impurity); })
+            (slices);
         arc.outerRadius(radius);
         selection
-            .call(slice, slices);
+            .call(slice, d3Slices);
     });
 
-function drawPie(svg, x, y, radius, weights) {
-    const sliceWeights = {sliceWeights: weights.map(weight => ({value: weight}))};
+function drawPie(svg, x, y, radius, slices) {
     svg.append("g")
         .attr("transform", `translate(${x}, ${y})`)
-        .call(pie, sliceWeights, {
+        .call(pie, {slices}, {
             radius: radius
         });
 }

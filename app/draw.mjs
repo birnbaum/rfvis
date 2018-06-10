@@ -19,7 +19,8 @@ function drawTree({
 }) {
     const {
         branches,
-        leafs
+        leafs,
+        bunches,
     } = generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
 
     // Draw branches
@@ -45,38 +46,42 @@ function drawTree({
         .attr("r", d => leafSize(d, _leafSize, totalSamples))
         .style("fill", d => leafColor(d, _leafColor));
 
-    drawPie(svg, 100, 100, 100, [1,2,3,4]);
+    for (const bunch of bunches) {
+        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, _leafSize, totalSamples), bunch.slices);
+    }
 }
 
 function resetTree(svg) {
     svg.selectAll('line').remove();
     svg.selectAll('circle').remove();
+    svg.selectAll('g').remove();
 }
+
+// Helper functions
+const addBranchInformation = (treeNode, index, x, y, angle, length, depth, parent) => {
+    return Object.assign(treeNode, {
+        index,
+        x,
+        y,
+        x2: x + length * Math.sin(angle),
+        y2: y - length * Math.cos(angle),
+        angle,
+        length,
+        depth,
+        parent
+    })
+};
+
+const removeChildReferences = (node) => {
+    const nodeCopy = Object.assign({}, node);
+    delete nodeCopy.children;
+    return nodeCopy;
+};
 
 function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strategy) {
     const branches = [];
     const leafs = [];
-
-    // Helper functions
-    const addBranchInformation = (treeNode, index, x, y, angle, length, depth, parent) => {
-        return Object.assign(treeNode, {
-            index,
-            x,
-            y,
-            x2: x + length * Math.sin(angle),
-            y2: y - length * Math.cos(angle),
-            angle,
-            length,
-            depth,
-            parent
-        })
-    };
-
-    const removeChildReferences = (node) => {
-        const nodeCopy = Object.assign({}, node);
-        delete nodeCopy.children;
-        return nodeCopy;
-    };
+    const bunches = [];
 
     // recursive function that adds branch objects to "branches"
     function branch(node) {
@@ -84,11 +89,11 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
         branches.push(removeChildReferences(node));
 
         if (node.depth === maxDepth - 1) {
-            const {weightedAverage, histogram} = getLeafImpurities(node);
-            leafs.push({
+            const histogram = getLeafHistogram(node, true);
+            bunches.push({
                 x: node.x2,
                 y: node.y2,
-                impurity: weightedAverage,
+                slices: histogram,
                 samples: node.samples
             });
             return;  // End of recursion
@@ -122,21 +127,22 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
     }
 
     // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    const baseNode = addBranchInformation(tree.baseNode, 0, 400, 800, 0, 100, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, 0, 400, 800, 0, 120, 0, null);
     branch(baseNode);
 
-    leafs.sort((a,b) => {
-        if (a.samples < b.samples) return -1;
-        if (a.samples > b.samples) return 1;
+    const sortBySamples = (a,b) => {
+        if (a.samples > b.samples) return -1;
+        if (a.samples < b.samples) return 1;
         return 0;
-    });
+    };
+    leafs.sort(sortBySamples);
+    bunches.sort(sortBySamples);
 
-    return {branches, leafs};
+    return {branches, leafs, bunches};
 }
 
-function getLeafImpurities(node) {
+function getLeafNodes(node) {
     const leafNodes = [];
-
     function searchLeafs(node) {
         if (node.children.length === 0) {
             leafNodes.push(node);
@@ -146,15 +152,33 @@ function getLeafImpurities(node) {
         }
     }
     searchLeafs(node);
+    return leafNodes;
+}
 
-    const leafImpurities = leafNodes.map(leaf => leaf.impurity);
-    const histogram = d3.histogram()(leafImpurities).map(h => h.length / node.samples);
-
+function getLeafWeightedAverage(node) {
+    const leafNodes = getLeafNodes(node);
     const leafImpuritiesAndSamples = leafNodes.map(leaf => ({impurity: leaf.impurity, samples: leaf.samples}));
     const weightedSum = leafImpuritiesAndSamples.reduce((acc, current) => acc + current.impurity * current.samples, 0);
-    const weightedAverage = weightedSum / leafNodes.length / node.samples;
+    return weightedSum / leafNodes.length / node.samples;
+}
 
-    return {weightedAverage, histogram};
+function getLeafHistogram(node, weighted = false) {
+    const leafNodes = getLeafNodes(node);
+    const histObj = {};
+    for (const leafNode of leafNodes) {
+        const impurity = leafNode.impurity.toFixed(1); // Converting all impurities to strings with two decimal places
+        const n = weighted ? leafNode.samples : 1;
+        if (impurity in histObj) {
+            histObj[impurity] += n;
+        } else {
+            histObj[impurity] = n;
+        }
+    }
+    const ordered = [];
+    Object.keys(histObj).sort().forEach(key => {
+        ordered.push({value: histObj[key], impurity: key});
+    });
+    return ordered;
 }
 
 // Tree construction strategies
