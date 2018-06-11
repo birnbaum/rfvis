@@ -14,7 +14,7 @@ const slice = component("path")
             .attr("d", arc(slice))
             .attr("fill", colorScale(slice.data.impurity))
             .attr("stroke", "#fff")
-            .attr("stroke-width", 1)
+            .attr("stroke-width", 0.5)
             .attr("stroke-linejoin", "round");
     });
 const pie = component("g")

@@ -1,9 +1,11 @@
 {
   "name": "random-forest-visualization",
   "scripts": {
-    "server": "node --experimental-modules server.mjs data",
+    "gui": "npm run build:js && npm run server",
     "cli": "node --experimental-modules cli.mjs data",
-    "watch:js": "rollup -c --sourcemap --watch"
+    "server": "node --experimental-modules server.mjs data",
+    "build:js": "rollup -c",
+    "watch:js": "rollup -c --watch"
   },
   "devDependencies": {
     "rollup": "^0.59.4",
