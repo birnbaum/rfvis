@@ -4,9 +4,15 @@ export {drawForest};
 
 function drawForest({
     svg,
-    forest
+    forest,
+
+    width = 300,
+    height = 300,
 }) {
-    console.log(forest);
+    // Adapt SVG size
+    svg.style("width", width).style("height", height);
+
+    // Draw trees
     svg.selectAll("circle")
         .data([32, 57, 112])
         .enter().append("circle")

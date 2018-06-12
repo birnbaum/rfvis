@@ -5,11 +5,17 @@ import {drawForest} from "./draw_forest.mjs";
 (async function() {
     const forest = await (await fetch("http://localhost:3000/data")).json();
 
+    const PADDING = 12;  // Hardcoded for now;
+    const treeColumnWidth = d3.select("#tree-column").node().offsetWidth - 2 * PADDING;
+    const leftColumnWidth = d3.select("#left-column").node().offsetWidth - 2 * PADDING;
+
     // -----------------------
     const forestSvg = d3.select('#forest');
     drawForest({
         svg: forestSvg,
-        forest: forest
+        forest: forest,
+
+        width: leftColumnWidth,
     });
     // -----------------------
 
@@ -22,7 +28,9 @@ import {drawForest} from "./draw_forest.mjs";
             tree: forest.trees[treeId],
             totalSamples: forest.totalSamples,
 
-            maxDepth: maxDepth
+            width: treeColumnWidth,
+
+            maxDepth: maxDepth,
 		});
 	}
 
