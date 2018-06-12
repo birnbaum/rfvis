@@ -2,7 +2,7 @@ import D3Node from "d3-node";
 import * as fs from "fs";
 import * as util from 'util';
 import svg2png from "svg2png";
-import {drawTree} from "./app/draw.mjs";
+import {drawTree} from "./app/draw_tree.mjs";
 import createForest from "./app/prepare_data.mjs";
 
 const fs_writeFile = util.promisify(fs.writeFile);

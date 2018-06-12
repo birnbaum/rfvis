@@ -1,8 +1,14 @@
 import * as d3 from "d3";
-import {drawTree, resetTree} from "./draw.mjs";
+import {drawTree, resetTree} from "./draw_tree.mjs";
+import {drawForest} from "./draw_forest.mjs";
 
 (async function() {
     const forest = await (await fetch("http://localhost:3000/data")).json();
+
+    // -----------------------
+    const forestSvg = d3.select('#forest');
+    drawForest(forestSvg);
+    // -----------------------
 
     const treeSvg = d3.select('#tree');
 

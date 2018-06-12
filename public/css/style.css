@@ -5,7 +5,6 @@ body {
 svg#tree {
 	width: 700px;
     height: 700px;
-    border: 1px solid #0a0a0a;
 }
 
 svg#forest {
