@@ -5,8 +5,7 @@ export default {
     input: './app/main.js',
     output: {
         file: './public/js/main.js',
-        format: 'iife',
-        sourcemap: true
+        format: 'iife'
     },
     plugins: [
         resolve(),

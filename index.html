@@ -1,32 +1,198 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/skeleton.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/style.css">
+    <link rel="stylesheet" type="text/css" href="public/css/bulma.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<meta charset="utf-8">
+	<title>Random Forest View</title>
+	<link rel="icon" type="image/svg" href="Greentree.svg"/>
   </head>
   <body>
-    <div class="container">
-      <div class="row">
-        <div class="four columns">
+	<!-- title bar -->
+	<nav class="navbar is-transparent">
+		<div class="navbar-brand">
+		   <a class="navbar-item" href="file:///C:/Users/Sophie/Documents/random-forest-visualization-master/index.html">
+			<img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Greentree.svg" alt="RF View: a visualiser for your Random Forest method" width="40" height="28">Random Forest View
+		   </a>
+		<div class="navbar-burger burger" data-target="RFnavbar">
+		  <span></span>
+		  <span></span>
+		  <span></span>
+		</div>
+	  </div>
+	    <div id="RFnavbar" class="navbar-menu">
+		  <div class="navbar-start">
+			<a class="navbar-item is-active" href="file:///C:/Users/Sophie/Documents/random-forest-visualization-master/index.html">
+			Home
+			</a>
+			</div>
+			<div class="navbar-end">
+			<a class="navbar-item is-hoverable" href="https://bulma.io/documentation/components/navbar/#navbar-menu">
+			Docs
+			</a>
+		</div>
+		</div>
+	</nav>
+	<!-- layout with tiles -->
+	<div class="tile is-ancestor">
+	  <div class="tile is-4 is-vertical is-parent">
+		<div class="tile is-child box">
+		  <p class="title">Forest View</p>
+		  <p>Forest map here</p>
+		</div>
+		<div class="tile is-child box">
+		  <p class="title">Settings</p>
+		  <!-- tabs in toolbar -->
+			<div class="tabs">
+			  <ul>
+				<li class="is-active" data-target="treeset">
+				<a>
+					<!-- for icons <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span> -->
+					<span>Tree View</span>
+				</a>
+				</li>
+				<li data-target="forestset">
+				<a>
+					<!-- for icons <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span> -->
+					<span>Forest View</span>
+				</a></li>
+			  </ul>
+			</div>
+		</div>
+	  </div>
+	  <div class="tile is-parent">
+		<div class="tile is-child box">
+		  <p class="title">Tree View</p>
+		  <div class="buttons has-addons">
+			  <span class="button">Previous</span>
+			  <span class="button">Next</span>
+		  </div>
+		  <!-- tree visualization -->
+		  <script src="js/main.js"></script>
+		  <div class="field">
+          <label for="nValue">
+				maxDepth: <span id="nValue-value"></span>
+		  </label>
+		  <a> <input type="number" min="1" max="100" step="1" value="50" id="nValue"></a>
+		  </div>
+		</div>
+	  </div>
+	</div>
+			<!-- navigation tree previous next
             <div id="navigation">
               <div><h4>NAVIGATION 🍁</h4></div>
               <button class="next">Next</button>
               <button class="previous">Previous</button>
-            </div>
-          <label for="nValue"
-                 style="display: inline-block; width: 240px; text-align: right">
-            maxDepth: <span id="nValue-value"></span>
-          </label>
-          <input type="number" min="1" max="100" step="1" value="50" id="nValue">
-        </div>
-        <div class="eight columns">
+            </div>  -->
+		<!-- icon
             <div id="chart">
               <svg id="tree"></svg>
-            </div>
-        </div>
-      </div>
-    </div>
+            </div> -->
+<!-- tab contents -->
+<div id="treeset"> <!--class="tabcontent"-->
+<!-- Main container -->
+<nav class="level">
+  <!-- Left side -->
+  <div class="level-left">
+    <div class="level-item">
+	<div>
+	<label class="label">Branches</label>
+	<p class="heading">Branch Color</p>
+		<div class="dropdown is-active">
+		  <div class="dropdown-trigger">
+			<button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+			  <span>Choose Parameter</span>
+			  <span class="icon is-small">
+				<i class="fas fa-angle-down" aria-hidden="true"></i>
+			  </span>
+			</button>
+		  </div>
+		  <div class="dropdown-menu" id="dropdown-menu" role="menu">
+			<div class="dropdown-content">
+			  <a href="#" class="dropdown-item is-active">
+				Default
+			  </a>
+			  <a href="#" class="dropdown-item">
+				Impurity drop
+			  </a>
+			  <a href="#" class="dropdown-item">
+				Feature ID
+			  </a>
+			</div>
+		  </div>
+		</div>
+	<p class="heading">Branch Size</p>
+	<p>Sample size is mapped to</p>
+		<div class="control">
+		  <label class="radio">
+			<input type="radio" name="answer">
+			Both
+		  </label>
+		  <label class="radio">
+			<input type="radio" name="answer">
+			Length
+		  </label>
+		  <label class="radio">
+			<input type="radio" name="answer">
+			Width
+		  </label>
+		</div>
+		</div>
+	<!-- RIGHT -nodes -->
+	<div class="level-right">
+	<div>
+	<label class="label">Nodes</label>
+	<p class="heading">Internal</p>
+		<div class="dropdown is-active">
+		  <div class="dropdown-trigger">
+			<button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+			  <span>Choose Parameter</span>
+			  <span class="icon is-small">
+				<i class="fas fa-angle-down" aria-hidden="true"></i>
+			  </span>
+			</button>
+		  </div>
+		  <div class="dropdown-menu" id="dropdown-menu" role="menu">
+			<div class="dropdown-content">
+			  <a href="#" class="dropdown-item is-active">
+				Default
+			  </a>
+			  <a href="#" class="dropdown-item">
+				Impurity drop
+			  </a>
+			  <a href="#" class="dropdown-item">
+				Feature ID
+			  </a>
+			</div>
+		  </div>
+		</div>
+	<p class="heading">Leaf</p>
+	<p>Sample size is mapped to</p>
+		<div class="control">
+		  <label class="radio">
+			<input type="radio" name="answer">
+			Both
+		  </label>
+		  <label class="radio">
+			<input type="radio" name="answer">
+			Length
+		  </label>
+		  <label class="radio">
+			<input type="radio" name="answer">
+			Width
+		  </label>
+		</div>
+		</div>
+	</div>
+	</nav>
+</div>
 
-    <script src="js/main.js"></script>
+
+	
+	<!-- in case also dropdown links -->
+	<!-- color bars -->
+	
   </body>
 </html>
