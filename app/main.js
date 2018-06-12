@@ -6,12 +6,14 @@ import {drawTree, resetTree} from "./draw.mjs";
 
     const treeSvg = d3.select('#tree');
 
-	function updateTreeVisualization(treeId) {
+	function updateTreeVisualization(treeId, maxDepth = 2) {
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
             tree: forest.trees[treeId],
-            totalSamples: forest.totalSamples
+            totalSamples: forest.totalSamples,
+
+            maxDepth: maxDepth
 		});
 	}
 
@@ -29,4 +31,8 @@ import {drawTree, resetTree} from "./draw.mjs";
 		treeId--;
 		updateTreeVisualization(treeId);
 	});
+
+    d3.select("#nValue").on("input", function(i) {
+        updateTreeVisualization(treeId, this.value);
+    });
 })();
