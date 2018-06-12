@@ -1,4 +1,14 @@
-svg {
-	width: 800px;
-    height: 800px;
+body {
+    padding-top: 20px;
+}
+
+svg#tree {
+	width: 700px;
+    height: 700px;
+    border: 1px solid #0a0a0a;
+}
+
+svg#forest {
+    width: 300px;
+    height: 300px;
 }

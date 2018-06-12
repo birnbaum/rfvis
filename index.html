@@ -1,20 +1,19 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/bulma.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="utf-8">
-    <title>Random Forest View</title>
-    <link rel="icon" type="image/svg" href="Greentree.svg"/>
 </head>
 <body>
+<div class="container">
 <div class="columns">
     <div class="column is-one-third">
         <div class="box">
             <h1 class="title">Forest View</h1>
-            <p>Forest map here</p>
+            <svg id="forest"></svg>
         </div>
         <div class="box">
             <h1 class="title">Settings</h1>
@@ -109,15 +108,13 @@
     </div>
     <div class="column is-two-thirds">
         <div class="box">
-            <div id="chart">
-                <svg id="tree"></svg>
-            </div>
+            <svg id="tree"></svg>
         </div>
     </div>
 </div>
+</div>
 
 <script src="js/main.js"></script>
-
 
 </body>
 </html>

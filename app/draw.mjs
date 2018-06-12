@@ -79,6 +79,8 @@ const removeChildReferences = (node) => {
 };
 
 function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strategy) {
+    const SVG_WIDTH = 700;
+
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -127,7 +129,7 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
     }
 
     // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    const baseNode = addBranchInformation(tree.baseNode, 0, 400, 800, 0, 120, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, 0, SVG_WIDTH/2, SVG_WIDTH, 0, 120, 0, null);
     branch(baseNode);
 
     const sortBySamples = (a,b) => {
