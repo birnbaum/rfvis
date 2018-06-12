@@ -7,7 +7,10 @@ import {drawForest} from "./draw_forest.mjs";
 
     // -----------------------
     const forestSvg = d3.select('#forest');
-    drawForest(forestSvg);
+    drawForest({
+        svg: forestSvg,
+        forest: forest
+    });
     // -----------------------
 
     const treeSvg = d3.select('#tree');
