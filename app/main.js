@@ -2,6 +2,8 @@ import * as d3 from "d3";
 import {drawTree, resetTree} from "./draw_tree.mjs";
 import {drawForest} from "./draw_forest.mjs";
 
+import "../scss/style.scss"
+
 (async function() {
     const forest = await (await fetch("http://localhost:3000/data")).json();
 
