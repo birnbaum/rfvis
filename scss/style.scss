@@ -1,0 +1,16 @@
+@import "../node_modules/bulma/bulma";
+
+body {
+  padding-top: 20px;
+}
+
+svg#forest, svg#tree {
+  background: #fff
+}
+
+#left-column, #right-column {
+  background: #fef;
+}
+#tree-column {
+  background: #eff;
+}

@@ -8,9 +8,10 @@ function drawTree({
     tree,
     totalSamples,
 
+    width = 800,
+    height = 800,
+
     maxDepth = Number.POSITIVE_INFINITY,
-    lengthDelta = 0.85, // Length delta (factor)
-    branchStrategy: _branchStrategy = "SIMPLE",
 
     branchColor: _branchColor = "IMPURITY",
     branchThickness: _branchThickness = "SAMPLES",
@@ -21,7 +22,10 @@ function drawTree({
         branches,
         leafs,
         bunches,
-    } = generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, branchStrategy(_branchStrategy));
+    } = generateTreeElements(tree, totalSamples, maxDepth, width, height);
+
+    // Adapt SVG size
+    svg.style("width", width).style("height", height);
 
     // Draw branches
     svg.selectAll('line')
@@ -78,9 +82,7 @@ const removeChildReferences = (node) => {
     return nodeCopy;
 };
 
-function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strategy) {
-    const SVG_WIDTH = 700;
-
+function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -111,8 +113,8 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
             return;  // End of recursion
         }
 
-        const {leftChild, rightChild} = strategy(node);
-        //const length = node.length * lengthDelta;
+        const leftChild = node.children[0];
+        const rightChild = node.children[1];
         // TODO Logarithmic?
         const length1 = 4 + leftChild.samples / totalSamples * 100;
         const length2 = 4 + rightChild.samples / totalSamples * 100;
@@ -129,7 +131,7 @@ function generateTreeElements(tree, totalSamples, lengthDelta, maxDepth, strateg
     }
 
     // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    const baseNode = addBranchInformation(tree.baseNode, 0, SVG_WIDTH/2, SVG_WIDTH, 0, 120, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, 0, width/2, height, 0, 120, 0, null);
     branch(baseNode);
 
     const sortBySamples = (a,b) => {
@@ -181,39 +183,6 @@ function getLeafHistogram(node, weighted = false) {
         ordered.push({value: histObj[key], impurity: key});
     });
     return ordered;
-}
-
-// Tree construction strategies
-function branchStrategy(type) {
-    if (type === "SIMPLE") {
-        return node => {
-            const leftChild = node.children[0];
-            const rightChild = node.children[1];
-            return {leftChild, rightChild};
-        };
-    } else if (type === "UP") {
-        return node => {
-            const firstBiggerThanSecond = (node.children[0].samples / node.samples) >= 0.5;
-            const leftBound = node.angle < 0;
-            let leftChild, rightChild;
-            if (firstBiggerThanSecond && leftBound) {
-                leftChild = node.children[1];
-                rightChild = node.children[0];
-            } else if (!firstBiggerThanSecond && leftBound) {
-                leftChild = node.children[0];
-                rightChild = node.children[1];
-            } else if (firstBiggerThanSecond && !leftBound) {
-                leftChild = node.children[0];
-                rightChild = node.children[1];
-            } else {
-                leftChild = node.children[1];
-                rightChild = node.children[0];
-            }
-            return {leftChild, rightChild};
-        };
-    }
-    console.log(this);
-    throw "Unsupported setting";
 }
 
 /* ------- Tree mapping functions ------- */

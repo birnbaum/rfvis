@@ -24,7 +24,7 @@ const pie = component("g")
     }) => {
         const d3Slices = d3.pie()
             .value(d => d.value)
-            .sort((a, b) => { console.log(a); return a.impurity.localeCompare(b.impurity); })
+            .sort((a, b) => a.impurity.localeCompare(b.impurity))
             (slices);
         arc.outerRadius(radius);
         selection

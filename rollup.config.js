@@ -1,5 +1,6 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import sass from 'rollup-plugin-scss';
 
 export default {
     input: './app/main.js',
@@ -10,6 +11,9 @@ export default {
     },
     plugins: [
         resolve(),
-        commonjs()
+        commonjs(),
+        sass({
+            output: './public/css/style.css'
+        })
     ]
 };
