@@ -4,8 +4,8 @@
     "gui": "npm run build:js && npm run server",
     "cli": "node --experimental-modules cli.mjs data",
     "server": "node --experimental-modules server.mjs data",
-    "build:js": "rollup -c",
-    "watch:js": "rollup -c --watch"
+    "build:js": "rollup -c rollup.config.mjs",
+    "watch:js": "rollup -c rollup.config.mjs --watch"
   },
   "devDependencies": {
     "rollup": "^0.59.4",
