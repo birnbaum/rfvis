@@ -13,3 +13,5 @@ export default function startServer(dataFolder) {
 
     app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
 }
+
+startServer(process.argv[2]);

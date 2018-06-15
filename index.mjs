@@ -4,13 +4,13 @@ import writeSvgs from "./cli.mjs";
 import rollup from "rollup";
 import rollupOptions from "./rollup.config.mjs";
 
-async function runGui(dataFolder) {
+async function runGui({data}) {
     await rollup.rollup(rollupOptions);
-    startServer(dataFolder);
+    startServer(data);
 }
 
-async function runCli(dataFolder) {
-    writeSvgs(dataFolder);
+async function runCli({data}) {
+//    writeSvgs(data);
 }
 
 const argv = yargs
