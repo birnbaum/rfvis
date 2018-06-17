@@ -1,30 +1,49 @@
 import yargs from "yargs";
 import express from "express";
 import createForest from "./src/prepare_data.js";
-import writeSvgs from "./src/cli.js";
-import rollup from "rollup";
-import rollupOptions from "./rollup.frontend.js";
 import * as path from "path";
+import {drawTree} from "./src/draw_tree";
+import D3Node from "d3-node";
+import * as fs from "fs";
 
-async function runGui(args) {
+function runGui(args) {
     //await rollup.rollup(rollupOptions);  // TODO this is a build step!
-    const {statisticsDir, summaryFile} = readData(args);
+    const forest = readForest(args);
     const app = express();
     console.log("Starting server");
     app.get('/',     (req, res) => res.sendFile(path.join(path.resolve() + '/index.html')));
-    app.get('/data', (req, res) => res.json(createForest(summaryFile, statisticsDir)));
+    app.get('/data', (req, res) => res.json(forest));
     app.use(express.static('public'));
     app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
 }
 
-async function runCli(args) {
-//    writeSvgs(data);
+function runCli(args) {
+    const forest = readForest(args);
+
+    const width = 800;
+    const height = 800;
+
+    for (const [index, tree] of forest.trees.entries()) {
+        const d3n = new D3Node();
+        const svg = d3n.createSVG(width, height).append("g");
+        drawTree({
+            svg: svg,
+            tree: tree,
+            totalSamples: forest.totalSamples
+        });
+        const fileName = `tree-${index}.svg`;
+        fs.writeFile(fileName, d3n.svgString(), () => {
+            console.log(`>> Exported "${fileName}"`);
+        });
+    }
+
+
 }
 
-function readData({data}) {
+function readForest({data}) {
     const statisticsDir = path.join(path.resolve(data), 'statistics');
     const summaryFile = path.join(path.resolve(data), 'summary.txt');
-    return {statisticsDir, summaryFile};
+    return createForest(summaryFile, statisticsDir);
 }
 
 const argv = yargs
@@ -78,9 +97,7 @@ const argv = yargs
                 }*/
                 // TODO threshold for impurity drop?
             }),
-        function (argv) {
-            console.log(argv)
-        }
+        runCli
     )
     .command(
         "gui <data>",
