@@ -1,10 +1,10 @@
 import D3Node from "d3-node";
 import * as fs from "fs";
 import * as path from "path";
-import * as util from 'util';
-import svg2png from "svg2png";
-import {drawTree} from "./app/draw_tree.mjs";
-import createForest from "./app/prepare_data.mjs";
+import * as util from "util";
+//import svg2png from "svg2png";
+import {drawTree} from "./draw_tree.js";
+import createForest from "./prepare_data.js";
 const fs_writeFile = util.promisify(fs.writeFile);
 
 export default function writeSvgs(dataFolder) {
@@ -38,13 +38,6 @@ export default function writeSvgs(dataFolder) {
 
 function output(outputName, d3n) {
 
-    if (d3n.options.canvas) {
-        const canvas = d3n.options.canvas;
-        console.log("canvas output...", canvas);
-        canvas.pngStream().pipe(fs.createWriteStream(outputName+".png"));
-        return;
-    }
-
     fs.writeFile(outputName+".html", d3n.html(), function () {
         console.log(">> Exported \""+outputName+".html\"");
     });
@@ -53,9 +46,9 @@ function output(outputName, d3n) {
         console.log(">> Exported \""+outputName+".html\"");
     });
 
-    const svgBuffer = new Buffer(d3n.svgString(), "utf-8");
+    const svgBuffer = new Buffer(d3n.svgString(), "utf-8");/*
     svg2png(svgBuffer)
         .then(buffer => fs_writeFile(outputName+".png", buffer))
         .catch(err => console.error(err))
-        .then(() => console.log(">> Exported: \""+outputName+".png\""));
+        .then(() => console.log(">> Exported: \""+outputName+".png\""));*/
 }

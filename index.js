@@ -1,16 +1,30 @@
 import yargs from "yargs";
-import startServer from "./server.mjs";
-import writeSvgs from "./cli.mjs";
+import express from "express";
+import createForest from "./src/prepare_data.js";
+import writeSvgs from "./src/cli.js";
 import rollup from "rollup";
-import rollupOptions from "./rollup.config.mjs";
+import rollupOptions from "./rollup.frontend.js";
+import * as path from "path";
 
-async function runGui({data}) {
-    await rollup.rollup(rollupOptions);
-    startServer(data);
+async function runGui(args) {
+    //await rollup.rollup(rollupOptions);  // TODO this is a build step!
+    const {statisticsDir, summaryFile} = readData(args);
+    const app = express();
+    console.log("Starting server");
+    app.get('/',     (req, res) => res.sendFile(path.join(path.resolve() + '/index.html')));
+    app.get('/data', (req, res) => res.json(createForest(summaryFile, statisticsDir)));
+    app.use(express.static('public'));
+    app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
 }
 
-async function runCli({data}) {
+async function runCli(args) {
 //    writeSvgs(data);
+}
+
+function readData({data}) {
+    const statisticsDir = path.join(path.resolve(data), 'statistics');
+    const summaryFile = path.join(path.resolve(data), 'summary.txt');
+    return {statisticsDir, summaryFile};
 }
 
 const argv = yargs

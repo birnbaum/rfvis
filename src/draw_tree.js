@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {drawPie} from "./pie.mjs";
+import {drawPie} from "./pie.js";
 
 export {drawTree, resetTree};
 
