@@ -111,3 +111,7 @@ const argv = yargs
     .help("help")
     .version("0.1.0")
     .argv;
+
+if (!argv._[0]) {
+    yargs.showHelp();
+}

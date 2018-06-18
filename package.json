@@ -1,11 +1,11 @@
 {
   "name": "random-forest-visualization",
   "scripts": {
-    "gui": "npm run build:js && npm run server",
-    "cli": "node --experimental-modules cli.mjs data",
-    "server": "cd dist && node index.js data",
-    "build:js": "rollup -c rollup.config.mjs",
-    "watch:js": "rollup -c rollup.config.mjs --watch"
+    "start": "node dist/index.js",
+    "build": "npm run build:backend && npm run build:frontend && npm run build:assets",
+    "build:backend": "rollup -c rollup.backend.js",
+    "build:frontend": "rollup -c rollup.frontend.js",
+    "build:assets": "cp index.html dist/index.html"
   },
   "devDependencies": {
     "rollup": "^0.59.4",
