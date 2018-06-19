@@ -1,16 +1,46 @@
 import yargs from "yargs";
-import startServer from "./server.mjs";
-import writeSvgs from "./cli.mjs";
-import rollup from "rollup";
-import rollupOptions from "./rollup.config.mjs";
+import express from "express";
+import createForest from "./src/parser.js";
+import * as path from "path";
+import {drawTree} from "./src/draw_tree";
+import D3Node from "d3-node";
+import * as fs from "fs";
 
-async function runGui({data}) {
-    await rollup.rollup(rollupOptions);
-    startServer(data);
+function runGui(args) {
+    const forest = readForest(args);
+    const app = express();
+    console.log("Starting server");
+    app.get('/',     (req, res) => res.sendFile(path.join(__dirname, '/index.html')));
+    app.get('/data', (req, res) => res.json(forest));
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
 }
 
-async function runCli({data}) {
-//    writeSvgs(data);
+function runCli(args) {
+    const forest = readForest(args);
+
+    const width = 800;
+    const height = 800;
+
+    for (const [index, tree] of forest.trees.entries()) {
+        const d3n = new D3Node();
+        const svg = d3n.createSVG(width, height).append("g");
+        drawTree({
+            svg: svg,
+            tree: tree,
+            totalSamples: forest.totalSamples
+        });
+        const fileName = `tree-${index}.svg`;
+        fs.writeFile(fileName, d3n.svgString(), () => {
+            console.log(`>> Exported "${fileName}"`);
+        });
+    }
+}
+
+function readForest({data}) {
+    const statisticsDir = path.join(path.resolve(data), 'statistics');
+    const summaryFile = path.join(path.resolve(data), 'summary.txt');
+    return createForest(summaryFile, statisticsDir);
 }
 
 const argv = yargs
@@ -64,9 +94,7 @@ const argv = yargs
                 }*/
                 // TODO threshold for impurity drop?
             }),
-        function (argv) {
-            console.log(argv)
-        }
+        runCli
     )
     .command(
         "gui <data>",
@@ -80,3 +108,7 @@ const argv = yargs
     .help("help")
     .version("0.1.0")
     .argv;
+
+if (!argv._[0]) {
+    yargs.showHelp();
+}

@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import {drawTree, resetTree} from "./draw_tree.mjs";
-import {drawForest} from "./draw_forest.mjs";
+import {drawTree, resetTree} from "./draw_tree.js";
+import {drawForest} from "./draw_forest.js";
 
 import "../scss/style.scss"
 

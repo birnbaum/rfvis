@@ -3,9 +3,9 @@ import commonjs from 'rollup-plugin-commonjs';
 import sass from 'rollup-plugin-scss';
 
 export default {
-    input: './app/main.js',
+    input: './src/main.js',
     output: {
-        file: './public/js/main.js',
+        file: './dist/public/js/main.js',
         format: 'iife',
         sourcemap: true
     },
@@ -13,7 +13,7 @@ export default {
         resolve(),
         commonjs(),
         sass({
-            output: './public/css/style.css'
+            output: './dist/public/css/style.css'
         })
     ]
 };

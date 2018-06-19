@@ -31,7 +31,7 @@ function drawForest({
     var x1 = 0;
     var y2 = 0;
     var x2 = 0;
-    var y2 = distmat(1,2);
+    //var y2 = distmat(1,2);
     
 
     // Draw trees
