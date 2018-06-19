@@ -1,8 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
 
-export "asd";
-
 /**
  * Reads the provided txt files and construcs a forest object of the following form:
  *  {
@@ -20,7 +18,7 @@ export "asd";
  * @param {string} statisticsDirectory - Path to the directory containing the tree statistics files
  * @returns {Object}
  */
- default function createForest(summaryFile, statisticsDirectory) {
+export default function createForest(summaryFile, statisticsDirectory) {
     const summary = fs.readFileSync(summaryFile, 'utf-8');
     const summaryParts = summary.split('\n\n');
 

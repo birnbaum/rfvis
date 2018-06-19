@@ -7,12 +7,12 @@ import D3Node from "d3-node";
 import * as fs from "fs";
 
 function runGui(args) {
-    const forest = readForest(args.data);
+    const forest = readForest(args);
     const app = express();
     console.log("Starting server");
-    app.get('/',     (req, res) => res.sendFile(path.join(path.resolve() + '/index.html')));
+    app.get('/',     (req, res) => res.sendFile(path.join(__dirname, '/index.html')));
     app.get('/data', (req, res) => res.json(forest));
-    app.use(express.static('public'));
+    app.use(express.static(path.join(__dirname, 'public')));
     app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
 }
 
