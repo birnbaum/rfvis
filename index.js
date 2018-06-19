@@ -1,14 +1,13 @@
 import yargs from "yargs";
 import express from "express";
-import createForest from "./src/prepare_data.js";
+import createForest from "./src/parser.js";
 import * as path from "path";
 import {drawTree} from "./src/draw_tree";
 import D3Node from "d3-node";
 import * as fs from "fs";
 
 function runGui(args) {
-    //await rollup.rollup(rollupOptions);  // TODO this is a build step!
-    const forest = readForest(args);
+    const forest = readForest(args.data);
     const app = express();
     console.log("Starting server");
     app.get('/',     (req, res) => res.sendFile(path.join(path.resolve() + '/index.html')));
@@ -36,8 +35,6 @@ function runCli(args) {
             console.log(`>> Exported "${fileName}"`);
         });
     }
-
-
 }
 
 function readForest({data}) {

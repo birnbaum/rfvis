@@ -5,7 +5,9 @@
     "build": "npm run build:backend && npm run build:frontend && npm run build:assets",
     "build:backend": "rollup -c rollup.backend.js",
     "build:frontend": "rollup -c rollup.frontend.js",
-    "build:assets": "cp index.html dist/index.html"
+    "build:assets": "cp index.html dist/index.html",
+    "watch:backend": "rollup -c rollup.backend.js --watch",
+    "watch:frontend": "rollup -c rollup.frontend.js --watch"
   },
   "devDependencies": {
     "rollup": "^0.59.4",
