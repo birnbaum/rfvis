@@ -1,5 +1,23 @@
 import * as path from "path";
 import * as fs from "fs";
+import * as util from "util";
+const fs_readFile = util.promisify(fs.readFile);
+
+
+function readDataFolder(args) {
+    const dataPath = path.resolve(args.data);
+    const forestFile = path.join(dataPath, "statistics", "forest.txt");
+    const forestFileContent = fs.readFileSync(forestFile, "utf8");
+
+    const treeFileContentPromises = {};
+    for (const file of fs.readdirSync(path.join(dataPath, "statistics"))) {
+        if (!file.startsWith("tree")) continue;
+        const id = Number.parseInt(file.split(".")[0].split("_")[1]);
+        treeFileContentPromises[id] = fs_readFile(path.join(dataPath, "statistics", file), "utf8");
+    }
+    return Promise.all(Object.values(treeFileContentPromises))
+        .then(treeFileContents => ({forestFileContent, treeFileContents}));
+}
 
 /**
  * Reads the provided txt files and construcs a forest object of the following form:
@@ -18,31 +36,18 @@ import * as fs from "fs";
  * @param {string} statisticsDirectory - Path to the directory containing the tree statistics files
  * @returns {Object}
  */
-export default function createForest(summaryFile, statisticsDirectory) {
-    const summary = fs.readFileSync(summaryFile, 'utf-8');
-    const summaryParts = summary.split('\n\n');
+export default async function createForest(args) {
+    const rawData = await readDataFolder(args);
+    const forestDataParts = rawData.forestFileContent.split('\n\n');
 
-    const totalStrength = Number.parseFloat(summaryParts[0]);
-    const correlationMatrix = parseCorrelationMatrix(summaryParts[2]);
+    const correlationMatrix = parseCorrelationMatrix(forestDataParts[0]);
+    const treeStrengths = forestDataParts[1].split('\n').map(Number.parseFloat);
+    const totalStrength = Number.parseFloat(forestDataParts[2]);
 
-    const treeFiles = fs.readdirSync(statisticsDirectory);
-    const treeStrengths = summaryParts[1].split('\n').map(Number.parseFloat);
-
-    // Sanity check
-    if (treeFiles.length !== treeStrengths.length) {
-        console.log(treeFiles, treeStrengths);
-        console.log(treeFiles.length, treeStrengths.length);
-        throw `Number of trees noted in ${summaryFile} (${treeFiles.length}) is inconsistend ` +
-        `to the amount of files in ${statisticsDirectory} (${treeStrengths.length})`;
-    }
-
-    const trees = treeFiles.map((treeFile, index) => {
-        const treeFilePath = path.resolve(statisticsDirectory, treeFile);
-        const content = fs.readFileSync(treeFilePath, 'utf-8');
-        const nodes = parseStatisticsContent(content);
+    const trees = rawData.treeFileContents.map((treeFileContent, index) => {
         return {
             strength: treeStrengths[index],
-            baseNode: transformNodes(nodes)
+            baseNode: parseStatisticsContent(treeFileContent)
         }
     });
 
@@ -72,50 +77,23 @@ function parseCorrelationMatrix(text) {
  * @returns {number[][]}
  */
 function parseStatisticsContent(text) {
-    return text.trim().split('\n').map(line => {
+    const lines = text.trim().split('\n').slice(2);
+    const nodes = lines.map(line => {
         const fields = line.split(';');
-        return [
-            Number.parseInt(fields[0]),  // height
-            Number.parseInt(fields[1]),  // samples
-            Number.parseFloat(fields[2]),  // impurity
-            Number.parseFloat(fields[9]),  // impurityDrop
-            Number.parseInt(fields[3]),  // feature
-        ]
+        if (fields.length === 11) {
+            return new InternalNode(fields)
+        } else if (fields.length === 6) {
+            return new LeafNode(fields)
+        } else {
+            throw "Unknown tree file format";
+        }
     });
-}
 
-/**
- * Internal tree data structure
- * The methods branchify() and toBranch() are just messy workarounds and should be refactored at some point
- */
-class TreeNode {
-    constructor(height, samples, impurity, impurityDrop, feature, children = []) {
-        this.height = height;
-        this.samples = samples;
-        this.impurity = impurity;
-        this.impurityDrop = impurityDrop;
-        this.feature = feature;
-        this.children = children;
-    }
+    const baseNode = nodes.shift();
 
-    /** Adds a child node */
-    add(node) {
-        if(this.children.length >= 2) throw `Node ${this} already has two children`;
-        this.children.push(node);
-    }
-}
-
-/**
- * Messy function for transforming the list of node parameters to an actual tree data structure
- * @param {*} tree
- */
-function transformNodes(nodes) {
-    const baseNode = new TreeNode(...nodes[0]);
     let stack = [baseNode];
-
-    for (let nodeParameters of nodes.slice(1)) {
+    for (const node of nodes) {
         let latest = stack[stack.length - 1];
-        const node = new TreeNode(...nodeParameters);
 
         if (node.height === latest.height + 1) {  // Child Node
             // Do nothing
@@ -133,4 +111,36 @@ function transformNodes(nodes) {
     }
 
     return baseNode;
+}
+
+// height;  -; 0 (==split node); size; impurity; DoI; splitting grade; #used features, list of feature IDs; fusion ID; path prediction, split point def; #scores, list of score IDs
+// 0; -; 0; 13361; 0.999982; 0.241935; 1.00015; 1, 0; 1; 2, median; 1, 2-misclass
+
+/**
+ * Internal tree data structure
+ */
+class InternalNode {
+    constructor(fields) {
+        this.height = Number.parseInt(fields[0]);
+        this.samples = Number.parseInt(fields[3]);
+        this.impurity = Number.parseFloat(fields[4]);
+        this.impurityDrop = Number.parseFloat(fields[5]);
+        this.children = [];
+    }
+
+    /** Adds a child node */
+    add(node) {
+        if(this.children.length >= 2) throw `Node ${this} already has two children`;
+        this.children.push(node);
+    }
+}
+
+class LeafNode {
+    constructor(fields) {
+        this.height = Number.parseInt(fields[0]);
+        this.leafId = Number.parseInt(fields[1]);
+        this.samples = Number.parseInt(fields[3]);
+        this.impurity = Number.parseFloat(fields[4]);
+        this.classFrequency = fields[5].split(",").map(c => Number.parseInt(c));
+    }
 }

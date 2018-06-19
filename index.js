@@ -6,18 +6,18 @@ import {drawTree} from "./src/draw_tree";
 import D3Node from "d3-node";
 import * as fs from "fs";
 
-function runGui(args) {
-    const forest = readForest(args);
+async function runGui(args) {
+    const forest = await createForest(args);
     const app = express();
     console.log("Starting server");
-    app.get('/',     (req, res) => res.sendFile(path.join(__dirname, '/index.html')));
-    app.get('/data', (req, res) => res.json(forest));
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
+    app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
+    app.get("/data", (req, res) => res.json(forest));
+    app.use(express.static(path.join(__dirname, "public")));
+    app.listen(3000, () => console.log("GUI running at http://localhost:3000"));
 }
 
-function runCli(args) {
-    const forest = readForest(args);
+async function runCli(args) {
+    const forest = await createForest(args);
 
     const width = 800;
     const height = 800;
@@ -37,19 +37,13 @@ function runCli(args) {
     }
 }
 
-function readForest({data}) {
-    const statisticsDir = path.join(path.resolve(data), 'statistics');
-    const summaryFile = path.join(path.resolve(data), 'summary.txt');
-    return createForest(summaryFile, statisticsDir);
-}
-
 const argv = yargs
     .command(
-        'cli <data>',
-        'Command line interface to generate SVGs',
+        "cli <data>",
+        "Command line interface to generate SVGs",
         yargs => yargs
-            .positional('data', {
-                describe: 'Folder containing the forest data'
+            .positional("data", {
+                describe: "Folder containing the forest data"
             })
             .options({
                 "width": {
@@ -100,8 +94,8 @@ const argv = yargs
         "gui <data>",
         "Graphical User Interface",
         yargs => yargs
-            .positional('data', {
-                describe: 'Folder containing the forest data'
+            .positional("data", {
+                describe: "Folder containing the forest data"
             }),
         runGui
     )

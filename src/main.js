@@ -23,7 +23,7 @@ import "../scss/style.scss"
 
     const treeSvg = d3.select('#tree');
 
-	function updateTreeVisualization(treeId, maxDepth = 2) {
+	function updateTreeVisualization(treeId, maxDepth = 1000) {
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
