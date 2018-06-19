@@ -18,21 +18,29 @@ async function runGui(args) {
 
 async function runCli(args) {
     const forest = await createForest(args);
-
-    const width = 800;
-    const height = 800;
+    const outDir = args.out ? path.resolve(args.out) : __dirname;
+    if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
 
     for (const [index, tree] of forest.trees.entries()) {
         const d3n = new D3Node();
-        const svg = d3n.createSVG(width, height).append("g");
+        const svg = d3n.createSVG(args.width, args.height).append("g");
         drawTree({
             svg: svg,
             tree: tree,
-            totalSamples: forest.totalSamples
+            totalSamples: forest.totalSamples,
+
+            width: args.width,
+            height: args.height,
+            branchLength: args.branchLength,
+
+            maxDepth: args.depth,
+
+            branchColor: args.branchColor.toUpperCase(),
+            leafColor: args.leafColor.toUpperCase()
         });
-        const fileName = `tree-${index}.svg`;
-        fs.writeFile(fileName, d3n.svgString(), () => {
-            console.log(`>> Exported "${fileName}"`);
+        const filePath = path.join(outDir, `tree-${index}.svg`);
+        fs.writeFile(filePath, d3n.svgString(), () => {
+            console.log(`>> Exported "${filePath}"`);
         });
     }
 }
@@ -46,6 +54,10 @@ const argv = yargs
                 describe: "Folder containing the forest data"
             })
             .options({
+                "out": {
+                    alias: "o",
+                    describe: "Output folder for the SVG files",
+                },
                 "width": {
                     alias: "w",
                     describe: "Width of the SVG",
@@ -56,6 +68,12 @@ const argv = yargs
                     alias: "h",
                     describe: "Height of the SVG",
                     default: 800,
+                    number: true,
+                },
+                "branch-length": {
+                    alias: "b",
+                    describe: "Length of the trunk which influences the entire tree size",
+                    default: 100,
                     number: true,
                 },
                 "depth": {
