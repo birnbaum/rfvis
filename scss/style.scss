@@ -14,3 +14,7 @@ svg#forest, svg#tree {
 #tree-column {
   background: #eff;
 }
+
+svg line:hover {
+  cursor: pointer;
+}

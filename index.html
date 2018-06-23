@@ -14,72 +14,7 @@
 
         <hr>
 
-        <h1>Hover Area</h1>
-        <table id="forestTable">
-            <!--<caption>Forest Information</caption>-->
-            <thead>
-                <tr>
-                    <th colspan="2">Forest Information</th>
-                </tr>
-            </thead>
-            <tr>
-                <th>Number of Samples</th>
-                <th>Strength</th>
-            </tr>
-            <tr>
-                <td>test value</td>
-                <td>test value</td>
-            </tr>
-        </table>
-
-        <script>
-            var exdata = [1, 1, 2, 3, 1, 3, 3, 3, 3, 2, 1, 2, 1, 2, 3, 1, 1, 2];
-            var width = 150,
-                height = 150,
-                padding = 20;
-            function drawhist (exdata){
-                
-                var histogram = d3.layout.histogram()
-                .bins(5)
-                (exdata)
-
-                var canvas = d3.select('body').append('svg')
-                    .attr('width', width)
-                    .attr('height', height+padding);
-
-                var bars = canvas.selectAll('bar')
-                    .data(histogram)
-                    .enter()
-                    .append('g')
-                
-                bars.append('rect')
-                    .attr('x', function (d) { return d.x;})
-                    .attr('y', 0)
-                    .attr('width', function (d) { return d.x;})
-                    .attr('height', function (d) { return d.y;})
-                    .attr('fill', 'steelblue')
-
-            }
-        </script>
-
-        <table id="treeTable" style="display:none">
-            <!--<caption>Tree Information</caption>-->
-            <thead>
-                <tr>
-                    <th colspan="2">Tree Information</th>
-                </tr>
-            </thead>
-            <tr>
-                <th>Number of Samples</th>
-                <th>Depth</th>
-                <th>Strength</th>
-            </tr>
-            <tr>
-                <td>test value</td>
-                <td>test value</td>
-                <td>trees.strength</td>
-            </tr>
-        </table>
+        <div id="hover-area"></div>
     </div>
     <div class="column is-7" id="tree-column">
         <svg id="tree"></svg>
@@ -89,24 +24,6 @@
             <span class="button previous">Previous</span>
             <span class="button next">Next</span>
         </div>
-
-        <script>
-            document.getElementById('forest').onmouseover = function() {showForestInfo()};
-            document.getElementById('tree').onmouseover = function() {showTreeInfo()};
-                function showForestInfo() {
-                    var f = document.getElementById('forestTable');
-                    var t = document.getElementById('treeTable');
-                    f.style.display = 'table';
-                    t.style.display = 'none';
-                }
-
-                function showTreeInfo() {
-                    var f = document.getElementById('forestTable');
-                    var t = document.getElementById('treeTable');
-                    f.style.display = 'none'
-                    t.style.display = 'table'
-                }
-        </script>
 
         <!-- tree visualization -->
         <div class="field is-horizontal">
@@ -194,6 +111,7 @@
 </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="js/main.js"></script>
 
 </body>

@@ -3,22 +3,23 @@ import {drawPie} from "./pie.js";
 
 export {drawTree, resetTree};
 
-function drawTree({
-    svg,
-    tree,
-    totalSamples,
+function drawTree(options) {
+    const {
+        svg,
+        tree,
+        totalSamples,
 
-    width = 800,
-    height = 800,
-    branchLength = 350,
+        width,
+        height,
+        branchLength,
 
-    maxDepth = Number.POSITIVE_INFINITY,
+        maxDepth,
 
-    branchColor: _branchColor = "IMPURITY",
-    branchThickness: _branchThickness = "SAMPLES",
-    leafColor: _leafColor = "IMPURITY",
-    leafSize: _leafSize = "SAMPLES",
-}) {
+        branchColor: _branchColor,
+        leafColor: _leafColor,
+    } = options;
+    console.log(tree);
+
     const {
         branches,
         leafs,
@@ -37,9 +38,42 @@ function drawTree({
         .attr('y1', d => d.y)
         .attr('x2', d => d.x2)
         .attr('y2', d => d.y2)
-        .style('stroke-width', d => branchThickness(d, _branchThickness, totalSamples))
+        .style('stroke-width', d => branchThickness(d, "SAMPLES", totalSamples))
         .style('stroke', d => branchColor(d, _branchColor))
-        .attr('id', d => 'branch-' + d.index);  // This attr is currently not used
+        .attr('id', d => 'branch-' + d.index)  // This attr is currently not used
+        .on("mouseover", d => {
+            const html = `<table class="table">
+                <tr>
+                  <td>Type</td>
+                  <td>Branch</td>
+                </tr>
+                <tr>
+                  <td>Height</td>
+                  <td>${d.height}</td>
+                </tr>
+                <tr>
+                  <td>Impurity</td>
+                  <td>${d.impurity}</td>
+                </tr>
+                <tr>
+                  <td>Drop of Impurity</td>
+                  <td>${d.impurityDrop}</td>
+                </tr>
+                <tr>
+                  <td>Samples</td>
+                  <td>${d.samples}</td>
+                </tr>
+            </table>`;
+            $("#hover-area").append(html);
+        })
+        .on("mouseout", d => $("#hover-area").empty())
+        .on("click", d => {
+            resetTree(svg);/*
+            options.tree.baseNode = {
+                baseNode
+            };*/
+            drawTree(options);
+        });
 
     // Draw leafs
     svg.selectAll('circle')
@@ -48,8 +82,35 @@ function drawTree({
         .append("circle")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("r", d => leafSize(d, _leafSize, totalSamples))
-        .style("fill", d => leafColor(d, _leafColor));
+        .attr("r", d => leafSize(d, "SAMPLES", totalSamples))
+        .style("fill", d => leafColor(d, _leafColor))
+        .on("mouseover", d => {
+            console.log(d)
+            const html = `<table class="table">
+                <tr>
+                  <td>Type</td>
+                  <td>Leaf</td>
+                </tr>
+                <tr>
+                  <td>Height</td>
+                  <td>${d.height}</td>
+                </tr>
+                <tr>
+                  <td>Impurity</td>
+                  <td>${d.impurity}</td>
+                </tr>
+                <tr>
+                  <td>Leaf ID</td>
+                  <td>${d.leafId}</td>
+                </tr>
+                <tr>
+                  <td>Class Frequency</td>
+                  <td>${d.classFrequency}</td>
+                </tr>
+            </table>`;
+            $("#hover-area").append(html);
+        })
+        .on("mouseout", d => $("#hover-area").empty());
 
     for (const bunch of bunches) {
         drawPie(svg, bunch.x, bunch.y, leafSize(bunch, _leafSize, totalSamples), bunch.slices);
@@ -109,7 +170,10 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, branc
                 x: node.x2,
                 y: node.y2,
                 impurity: node.impurity,
-                samples: node.samples
+                samples: node.samples,
+                leafId: node.leafId,
+                height: node.height,
+                classFrequency: node.classFrequency
             });
             return;  // End of recursion
         }

@@ -31,8 +31,13 @@ import "../scss/style.scss"
             totalSamples: forest.totalSamples,
 
             width: treeColumnWidth,
+            height: 800,
+            branchLength: 300,
 
             maxDepth: maxDepth,
+
+            branchColor: "IMPURITY",
+            leafColor: "IMPURITY",
 		});
 	}
 
