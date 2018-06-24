@@ -1,119 +1,86 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 </head>
 <body>
 <div class="container">
-<div class="columns box">
-    <div class="column is-3" id="left-column">
+    <div class="columns box">
+        <div class="column is-3" id="left-column">
 
-        <h1 class="title">Random Forest Visualization Tool</h1>
+            <h1 class="title">Random Forest Visualization Tool</h1>
 
-        <hr>
+            <hr>
 
-        <svg id="forest"></svg>
+            <svg id="forest"></svg>
 
-        <hr>
-
-        <div id="hover-area"></div>
-    </div>
-    <div class="column is-7" id="tree-column">
-        <svg id="tree"></svg>
-    </div>
-    <div class="column is-2" id="right-column">
-        <div class="buttons has-addons">
-            <span class="button previous">Previous</span>
-            <span class="button next">Next</span>
-        </div>
-
-        <!-- tree visualization -->
-        <div class="field is-horizontal">
-            <div class="field-label is-small">
-                <label class="label">Max Depth</label>
+            <div class="buttons has-addons">
+                <span class="button previous">
+                    <span class="icon">
+                      <i class="fab fa-arrow-right"></i>
+                    </span>
+                    <span>GitHub</span>
+                </span>
+                <span class="button next">Next</span>
             </div>
-            <div class="field-body">
-                <div class="field">
-                    <input type="number" min="1" max="100" step="1" value="50" id="nValue">
+
+            <hr>
+
+            <div id="hover-area"></div>
+        </div>
+        <div class="column is-7" id="tree-column">
+            <!--<svg id="tree"></svg>-->
+        </div>
+        <div class="column is-2" id="right-column">
+
+            <h1 class="title">Settings</h1>
+
+            <hr>
+
+            <!-- tree visualization -->
+            <div class="field">
+                <label class="label">Depth</label>
+                <div class="control">
+                    <input class="input" type="number" min="1" max="100" step="1" value="50" id="nValue">
                 </div>
             </div>
-        </div>
 
-        <hr>
+            <hr>
 
-        <!-- Branch Color -->
-        <div class="field is-horizontal">
-            <div class="field-label is-small">
+            <div class="field">
                 <label class="label">Branch Color</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="radio">
-                            <input type="radio" name="answer" checked>
-                            Impurity
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="answer">
-                            Impurity Drop
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="answer">
-                            Path
-                        </label>
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select>
+                            <option>Impurity</option>
+                            <option>Drop of Impurity</option>
+                            <option>Path</option>
+                        </select>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-small">
-                <label class="label">Threshold</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <input type="number" min="0" max="100" step="1" value="0">
-                </div>
-            </div>
-        </div>
 
-        <hr>
+            <hr>
 
-        <!-- Leaf Color -->
-        <div class="field is-horizontal">
-            <div class="field-label is-small">
+            <!-- Leaf Color -->
+
+            <div class="field">
                 <label class="label">Leaf Color</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <label class="radio">
-                            <input type="radio" name="answer" checked>
-                            Impurity
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="answer">
-                            Selected Class
-                        </label>
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select>
+                            <option>Impurity</option>
+                            <option>Selected Class</option>
+                        </select>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-small">
-                <label class="label">Threshold</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <input type="number" min="0" max="100" step="1" value="0">
-                </div>
-            </div>
-        </div>
 
+        </div>
     </div>
-</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

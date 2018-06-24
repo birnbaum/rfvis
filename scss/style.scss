@@ -2,7 +2,12 @@
 
 body {
   padding: 20px 0;
+  height: 100vh;
   background: #eee;
+}
+
+.columns.box {
+  height: calc(100vh - 20px);
 }
 
 h1.title {
