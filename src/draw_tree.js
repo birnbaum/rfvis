@@ -1,31 +1,36 @@
 import * as d3 from "d3";
 import {drawPie} from "./pie.js";
+import {branchTemplate, leafTemplate} from "./html-templates.js";
 
 export {drawTree, resetTree};
 
-function drawTree({
-    svg,
-    tree,
-    totalSamples,
+function drawTree(options) {
+    const {
+        svg,
+        tree,
+        totalSamples,
 
-    width = 800,
-    height = 800,
+        width,
+        height,
+        branchLength,
 
-    maxDepth = Number.POSITIVE_INFINITY,
+        maxDepth,
 
-    branchColor: _branchColor = "IMPURITY",
-    branchThickness: _branchThickness = "SAMPLES",
-    leafColor: _leafColor = "IMPURITY",
-    leafSize: _leafSize = "SAMPLES",
-}) {
+        branchColor: _branchColor,
+        leafColor: _leafColor,
+    } = options;
+    console.log(tree);
+
     const {
         branches,
         leafs,
         bunches,
-    } = generateTreeElements(tree, totalSamples, maxDepth, width, height);
+    } = generateTreeElements(tree, totalSamples, maxDepth, width, height, branchLength);
 
     // Adapt SVG size
     svg.style("width", width).style("height", height);
+
+    const hoverArea = $("#hover-area");
 
     // Draw branches
     svg.selectAll('line')
@@ -36,9 +41,17 @@ function drawTree({
         .attr('y1', d => d.y)
         .attr('x2', d => d.x2)
         .attr('y2', d => d.y2)
-        .style('stroke-width', d => branchThickness(d, _branchThickness, totalSamples))
+        .style('stroke-width', d => branchThickness(d, "SAMPLES", totalSamples))
         .style('stroke', d => branchColor(d, _branchColor))
-        .attr('id', d => 'branch-' + d.index);  // This attr is currently not used
+        //.attr('id', d => 'branch-' + d.index)  // This attr is currently not used
+        .on("mouseover", d => hoverArea.append(branchTemplate(d)))
+        .on("mouseout", d => hoverArea.empty())
+        .on("click", d => {
+            resetTree(svg);
+            options.tree.baseNode = d;
+            options.totalSamples = d.samples;
+            drawTree(options);
+        });
 
     // Draw leafs
     svg.selectAll('circle')
@@ -47,11 +60,13 @@ function drawTree({
         .append("circle")
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("r", d => leafSize(d, _leafSize, totalSamples))
-        .style("fill", d => leafColor(d, _leafColor));
+        .attr("r", d => leafSize(d, "SAMPLES", totalSamples))
+        .style("fill", d => leafColor(d, _leafColor))
+        .on("mouseover", d => hoverArea.append(leafTemplate(d)))
+        .on("mouseout", d => hoverArea.empty());
 
     for (const bunch of bunches) {
-        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, _leafSize, totalSamples), bunch.slices);
+        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), bunch.slices);
     }
 }
 
@@ -82,7 +97,7 @@ const removeChildReferences = (node) => {
     return nodeCopy;
 };
 
-function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
+function generateTreeElements(tree, totalSamples, maxDepth, width, height, branchLength) {
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -90,7 +105,8 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
     // recursive function that adds branch objects to "branches"
     function branch(node) {
 
-        branches.push(removeChildReferences(node));
+        //branches.push(removeChildReferences(node));
+        branches.push(node);
 
         if (node.depth === maxDepth - 1) {
             const histogram = getLeafHistogram(node, true);
@@ -103,12 +119,15 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
             return;  // End of recursion
         }
 
-        if (node.children.length === 0) {
+        if (!node.children) {
             leafs.push({
                 x: node.x2,
                 y: node.y2,
                 impurity: node.impurity,
-                samples: node.samples
+                samples: node.samples,
+                leafId: node.leafId,
+                height: node.height,
+                classFrequency: node.classFrequency
             });
             return;  // End of recursion
         }
@@ -116,8 +135,8 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
         const leftChild = node.children[0];
         const rightChild = node.children[1];
         // TODO Logarithmic?
-        const length1 = 4 + leftChild.samples / totalSamples * 100;
-        const length2 = 4 + rightChild.samples / totalSamples * 100;
+        const length1 = 4 + leftChild.samples / totalSamples * branchLength;
+        const length2 = 4 + rightChild.samples / totalSamples * branchLength;
 
         const angle1 = node.angle - Math.abs(leftChild.samples / node.samples - 1);
         const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
@@ -131,7 +150,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
     }
 
     // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    const baseNode = addBranchInformation(tree.baseNode, 0, width/2, height, 0, 120, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, 0, width/2, height, 0, branchLength, 0, null);
     branch(baseNode);
 
     const sortBySamples = (a,b) => {
@@ -148,7 +167,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height) {
 function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {
-        if (node.children.length === 0) {
+        if (!node.children) {
             leafNodes.push(node);
         } else {
             searchLeafs(node.children[0]);

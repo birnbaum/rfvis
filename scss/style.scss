@@ -1,16 +1,23 @@
 @import "../node_modules/bulma/bulma";
 
 body {
-  padding-top: 20px;
+  padding: 20px 0;
+  height: 100vh;
+  background: darkseagreen;
 }
 
-svg#forest, svg#tree {
-  background: #fff
+.columns.box {
+  height: calc(100vh - 20px);
 }
 
-#left-column, #right-column {
-  background: #fef;
+h1.title {
+  font-size: 19px;
 }
-#tree-column {
-  background: #eff;
+
+svg#forest {
+  background: darkseagreen;
+}
+
+svg line:hover {
+  cursor: pointer;
 }

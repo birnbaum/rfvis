@@ -6,52 +6,58 @@ import {drawTree} from "./src/draw_tree";
 import D3Node from "d3-node";
 import * as fs from "fs";
 
-function runGui(args) {
-    const forest = readForest(args);
+async function runGui(args) {
+    const forest = await createForest(args);
     const app = express();
     console.log("Starting server");
-    app.get('/',     (req, res) => res.sendFile(path.join(__dirname, '/index.html')));
-    app.get('/data', (req, res) => res.json(forest));
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.listen(3000, () => console.log('GUI running at http://localhost:3000'));
+    app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
+    app.get("/data", (req, res) => res.json(forest));
+    app.use(express.static(path.join(__dirname, "public")));
+    app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
 }
 
-function runCli(args) {
-    const forest = readForest(args);
-
-    const width = 800;
-    const height = 800;
+async function runCli(args) {
+    const forest = await createForest(args);
+    const outDir = args.out ? path.resolve(args.out) : __dirname;
+    if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
 
     for (const [index, tree] of forest.trees.entries()) {
         const d3n = new D3Node();
-        const svg = d3n.createSVG(width, height).append("g");
+        const svg = d3n.createSVG(args.width, args.height).append("g");
         drawTree({
             svg: svg,
             tree: tree,
-            totalSamples: forest.totalSamples
+            totalSamples: forest.totalSamples,
+
+            width: args.width,
+            height: args.height,
+            branchLength: args.branchLength,
+
+            maxDepth: args.depth,
+
+            branchColor: args.branchColor.toUpperCase(),
+            leafColor: args.leafColor.toUpperCase()
         });
-        const fileName = `tree-${index}.svg`;
-        fs.writeFile(fileName, d3n.svgString(), () => {
-            console.log(`>> Exported "${fileName}"`);
+        const filePath = path.join(outDir, `tree-${index}.svg`);
+        fs.writeFile(filePath, d3n.svgString(), () => {
+            console.log(`>> Exported "${filePath}"`);
         });
     }
 }
 
-function readForest({data}) {
-    const statisticsDir = path.join(path.resolve(data), 'statistics');
-    const summaryFile = path.join(path.resolve(data), 'summary.txt');
-    return createForest(summaryFile, statisticsDir);
-}
-
 const argv = yargs
     .command(
-        'cli <data>',
-        'Command line interface to generate SVGs',
+        "cli <data>",
+        "Command line interface to generate SVGs",
         yargs => yargs
-            .positional('data', {
-                describe: 'Folder containing the forest data'
+            .positional("data", {
+                describe: "Folder containing the forest data"
             })
             .options({
+                "out": {
+                    alias: "o",
+                    describe: "Output folder for the SVG files. If omitted the current working directory is used.",
+                },
                 "width": {
                     alias: "w",
                     describe: "Width of the SVG",
@@ -64,9 +70,15 @@ const argv = yargs
                     default: 800,
                     number: true,
                 },
+                "branch-length": {
+                    alias: "b",
+                    describe: "Length of the trunk which influences the entire tree size",
+                    default: 100,
+                    number: true,
+                },
                 "depth": {
                     alias: "d",
-                    describe: "Maximal depth of the tree rendering. Cut of leaves are visualized via consolidation nodes.",
+                    describe: "Depth of the tree rendering. Cut of leaves are visualized as pie chart consolidation nodes.",
                     number: true,
                 },
                 "leaf-color": {
@@ -74,14 +86,15 @@ const argv = yargs
                     choices: ["impurity", "class"],
                     default: "impurity",
                 },
+                /*
                 "leaf-impurity-threshold": {
                     describe: "Between 0 and 1. By default the impurity is mapped from 0 to 1 on a linear color gradient between red and green. If you set this flag, everything below the provided threshold is visualized red and the gradient will be linear between <threshold> and 1",
                     implies: "leaf-color",
                     default: 0,
                     number: true,
-                },
+                },*/
                 "branch-color": {
-                    describe: "Color of the branches. Either the node's impurity or the node's drop-of-impurity.",
+                    describe: "Color of the branches. Either the node impurity or the node drop-of-impurity.",
                     choices: ["impurity", "impurity-drop"],
                     default: "impurity",
                 },
@@ -100,8 +113,16 @@ const argv = yargs
         "gui <data>",
         "Graphical User Interface",
         yargs => yargs
-            .positional('data', {
-                describe: 'Folder containing the forest data'
+            .positional("data", {
+                describe: "Folder containing the forest data"
+            })
+            .options({
+                "port": {
+                    alias: "p",
+                    describe: "Port on which the server shall run on.",
+                    default: 3000,
+                    number: true,
+                },
             }),
         runGui
     )

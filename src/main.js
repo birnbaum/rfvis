@@ -8,6 +8,9 @@ import "../scss/style.scss"
     const forest = await (await fetch("http://localhost:3000/data")).json();
 
     const PADDING = 12;  // Hardcoded for now;
+
+    // TODO use jQuery
+    const treeColumnHeight = d3.select("#tree-column").node().offsetHeight - PADDING;
     const treeColumnWidth = d3.select("#tree-column").node().offsetWidth - 2 * PADDING;
     const leftColumnWidth = d3.select("#left-column").node().offsetWidth - 2 * PADDING;
 
@@ -23,7 +26,7 @@ import "../scss/style.scss"
 
     const treeSvg = d3.select('#tree');
 
-	function updateTreeVisualization(treeId, maxDepth = 2) {
+	function updateTreeVisualization(treeId, maxDepth = 1000) {
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
@@ -31,8 +34,13 @@ import "../scss/style.scss"
             totalSamples: forest.totalSamples,
 
             width: treeColumnWidth,
+            height: treeColumnHeight,
+            branchLength: 300,
 
             maxDepth: maxDepth,
+
+            branchColor: "IMPURITY",
+            leafColor: "IMPURITY",
 		});
 	}
 
