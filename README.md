@@ -1,8 +1,6 @@
 # Random Forest Visualization Tool
 
-A tool for visualizing structure, performance and other attributes of Random Forests.
-
-It offers a command line interface to either generate SVG files directly from your input data or to spin up a web-based GUI for a more interactive analysis.
+A tool for visualizing the structure and performance of Random Forests.
 
 ![Tree](images/tree.png)
 
@@ -11,7 +9,7 @@ It offers a command line interface to either generate SVG files directly from yo
 As prerequisites you need [Node.js](https://nodejs.org/en/download/) an a local copy of this repository. 
 To install all required project dependencies run:
 ```
-npm install
+$ npm install
 ```
 
 ### Build
@@ -25,7 +23,9 @@ This will generate a `./dist` folder which contains the "compiled" Javascript fi
 ### Run
 The entrypoint of the tool is the `./dist/index.js` which is generated in the previous build step.
 
-To see the available commands run:
+The tool offers a command line interface to either generate SVG files directly from your input data (`node ./dist/index.js cli <data>`) or to spin up a web-based GUI for a more interactive analysis (`node ./dist/index.js gui <data>`).
+
+To see all available commands run:
 ```
 $ node ./dist/index.js
 
@@ -41,7 +41,7 @@ Options:
 ```
 
 ## The Command Line Interface
-To use the command line interface and generate SVG files for each tree in the input data run:
+To use the command line interface and generate SVG files for each tree in the input data, run:
 ```
 $ node ./dist/index.js cli /path/to/data --out result
 >> Exported "/dev/random-forest-visualization/result/tree-0.svg"
