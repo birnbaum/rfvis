@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import {drawPie} from "./pie.js";
+import {branchTemplate, leafTemplate} from "./html-templates.js";
 
 export {drawTree, resetTree};
 
@@ -29,6 +30,8 @@ function drawTree(options) {
     // Adapt SVG size
     svg.style("width", width).style("height", height);
 
+    const hoverArea = $("#hover-area");
+
     // Draw branches
     svg.selectAll('line')
         .data(branches)  // This is where we feed the data to the visualization
@@ -40,38 +43,13 @@ function drawTree(options) {
         .attr('y2', d => d.y2)
         .style('stroke-width', d => branchThickness(d, "SAMPLES", totalSamples))
         .style('stroke', d => branchColor(d, _branchColor))
-        .attr('id', d => 'branch-' + d.index)  // This attr is currently not used
-        .on("mouseover", d => {
-            const html = `<table class="table">
-                <tr>
-                  <td>Type</td>
-                  <td>Branch</td>
-                </tr>
-                <tr>
-                  <td>Height</td>
-                  <td>${d.height}</td>
-                </tr>
-                <tr>
-                  <td>Impurity</td>
-                  <td>${d.impurity}</td>
-                </tr>
-                <tr>
-                  <td>Drop of Impurity</td>
-                  <td>${d.impurityDrop}</td>
-                </tr>
-                <tr>
-                  <td>Samples</td>
-                  <td>${d.samples}</td>
-                </tr>
-            </table>`;
-            $("#hover-area").append(html);
-        })
-        .on("mouseout", d => $("#hover-area").empty())
+        //.attr('id', d => 'branch-' + d.index)  // This attr is currently not used
+        .on("mouseover", d => hoverArea.append(branchTemplate(d)))
+        .on("mouseout", d => hoverArea.empty())
         .on("click", d => {
-            resetTree(svg);/*
-            options.tree.baseNode = {
-                baseNode
-            };*/
+            resetTree(svg);
+            options.tree.baseNode = d;
+            options.totalSamples = d.samples;
             drawTree(options);
         });
 
@@ -84,36 +62,11 @@ function drawTree(options) {
         .attr("cy", d => d.y)
         .attr("r", d => leafSize(d, "SAMPLES", totalSamples))
         .style("fill", d => leafColor(d, _leafColor))
-        .on("mouseover", d => {
-            console.log(d)
-            const html = `<table class="table">
-                <tr>
-                  <td>Type</td>
-                  <td>Leaf</td>
-                </tr>
-                <tr>
-                  <td>Height</td>
-                  <td>${d.height}</td>
-                </tr>
-                <tr>
-                  <td>Impurity</td>
-                  <td>${d.impurity}</td>
-                </tr>
-                <tr>
-                  <td>Leaf ID</td>
-                  <td>${d.leafId}</td>
-                </tr>
-                <tr>
-                  <td>Class Frequency</td>
-                  <td>${d.classFrequency}</td>
-                </tr>
-            </table>`;
-            $("#hover-area").append(html);
-        })
-        .on("mouseout", d => $("#hover-area").empty());
+        .on("mouseover", d => hoverArea.append(leafTemplate(d)))
+        .on("mouseout", d => hoverArea.empty());
 
     for (const bunch of bunches) {
-        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, _leafSize, totalSamples), bunch.slices);
+        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), bunch.slices);
     }
 }
 
@@ -152,7 +105,8 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, branc
     // recursive function that adds branch objects to "branches"
     function branch(node) {
 
-        branches.push(removeChildReferences(node));
+        //branches.push(removeChildReferences(node));
+        branches.push(node);
 
         if (node.depth === maxDepth - 1) {
             const histogram = getLeafHistogram(node, true);
