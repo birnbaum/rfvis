@@ -94,7 +94,7 @@ const argv = yargs
                     number: true,
                 },*/
                 "branch-color": {
-                    describe: "Color of the branches. Either the node's impurity or the node's drop-of-impurity.",
+                    describe: "Color of the branches. Either the node impurity or the node drop-of-impurity.",
                     choices: ["impurity", "impurity-drop"],
                     default: "impurity",
                 },

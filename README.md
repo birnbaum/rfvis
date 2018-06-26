@@ -1,28 +1,31 @@
 # Random Forest Visualization Tool
 
-A tool for analyzing the structure, performance and other attributes of Random Forests
+A tool for visualizing structure, performance and other attributes of Random Forests.
+
+It offers a command line interface to either generate SVG files directly from your input data or to spin up a web-based GUI for a more interactive analysis.
+
 ![Tree](images/tree.png)
 
 ## Getting Started 
 
-As prerequisites you need [Node.js](https://nodejs.org/en/download/) and the project dependencies installed (run `npm install` withtin you local copy of this respository).
-
-## Project structure
-
-The tool offers a command line interface which can either directly generate SVG files from your input data or spin up a web-based GUI for a more interactive analysis.
+As prerequisites you need [Node.js](https://nodejs.org/en/download/) an a local copy of this repository. 
+To install all required project dependencies run:
+```
+npm install
+```
 
 ### Build
 
-To build all necessary files, run:
+To build the project run:
 ```
 $ npm run build
 ```
-This will generate a `dist` folder which contains the "compiled" Javascript files for the frontend and backend, as well as the necessary assets and HTML.
+This will generate a `./dist` folder which contains the "compiled" Javascript files for the frontend and backend, as well as the necessary assets and HTML.
 
 ### Run
 The entrypoint of the tool is the `./dist/index.js` which is generated in the previous build step.
 
-To see the available commands (`cli` and `gui`) run:
+To see the available commands run:
 ```
 $ node ./dist/index.js
 
@@ -37,8 +40,8 @@ Options:
   --version  Show version number                                       [boolean]
 ```
 
-#### The Command Line Interface
-To generate SVG files for each tree in the input data, run
+## The Command Line Interface
+To use the command line interface and generate SVG files for each tree in the input data run:
 ```
 $ node ./dist/index.js cli /path/to/data --out result
 >> Exported "/dev/random-forest-visualization/result/tree-0.svg"
@@ -48,9 +51,9 @@ $ node ./dist/index.js cli /path/to/data --out result
 ...
 ```
 
-A full list of available options:
+Get a full list of available options with `--help`:
 ```
-$ node ./dist/index.js cli
+$ node ./dist/index.js cli --help
 index.js cli <data>
 
 Command line interface to generate SVGs
@@ -72,12 +75,12 @@ Options:
   --leaf-color         Color of the leaves. Either the leaf impurity or the
                        class assigned to the leaf.
                             [choices: "impurity", "class"] [default: "impurity"]
-  --branch-color       Color of the branches. Either the node's impurity or the
-                       node's drop-of-impurity.
+  --branch-color       Color of the branches. Either the node impurity or the
+                       node drop-of-impurity.
                     [choices: "impurity", "impurity-drop"] [default: "impurity"]
 ```
 
-#### The Graphical User Interface
+## The Graphical User Interface
 To interactively analyze your forest with the web-based GUI run:
 ```
 $ node ./dist/index.js gui /path/to/data
@@ -85,6 +88,7 @@ Starting server
 GUI running at http://localhost:3000
 ```
 You can now open up your browser at <http://localhost:3000> to see something like this:
+
 ![Tree](images/screenshot.png)
 
 
@@ -97,9 +101,9 @@ The input data is expected to come in text files in the following folder structu
 
 
 ## Development
-In order to make development more convenient (which means not having to run `npm run build` after every change change) you can run watchers on the source files. The recommended setup for development is to open two terminal processes and run:
-1. `npm run watch:frontend` to automatically build any changes in the frontend related Javascript or SCSS files
-2. `npm run watch:backend` to automatically build any changes in the command line interface or the server related Javascript files
+In order to make development more convenient (which means not having to run `npm run build` after every change) you can run watchers on the source files. The recommended setup for development is to open two terminal processes and run:
+1. `npm run watch:frontend` to automatically build any changes in the frontend related JS or SCSS files
+2. `npm run watch:backend` to automatically build any changes in the command line interface or the server related JS files
 
 Note that many files are used by the frontend _and_ backend, e.g. the logic for constructing and drawing the trees. A change to `./src/draw_tree.js` will therefore trigger both watchers.
 
@@ -113,5 +117,6 @@ Note that many files are used by the frontend _and_ backend, e.g. the logic for 
 * [rollup.js](https://rollupjs.org/) - Module Bundler / Build Tool
 
 
-### To Do
+## To Do
 - Better GUI Screenshot
+- Link Research Paper
