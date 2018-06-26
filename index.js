@@ -13,7 +13,7 @@ async function runGui(args) {
     app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
     app.get("/data", (req, res) => res.json(forest));
     app.use(express.static(path.join(__dirname, "public")));
-    app.listen(3000, () => console.log("GUI running at http://localhost:3000"));
+    app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
 }
 
 async function runCli(args) {
@@ -56,7 +56,7 @@ const argv = yargs
             .options({
                 "out": {
                     alias: "o",
-                    describe: "Output folder for the SVG files",
+                    describe: "Output folder for the SVG files. If omitted the current working directory is used.",
                 },
                 "width": {
                     alias: "w",
@@ -78,7 +78,7 @@ const argv = yargs
                 },
                 "depth": {
                     alias: "d",
-                    describe: "Maximal depth of the tree rendering. Cut of leaves are visualized via consolidation nodes.",
+                    describe: "Depth of the tree rendering. Cut of leaves are visualized as pie chart consolidation nodes.",
                     number: true,
                 },
                 "leaf-color": {
@@ -86,12 +86,13 @@ const argv = yargs
                     choices: ["impurity", "class"],
                     default: "impurity",
                 },
+                /*
                 "leaf-impurity-threshold": {
                     describe: "Between 0 and 1. By default the impurity is mapped from 0 to 1 on a linear color gradient between red and green. If you set this flag, everything below the provided threshold is visualized red and the gradient will be linear between <threshold> and 1",
                     implies: "leaf-color",
                     default: 0,
                     number: true,
-                },
+                },*/
                 "branch-color": {
                     describe: "Color of the branches. Either the node's impurity or the node's drop-of-impurity.",
                     choices: ["impurity", "impurity-drop"],
@@ -114,6 +115,14 @@ const argv = yargs
         yargs => yargs
             .positional("data", {
                 describe: "Folder containing the forest data"
+            })
+            .options({
+                "port": {
+                    alias: "p",
+                    describe: "Port on which the server shall run on.",
+                    default: 3000,
+                    number: true,
+                },
             }),
         runGui
     )
