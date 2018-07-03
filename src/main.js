@@ -49,37 +49,56 @@ import "../scss/style.scss"
             leafColor: leafColor,
 		});
 	}
-
 	updateTreeVisualization();
 
-	d3.selectAll('#next-tree').on('click', () => {
-		if (treeId === forest.trees.length-1) return alert("Last");
-		treeId++;
-		updateTreeVisualization();
-	});
 
-	d3.selectAll('#previous-tree').on('click', () => {
-		if (treeId === 0) return alert("First");
-		treeId--;
-		updateTreeVisualization();
-	});
+	/* --- UI Element & Keyboard Bindings for Previous/Next Tree --- */
 
-    d3.select("#tree-depth").on("input", function(i) {
+    function nextTree() {
+        if (treeId === forest.trees.length - 1) {
+            treeId = 0;
+        } else {
+            treeId++;
+        }
+        updateTreeVisualization();
+    }
+
+    function previousTree() {
+        if (treeId === 0) {
+            treeId = forest.trees.length - 1;
+        } else {
+            treeId--;
+        }
+        updateTreeVisualization();
+    }
+
+    document.onkeyup = function(e) {
+        if (e.key === "ArrowLeft") previousTree();
+        else if (e.key === "ArrowRight") nextTree();
+    };
+
+	d3.selectAll('#next-tree').on('click', nextTree);
+	d3.selectAll('#previous-tree').on('click', previousTree);
+
+
+	/* --- UI Element Bindings for Settings --- */
+
+    d3.select("#tree-depth").on("input", function() {
         maxDepth = this.value;
         updateTreeVisualization();
     });
 
-    d3.select("#trunk-length").on("input", function(i) {
+    d3.select("#trunk-length").on("input", function() {
         trunkLength = this.value;
         updateTreeVisualization();
     });
 
-    d3.select("#branch-color").on("change", function(i) {
+    d3.select("#branch-color").on("change", function() {
         branchColor = this.value;
         updateTreeVisualization();
     });
 
-    d3.select("#leaf-color").on("change", function(i) {
+    d3.select("#leaf-color").on("change", function() {
         leafColor = this.value;
         updateTreeVisualization();
     });
