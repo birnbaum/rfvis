@@ -16,8 +16,8 @@ function drawTree(options) {
 
         maxDepth,
 
-        branchColor: _branchColor,
-        leafColor: _leafColor,
+        branchColor: branchColorType,
+        leafColor: leafColorType,
     } = options;
 
     const {
@@ -39,7 +39,7 @@ function drawTree(options) {
         .attr('x2', d => d.x2)
         .attr('y2', d => d.y2)
         .style('stroke-width', d => branchThickness(d, "SAMPLES", totalSamples))
-        .style('stroke', d => branchColor(d, _branchColor))
+        .style('stroke', d => branchColor(branchColorType, d))
         //.attr('id', d => 'branch-' + d.index)  // This attr is currently not used
         .on("mouseover", d => $("#hover-area").append(branchTemplate(d)))
         .on("mouseout", d => $("#hover-area").empty())
@@ -58,12 +58,12 @@ function drawTree(options) {
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .attr("r", d => leafSize(d, "SAMPLES", totalSamples))
-        .style("fill", d => leafColor(d, _leafColor))
+        .style("fill", d => leafColor(leafColorType, d))
         .on("mouseover", d => $("#hover-area").append(leafTemplate(d)))
         .on("mouseout", d => $("#hover-area").empty());
 
     for (const bunch of bunches) {
-        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), bunch.slices);
+        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), getHistogram(bunch.baseNode, leafColorType, true));
     }
 }
 
@@ -106,12 +106,11 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, branc
         branches.push(node);
 
         if (node.depth === maxDepth - 1) {
-            const histogram = getLeafHistogram(node, true);
             bunches.push({
                 x: node.x2,
                 y: node.y2,
-                slices: histogram,
-                samples: node.samples
+                baseNode: node,
+                samples: node.samples,
             });
             return;  // End of recursion
         }
@@ -124,7 +123,9 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, branc
                 samples: node.samples,
                 leafId: node.leafId,
                 height: node.height,
-                classFrequency: node.classFrequency
+                noClasses: node.noClasses,
+                classes: node.classes,
+                bestClass: node.bestClass,
             });
             return;  // End of recursion
         }
@@ -182,28 +183,48 @@ function getLeafWeightedAverage(node) {
     return weightedSum / leafNodes.length / node.samples;
 }
 
-function getLeafHistogram(node, weighted = false) {
+function getHistogram(node, type, weighted) {
     const leafNodes = getLeafNodes(node);
     const histObj = {};
-    for (const leafNode of leafNodes) {
-        const impurity = leafNode.impurity.toFixed(1); // Converting all impurities to strings with two decimal places
-        const n = weighted ? leafNode.samples : 1;
-        if (impurity in histObj) {
-            histObj[impurity] += n;
-        } else {
-            histObj[impurity] = n;
+    if (type === "IMPURITY") {
+        for (const leafNode of leafNodes) {
+            const impurity = leafNode.impurity.toFixed(1); // Converting all impurities to strings with two decimal places
+            const n = weighted ? leafNode.samples : 1;
+            if (impurity in histObj) {
+                histObj[impurity] += n;
+            } else {
+                histObj[impurity] = n;
+            }
         }
+        const ordered = [];
+        Object.keys(histObj).sort().forEach(key => {
+            const color = leafColor(type, {impurity: Number.parseFloat(key)});
+            ordered.push({value: histObj[key], color: color, sortKey: key});
+        });
+        return ordered;
     }
-    const ordered = [];
-    Object.keys(histObj).sort().forEach(key => {
-        ordered.push({value: histObj[key], impurity: key});
-    });
-    return ordered;
+    if (type === "BEST_CLASS") {
+        for (const leafNode of leafNodes) {
+            const n = weighted ? leafNode.bestClass.count : 1;
+            if (leafNode.bestClass.name in histObj) {
+                histObj[leafNode.bestClass.name][0] += n
+            } else {
+                histObj[leafNode.bestClass.name] = [n];
+            }
+            histObj[leafNode.bestClass.name][1] = leafNode.bestClass.color;
+        }
+        const ordered = [];
+        Object.keys(histObj).sort().forEach(key => {
+            const color = leafColor(type, {bestClass: {color: histObj[key][1]}});
+            ordered.push({value: histObj[key][0], color: color, sortKey: key});
+        });
+        return ordered;
+    }
 }
 
 /* ------- Tree mapping functions ------- */
 
-function branchColor(branch, type) {
+function branchColor(type, branch) {
     if (type === "IMPURITY") {
         // Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
         return d3.scaleLinear()
@@ -233,7 +254,7 @@ function branchThickness(branch, type, totalSamples) {
     throw "Unsupported setting";
 }
 
-function leafColor(leaf, type) {
+function leafColor(type, leaf) {
     if (type === "IMPURITY") {
         if (leaf.impurity > 0.5) {
             return "red";
@@ -245,11 +266,7 @@ function leafColor(leaf, type) {
         }
     }
     if (type === "BEST_CLASS") {
-        // TODO Currently hardcoded
-        return d3.scaleOrdinal()
-            .domain([0,1,2,3,4])
-            .range([d3.rgb(0,0,255), d3.rgb(255,0,0), d3.rgb(0,128,0), d3.rgb(0,255,255), d3.rgb(0,255,0)])
-            (leaf.classFrequency.indexOf(Math.max(...leaf.classFrequency)));
+        return d3.rgb(...leaf.bestClass.color);
     }
     console.log(this);
     throw "Unsupported setting";

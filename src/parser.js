@@ -141,6 +141,50 @@ class LeafNode {
         this.leafId = Number.parseInt(fields[1]);
         this.samples = Number.parseInt(fields[3]);
         this.impurity = Number.parseFloat(fields[4]);
-        this.classFrequency = fields[5].split(",").slice(1).map(c => Number.parseInt(c));
+
+        const parts = fields[5].split(",").map(c => Number.parseInt(c));
+        this.noClasses = parts[0];
+
+        // TODO Currently hardcoded
+        this.classes = [
+            {
+                name: "city",
+                color: [0,0,255],
+                count: parts[1]
+            },
+            {
+                name: "streets",
+                color: [255,0,0],
+                count: parts[2]
+            },
+            {
+                name: "forest",
+                color: [0,128,0],
+                count: parts[3]
+            },
+            {
+                name: "field",
+                color: [0,255,255],
+                count: parts[4]
+            },
+            {
+                name: "shrubland",
+                color: [0,255,0],
+                count: parts[5]
+            },
+        ];
+        this.bestClass = getBestClass(this.classes);
     }
+}
+
+function getBestClass(classes) {
+    let best;
+    let indexOfBest;
+    for (let i = 0; i < classes.length; i++) {
+        if (!best || classes[i].count > best.count) {
+            best = classes[i];
+            indexOfBest = i;
+        }
+    }
+    return classes[indexOfBest];
 }
