@@ -45,9 +45,11 @@ function drawTree(options) {
         .on("mouseout", d => $("#hover-area").empty())
         .on("click", d => {
             resetTree(svg);
-            options.tree.baseNode = d;
-            options.totalSamples = d.samples;
-            drawTree(options);
+            const newOptions = Object.assign({}, options);
+            newOptions.totalSamples = d.samples;
+            newOptions.tree = Object.assign({}, options.tree);
+            newOptions.tree.baseNode = d;
+            drawTree(newOptions);
         });
 
     // Draw leafs
@@ -237,6 +239,9 @@ function branchColor(type, branch) {
             .domain([0, 1])
             .range(["red", "green"])
             (branch.impurityDrop);
+    }
+    if (type === "BLACK") {
+        return "black";
     }
     console.log(this);
     throw "Unsupported setting";

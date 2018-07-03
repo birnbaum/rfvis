@@ -33,6 +33,7 @@ import "../scss/style.scss"
     let leafColor = "IMPURITY";
 
 	function updateTreeVisualization() {
+	    console.log(forest.trees[treeId])
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
@@ -82,6 +83,8 @@ import "../scss/style.scss"
 
 
 	/* --- UI Element Bindings for Settings --- */
+
+    d3.select("#reset-zoom").on('click', updateTreeVisualization);
 
     d3.select("#tree-depth").on("input", function() {
         maxDepth = this.value;
