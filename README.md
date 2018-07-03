@@ -68,7 +68,7 @@ Options:
                        working directory is used.
   --width, -w          Width of the SVG                  [number] [default: 800]
   --height, -h         Height of the SVG                 [number] [default: 800]
-  --branch-length, -b  Length of the trunk which influences the entire tree size
+  --trunk-length, -t   Length of the trunk which influences the entire tree size
                                                          [number] [default: 100]
   --depth, -d          Depth of the tree rendering. Cut of leaves are visualized
                        as pie chart consolidation nodes.                [number]

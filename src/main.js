@@ -26,7 +26,13 @@ import "../scss/style.scss"
 
     const treeSvg = d3.select('#tree');
 
-	function updateTreeVisualization(treeId, maxDepth = 1000) {
+    let treeId = 0;
+    let trunkLength = 100;
+    let maxDepth = Number.MAX_SAFE_INTEGER;
+    let branchColor = "IMPURITY";
+    let leafColor = "IMPURITY";
+
+	function updateTreeVisualization() {
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
@@ -35,31 +41,46 @@ import "../scss/style.scss"
 
             width: treeColumnWidth,
             height: treeColumnHeight,
-            branchLength: 300,
+            trunkLength: trunkLength,
 
             maxDepth: maxDepth,
 
-            branchColor: "IMPURITY",
-            leafColor: "IMPURITY",
+            branchColor: branchColor,
+            leafColor: leafColor,
 		});
 	}
 
-	let treeId = 0;
-	updateTreeVisualization(treeId);
+	updateTreeVisualization();
 
-	d3.selectAll('.next').on('click', () => {
+	d3.selectAll('#next-tree').on('click', () => {
 		if (treeId === forest.trees.length-1) return alert("Last");
 		treeId++;
-		updateTreeVisualization(treeId);
+		updateTreeVisualization();
 	});
 
-	d3.selectAll('.previous').on('click', () => {
+	d3.selectAll('#previous-tree').on('click', () => {
 		if (treeId === 0) return alert("First");
 		treeId--;
-		updateTreeVisualization(treeId);
+		updateTreeVisualization();
 	});
 
-    d3.select("#nValue").on("input", function(i) {
-        updateTreeVisualization(treeId, this.value);
+    d3.select("#tree-depth").on("input", function(i) {
+        maxDepth = this.value;
+        updateTreeVisualization();
+    });
+
+    d3.select("#trunk-length").on("input", function(i) {
+        trunkLength = this.value;
+        updateTreeVisualization();
+    });
+
+    d3.select("#branch-color").on("change", function(i) {
+        branchColor = this.value;
+        updateTreeVisualization();
+    });
+
+    d3.select("#leaf-color").on("change", function(i) {
+        leafColor = this.value;
+        updateTreeVisualization();
     });
 })();

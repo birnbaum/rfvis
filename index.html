@@ -30,11 +30,16 @@
 
             <hr>
 
-            <!-- tree visualization -->
             <div class="field">
-                <label class="label">Depth</label>
+                <label class="label">Tree Depth</label>
                 <div class="control">
-                    <input class="input" type="number" min="1" max="100" step="1" value="50" id="nValue">
+                    <input id="tree-depth" class="input" type="number" min="1" max="100" step="1" value="50">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Trunk Length</label>
+                <div class="control">
+                    <input id="trunk-length" class="input" type="number" min="10" max="500" step="10" value="100">
                 </div>
             </div>
 
@@ -44,26 +49,22 @@
                 <label class="label">Branch Color</label>
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select>
-                            <option>Impurity</option>
-                            <option>Drop of Impurity</option>
-                            <option>Path</option>
+                        <select id="branch-color">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="DROP_OF_IMPURITY">Drop of Impurity</option>
+                            <!--<option>Path</option>-->
                         </select>
                     </div>
                 </div>
             </div>
 
-            <hr>
-
-            <!-- Leaf Color -->
-
             <div class="field">
                 <label class="label">Leaf Color</label>
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select>
-                            <option>Impurity</option>
-                            <option>Selected Class</option>
+                        <select id="leaf-color">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="BEST_CLASS">Best Class</option>
                         </select>
                     </div>
                 </div>
@@ -72,13 +73,13 @@
             <hr>
 
             <div class="buttons has-addons">
-                <span class="button previous">
+                <span id="previous-tree" class="button">
                     <span class="icon">
                       <i class="fas fa-arrow-alt-circle-left"></i>
                     </span>
                     <span>Previous Tree</span>
                 </span>
-                <span class="button next">
+                <span id="next-tree" class="button">
                     <span>Next Tree</span>
                     <span class="icon">
                       <i class="fas fa-arrow-alt-circle-right"></i>

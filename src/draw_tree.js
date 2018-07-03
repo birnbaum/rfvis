@@ -12,25 +12,22 @@ function drawTree(options) {
 
         width,
         height,
-        branchLength,
+        trunkLength,
 
         maxDepth,
 
         branchColor: _branchColor,
         leafColor: _leafColor,
     } = options;
-    console.log(tree);
 
     const {
         branches,
         leafs,
         bunches,
-    } = generateTreeElements(tree, totalSamples, maxDepth, width, height, branchLength);
+    } = generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength);
 
     // Adapt SVG size
     svg.style("width", width).style("height", height);
-
-    const hoverArea = $("#hover-area");
 
     // Draw branches
     svg.selectAll('line')
@@ -44,8 +41,8 @@ function drawTree(options) {
         .style('stroke-width', d => branchThickness(d, "SAMPLES", totalSamples))
         .style('stroke', d => branchColor(d, _branchColor))
         //.attr('id', d => 'branch-' + d.index)  // This attr is currently not used
-        .on("mouseover", d => hoverArea.append(branchTemplate(d)))
-        .on("mouseout", d => hoverArea.empty())
+        .on("mouseover", d => $("#hover-area").append(branchTemplate(d)))
+        .on("mouseout", d => $("#hover-area").empty())
         .on("click", d => {
             resetTree(svg);
             options.tree.baseNode = d;
@@ -62,8 +59,8 @@ function drawTree(options) {
         .attr("cy", d => d.y)
         .attr("r", d => leafSize(d, "SAMPLES", totalSamples))
         .style("fill", d => leafColor(d, _leafColor))
-        .on("mouseover", d => hoverArea.append(leafTemplate(d)))
-        .on("mouseout", d => hoverArea.empty());
+        .on("mouseover", d => $("#hover-area").append(leafTemplate(d)))
+        .on("mouseout", d => $("#hover-area").empty());
 
     for (const bunch of bunches) {
         drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), bunch.slices);
@@ -214,6 +211,12 @@ function branchColor(branch, type) {
             .range(["green", "brown"])
             (branch.impurity);
     }
+    if (type === "DROP_OF_IMPURITY") {
+        return d3.scaleLinear()
+            .domain([0, 1])
+            .range(["red", "green"])
+            (branch.impurityDrop);
+    }
     console.log(this);
     throw "Unsupported setting";
 }
@@ -240,6 +243,13 @@ function leafColor(leaf, type) {
                 .range(["green", "red"])
                 (leaf.impurity);
         }
+    }
+    if (type === "BEST_CLASS") {
+        // TODO Currently hardcoded
+        return d3.scaleOrdinal()
+            .domain([0,1,2,3,4])
+            .range([d3.rgb(0,0,255), d3.rgb(255,0,0), d3.rgb(0,128,0), d3.rgb(0,255,255), d3.rgb(0,255,0)])
+            (leaf.classFrequency.indexOf(Math.max(...leaf.classFrequency)));
     }
     console.log(this);
     throw "Unsupported setting";

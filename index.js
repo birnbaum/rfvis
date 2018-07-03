@@ -31,7 +31,7 @@ async function runCli(args) {
 
             width: args.width,
             height: args.height,
-            branchLength: args.branchLength,
+            trunkLength: args.trunkLength,
 
             maxDepth: args.depth,
 
@@ -70,8 +70,8 @@ const argv = yargs
                     default: 800,
                     number: true,
                 },
-                "branch-length": {
-                    alias: "b",
+                "trunk-length": {
+                    alias: "l",
                     describe: "Length of the trunk which influences the entire tree size",
                     default: 100,
                     number: true,

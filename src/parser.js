@@ -6,14 +6,14 @@ const fs_readFile = util.promisify(fs.readFile);
 
 function readDataFolder(args) {
     const dataPath = path.resolve(args.data);
-    const forestFile = path.join(dataPath, "statistics", "forest.txt");
+    const forestFile = path.join(dataPath, "forest.txt");
     const forestFileContent = fs.readFileSync(forestFile, "utf8");
 
     const treeFileContentPromises = {};
-    for (const file of fs.readdirSync(path.join(dataPath, "statistics"))) {
+    for (const file of fs.readdirSync(dataPath)) {
         if (!file.startsWith("tree")) continue;
         const id = Number.parseInt(file.split(".")[0].split("_")[1]);
-        treeFileContentPromises[id] = fs_readFile(path.join(dataPath, "statistics", file), "utf8");
+        treeFileContentPromises[id] = fs_readFile(path.join(dataPath, file), "utf8");
     }
     return Promise.all(Object.values(treeFileContentPromises))
         .then(treeFileContents => ({forestFileContent, treeFileContents}));
@@ -141,6 +141,6 @@ class LeafNode {
         this.leafId = Number.parseInt(fields[1]);
         this.samples = Number.parseInt(fields[3]);
         this.impurity = Number.parseFloat(fields[4]);
-        this.classFrequency = fields[5].split(",").map(c => Number.parseInt(c));
+        this.classFrequency = fields[5].split(",").slice(1).map(c => Number.parseInt(c));
     }
 }
