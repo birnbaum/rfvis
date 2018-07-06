@@ -96,7 +96,7 @@ const removeChildReferences = (node) => {
     return nodeCopy;
 };
 
-function generateTreeElements(tree, totalSamples, maxDepth, width, height, branchLength) {
+function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, shorteningFactor = 0.9, minBranchLength = 4) {
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -134,9 +134,9 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, branc
 
         const leftChild = node.children[0];
         const rightChild = node.children[1];
-        // TODO Logarithmic?
-        const length1 = 4 + leftChild.samples / totalSamples * branchLength;
-        const length2 = 4 + rightChild.samples / totalSamples * branchLength;
+
+        const length1 = Math.max(Math.min(leftChild.samples / node.samples, shorteningFactor) * node.length, minBranchLength);
+        const length2 = Math.max(Math.min(rightChild.samples / node.samples, shorteningFactor) * node.length, minBranchLength);
 
         const angle1 = node.angle - Math.abs(leftChild.samples / node.samples - 1);
         const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
@@ -149,8 +149,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, branc
         }
     }
 
-    // Start parameters: Index=0; starting point at 500,600 (middle of bottom line); 0° angle; 100px long; no parent branch
-    const baseNode = addBranchInformation(tree.baseNode, 0, width/2, height, 0, branchLength, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, 0, width/2, height, 0, trunkLength, 0, null);
     branch(baseNode);
 
     const sortBySamples = (a,b) => {

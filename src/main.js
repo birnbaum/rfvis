@@ -5,7 +5,7 @@ import {drawForest} from "./draw_forest.js";
 import "../scss/style.scss"
 
 (async function() {
-    const forest = await (await fetch("http://localhost:3000/data")).json();
+    const forest = await (await fetch(window.location.origin + "/data")).json();
 
     const PADDING = 12;  // Hardcoded for now;
 
@@ -33,7 +33,6 @@ import "../scss/style.scss"
     let leafColor = "IMPURITY";
 
 	function updateTreeVisualization() {
-	    console.log(forest.trees[treeId])
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
