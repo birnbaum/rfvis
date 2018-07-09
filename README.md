@@ -12,6 +12,8 @@ To install all required project dependencies run:
 $ npm install
 ```
 
+The web-based GUI is currently only tested on Google Chrome.
+
 ### Build
 
 To build the project run:

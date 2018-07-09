@@ -11,9 +11,10 @@ function readDataFolder(args) {
 
     const treeFileContentPromises = {};
     for (const file of fs.readdirSync(dataPath)) {
-        if (!file.startsWith("tree")) continue;
-        const id = Number.parseInt(file.split(".")[0].split("_")[1]);
-        treeFileContentPromises[id] = fs_readFile(path.join(dataPath, file), "utf8");
+        if (file.startsWith("tree") && file.endsWith(".txt")) {
+            const id = Number.parseInt(file.split(".")[0].split("_")[1]);
+            treeFileContentPromises[id] = fs_readFile(path.join(dataPath, file), "utf8");
+        }
     }
     return Promise.all(Object.values(treeFileContentPromises))
         .then(treeFileContents => ({forestFileContent, treeFileContents}));

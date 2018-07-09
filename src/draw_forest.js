@@ -32,13 +32,33 @@ function drawForest({
     var y2 = 0;
     var x2 = 0;
     //var y2 = distmat(1,2);
-    
+
+    const mockedForest = [
+        {x: 21, y: 8, strength: 0.5},
+        {x: 31, y: 42, strength: 0.5},
+        {x: 13, y: 50, strength: 0.77},
+        {x: 48, y: 54, strength: 0.5},
+        {x: 46, y: 88, strength: 0.3},
+        {x: 9, y: 32, strength: 0.45},
+        {x: 75, y: 77, strength: 0.1},
+        {x: 42, y: 36, strength: 1},
+        {x: 53, y: 18, strength: 0.5},
+        {x: 89, y: 49, strength: 0.28},
+    ];
 
     // Draw trees
     svg.selectAll("circle")
-        .data([32, 57, 112])
+        .data(mockedForest)
         .enter().append("circle")
-        .attr("cy", 60)
-        .attr("cx", (d, i) => i * 100 + 30)
-        .attr("r", d => Math.sqrt(d));
+        .attr("cy", d => d.y * 3)
+        .attr("cx", d => d.x * 3)
+        .attr("r", d => Math.sqrt(d.strength / Math.PI) * 10 + 5)
+        .style("fill", d => treeColor(d));
+}
+
+function treeColor(tree) {
+        return d3.scaleLinear()
+            .domain([1, 0])
+            .range(["green", "red"])
+            (tree.strength);
 }

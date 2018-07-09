@@ -260,14 +260,10 @@ function branchThickness(branch, type, totalSamples) {
 
 function leafColor(type, leaf) {
     if (type === "IMPURITY") {
-        if (leaf.impurity > 0.5) {
-            return "red";
-        } else {
-            return d3.scaleLinear()
-                .domain([0, 0.5])
-                .range(["green", "red"])
-                (leaf.impurity);
-        }
+        return d3.scaleLinear()
+            .domain([0, 0.5, 1])
+            .range(["green", "red", "red"])
+            (leaf.impurity);
     }
     if (type === "BEST_CLASS") {
         return d3.rgb(...leaf.bestClass.color);
