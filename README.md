@@ -117,8 +117,3 @@ Note that many files are used by the frontend _and_ backend, e.g. the logic for 
 * [Bulma](https://bulma.io/) - Lightweight CSS Framework
 * [Express](https://expressjs.com/) - Web Application Framework
 * [rollup.js](https://rollupjs.org/) - Module Bundler / Build Tool
-
-
-## To Do
-- Better GUI Screenshot
-- Link Research Paper
