@@ -113,6 +113,8 @@ Note that many files are used by the frontend _and_ backend, e.g. the logic for 
 ## Built With
 
 * [D3.js](https://d3js.org/) - Data Visualization Library
+* [math.js](http://mathjs.org/) - Math Library used for Matrix Computations
+* [NumJs](https://github.com/nicolaspanel/numjs) - Math Library used for 2D Convolutions
 * [Yargs](https://github.com/yargs/yargs) - Command Line Parsing Library
 * [Bulma](https://bulma.io/) - Lightweight CSS Framework
 * [Express](https://expressjs.com/) - Web Application Framework

@@ -1,6 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "util";
+import * as math from "mathjs";
+import nj from "numjs";
 const fs_readFile = util.promisify(fs.readFile);
 
 
@@ -52,12 +54,14 @@ export default async function createForest(args) {
         }
     });
 
-    return {
+    const forest = {
         strength: totalStrength,
         totalSamples: trees[0].baseNode.samples,
         correlationMatrix: correlationMatrix,
         trees: trees
-    }
+    };
+
+    return add2dPositions(forest)
 }
 
 /**
@@ -188,4 +192,91 @@ function getBestClass(classes) {
         }
     }
     return classes[indexOfBest];
+}
+
+function add2dPositions(forest) {
+    const gaussian = math.matrix([[0.058750, 0.100669, 0.162991, 0.249352, 0.360448, 0.492325,
+        0.635391, 0.774837, 0.892813, 0.972053, 1.000000, 0.972053,
+        0.892813, 0.774837, 0.635391, 0.492325, 0.360448, 0.249352,
+        0.162991, 0.100669, 0.058750]]);
+
+    const argmax = arr => arr.indexOf(Math.max(...arr));
+
+    console.time('Computing forest map');
+
+    // ++++++++++++++++++++++
+
+    const treeSim = forest.correlationMatrix;
+    const treeStrength = forest.trees.map(tree => tree.strength);
+
+    // produce toy data
+    const numTrees = treeStrength.length;
+
+    // init output
+    let position = math.zeros(2, numTrees);
+
+    // init voting spaces
+    // init voting spaces
+    let voting = math.zeros(100, 100, numTrees);
+
+    // some pre-calculations
+    const x = math.matrix(Array(100).fill().map(el => math.range(1, 101)));
+    const y = math.transpose(x);
+    const g = math.multiply(math.transpose(gaussian), gaussian);
+
+    for (let t1 = 0; t1 < numTrees; t1++) {
+
+        // find tree with current maximal strength
+        const i = argmax(treeStrength);
+        // if its the first tree, define position as center
+        if (t1 === 0) {
+            position = math.subset(position, math.index([0,1], i), [[50],[50]])
+        } else {
+            // else get current voting space of this tree
+            const tmp = math.subset(voting, math.index(math.range(0, 100), math.range(0, 100), i));
+            // find maximum in this space
+            const pos = argmax(math.flatten(tmp)._data);
+
+            // use one random entry of maxima as position
+            // pos=pos(ceil(rand*numel(pos)));
+
+            const ix = pos / 100;
+            const iy = pos % 100;
+            position = math.subset(position, math.index([0, 1], i), [[ix], [iy]])
+        }
+        for (let t = 0; t < numTrees; t++) {
+            // skip current tree
+            if (t === i) {
+                continue;
+            }
+
+            // transform correlation into distance
+            const d = (1-treeSim[i][t])/(1-0.5)*25+10;
+
+            // produce voting image
+            const r = math.sqrt(math.add(math.dotPow(math.subtract(x, position._data[0][i]), 2), math.dotPow(math.subtract(y, position._data[1][i]), 2)))
+            // tmp = conv2(double(abs(r-d)<5),g,'same');
+            const votingImage = math.number(math.smaller(math.abs(math.subtract(r, d)), 5))
+
+            const paddedVotingImage = math.subset(math.zeros(120,120), math.index(math.range(10, 110), math.range(10, 110)), votingImage);
+
+            const tmp = math.matrix(nj.array(paddedVotingImage._data).convolve(nj.array(g._data)).tolist());
+
+            // vote
+            const oldVotingImage = math.subset(voting, math.index(math.range(0, 100), math.range(0, 100), t));
+            const newVotingImage = math.add(oldVotingImage, math.reshape(tmp, [100,100,1]));
+            voting = math.subset(voting, math.index(math.range(0, 100), math.range(0, 100), t), newVotingImage)
+        }
+        // "delete" current tree from list
+        treeStrength[i] = 0;
+    }
+    console.timeEnd('Computing forest map');
+
+    forest.trees = forest.trees.map((tree, i) => {
+        const c = math.subset(position, math.index([0, 1], i))._data;
+        tree.x = c[0][0];
+        tree.y = c[1][0];
+        return tree;
+    });
+    return forest;
 }
