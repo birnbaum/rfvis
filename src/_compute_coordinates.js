@@ -1,7 +1,19 @@
-import nj from "numjs";
-import * as math from "mathjs";
+/**
+ * This script contains the coordinate algorithm and is meant to be called in a child process,
+ * as it is computationally expensive and would otherwise block the event loop.
+ */
 
-export {computeForestMap};
+const nj = require("numjs");
+const math = require("mathjs");
+
+/**
+ * This listener is invoked from the main process and sends back the result once the computation is done
+ */
+process.on("message", forest => {
+    const forestMap = computeForestMap({forest});
+    process.send(forestMap);
+});
+
 
 // There is no straightforward way to compute a gaussian distribution in Javascript, therefore this hardcoded array
 const GAUSSIAN_1D = nj.array([[0.058750, 0.100669, 0.162991, 0.249352, 0.360448,
@@ -12,6 +24,15 @@ const GAUSSIAN_2D = nj.dot(GAUSSIAN_1D.T, GAUSSIAN_1D);
 const argmax = arr => arr.indexOf(Math.max(...arr));
 
 /**
+ * Object returned by computeForestMap()
+ * @typedef {Object} TreePosition
+ * @property {number} strength - Strength of the tree. Between 0 and 1
+ * @property {number} x - X coordinate of the tree. Between 0 and N
+ * @property {number} y - Y coordinate of the tree. Between 0 and N
+ */
+
+/**
+ *
  * Computes the 2D spacial coordinates of a given forest
  *
  * This is an implementation of the algorithm proposed by:
@@ -21,28 +42,26 @@ const argmax = arr => arr.indexOf(Math.max(...arr));
  * To understand the options, consult this paper.
  *
  * @param {Object} forest - Forest object as returned by parser.createForest()
- * @param {number} [rmax] - Max distance
- * @param {number} [rmin] - Min distance
- * @param {number} [width] - Width of the ring around each tree used to compute the voting space
- * @param {number} [N] - Length & Width of the space where the trees shall be placed
- * @returns {Object}[] trees - List of trees on map
-            {number} tree.strength - Strength of the tree. Between 0 and 1
-            {number} tree.x - X coordinate of the tree. Between 0 and N
-            {number} tree.y - Y coordinate of the tree. Between 0 and N
+ * @param {number} [rmax = 50] - Max distance
+ * @param {number} [rmin = 10] - Min distance
+ * @param {number} [width = 5] - Width of the ring around each tree used to compute the voting space
+ * @param {number} [N = 100] - Length & Width of the space where the trees shall be placed
+ * @returns {TreePosition[]} - List of tree positions for all trees in the forest
  */
-function computeForestMap(forest, {
+function computeForestMap({
+    forest,
     rmax = 50,
     rmin = 10,
     width = 5,
     N = 100
 }) {
     // some pre-calculations
-    const X = math.matrix(Array(N).fill(null).map(el => math.range(1, N + 1)));
+    const X = math.matrix(Array(N).fill(null).map(() => math.range(1, N + 1)));
     const Y = math.transpose(X);
 
     const treeStrengths = forest.trees.map(tree => tree.strength);
 
-    // Init empty output matrix (x and y coordiates for each tree)
+    // Init empty output matrix (x and y coordinates for each tree)
     let position = math.zeros(2, treeStrengths.length);
 
     // Init empty NxN voting spaces for each tree
@@ -54,7 +73,7 @@ function computeForestMap(forest, {
         const i = argmax(treeStrengths);
         // if its the first tree, define position as center
         if (t1 === 0) {
-            position = math.subset(position, math.index([0,1], i), [[N / 2],[N / 2]])
+            position = math.subset(position, math.index([0, 1], i), [[N / 2], [N / 2]])
         } else {
             // else get current voting space of this tree
             const tmp = math.subset(votingMatrices, math.index(math.range(0, N), math.range(0, N), i));

@@ -1,17 +1,43 @@
 import yargs from "yargs";
 import express from "express";
-import createForest from "./src/parser.js";
+import {createForest} from "./src/parser.js";
 import * as path from "path";
 import {drawTree} from "./src/draw_tree";
 import D3Node from "d3-node";
 import * as fs from "fs";
+import * as child_process from "child_process";
+
 
 async function runGui(args) {
     const forest = await createForest(args);
-    const app = express();
+
+    // As the positions are computationally expensive, we start the calculation in a subprocess
+    // and offer the HTTP endpoint "/positions" to poll the result periodically
+    let positions = null;
+    const computation_process = child_process.fork(path.join(__dirname, "_compute_coordinates.js"), [], {
+        execArgv: []  // This flag is necessary to debug child processes in Webstorm
+    });
+    computation_process.on("message", result => {
+        positions = result;
+    });
+    computation_process.on("error", console.error);
+    computation_process.send(forest);
+
+
     console.log("Starting server");
+    const app = express();
     app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
     app.get("/data", (req, res) => res.json(forest));
+    app.get("/positions", (req, res) => {
+        // If the positions are already created return them, otherwise return an Error
+        if (positions) {
+            res.json(positions);
+        } else {
+            res.status(404);
+            res.send("Still processing");
+        }
+    });
+
     app.use(express.static(path.join(__dirname, "public")));
     app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
 }

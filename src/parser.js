@@ -3,6 +3,8 @@ import * as fs from "fs";
 import * as util from "util";
 const fs_readFile = util.promisify(fs.readFile);
 
+export {createForest};
+
 
 /**
  * Reads the text files from the provided data folder
@@ -37,7 +39,7 @@ function readDataFolder(dataFolder) {
  * @param {Object} args - User provided arguments
  * @returns {Object}
  */
-export default async function createForest(args) {
+async function createForest(args) {
     const rawData = await readDataFolder(args.data);
     const forestDataParts = rawData.forestFileContent.split('\n\n');
 
