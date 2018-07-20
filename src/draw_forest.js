@@ -9,18 +9,21 @@ function drawForest({
     width = 300,
     height = 300,
 }) {
-    // Adapt SVG size
-    svg.style("width", width).style("height", height);
+    const size = Math.min(width, height);
 
-    console.log(forest.trees);
+    // Adapt SVG size
+    svg.style("width", size).style("height", size);
+
+
+    console.log(forest);
 
     // Draw trees
     svg.selectAll("circle")
         .data(forest.trees)
         .enter().append("circle")
-        .attr("cy", d => d.y * 3)
-        .attr("cx", d => d.x * 3)
-        .attr("r", d => Math.sqrt(d.strength / Math.PI) * 5 + 2)
+        .attr("cy", d => d.y / 100 * size)
+        .attr("cx", d => d.x / 100 * size)
+        .attr("r", d => Math.sqrt(d.strength / Math.PI) * 5 + 2)  // TODO adapt to size
         .style("fill", d => treeColor(d));
 }
 
