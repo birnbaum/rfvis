@@ -1,13 +1,16 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "util";
-import * as math from "mathjs";
-import nj from "numjs";
 const fs_readFile = util.promisify(fs.readFile);
 
 
-function readDataFolder(args) {
-    const dataPath = path.resolve(args.data);
+/**
+ * Reads the text files from the provided data folder
+ * @param {string} dataFolder - Folder containing the forest data text files
+ * @returns {Promise<{forestFileContent: string, treeFileContents: [string]}>}
+ */
+function readDataFolder(dataFolder) {
+    const dataPath = path.resolve(dataFolder);
     const forestFile = path.join(dataPath, "forest.txt");
     const forestFileContent = fs.readFileSync(forestFile, "utf8");
 
@@ -23,24 +26,19 @@ function readDataFolder(args) {
 }
 
 /**
- * Reads the provided txt files and construcs a forest object of the following form:
+ * Reads the provided txt files and constructs a forest object of the following form:
  *  {
  *      strength: float,
- *      correlationMatrix: [[float]],
- *      trees: [{
- *          strength: float,
- *          nodes: [
- *              [int, int, int, int, int]  // correspond to height, samples, impurity, impurityDrop, feature
- *          ]
- *      }]
+ *      totalSamples: int,
+ *      correlationMatrix: float[][],
+ *      trees: {strength: float, baseNode: InternalNode}[]
  *  }
  *
- * @param {string} summaryFile - Path to the overall summary file
- * @param {string} statisticsDirectory - Path to the directory containing the tree statistics files
+ * @param {Object} args - User provided arguments
  * @returns {Object}
  */
 export default async function createForest(args) {
-    const rawData = await readDataFolder(args);
+    const rawData = await readDataFolder(args.data);
     const forestDataParts = rawData.forestFileContent.split('\n\n');
 
     const correlationMatrix = parseCorrelationMatrix(forestDataParts[0]);
@@ -54,14 +52,12 @@ export default async function createForest(args) {
         }
     });
 
-    const forest = {
+    return {
         strength: totalStrength,
         totalSamples: trees[0].baseNode.samples,
         correlationMatrix: correlationMatrix,
-        trees: trees
+        trees: trees.slice(0, 15)
     };
-
-    return add2dPositions(forest)
 }
 
 /**
@@ -77,9 +73,9 @@ function parseCorrelationMatrix(text) {
 }
 
 /**
- * Parses a given tree statistics text file content into an internal tuple representation
+ * Parses a given tree statistics text file content into an internal Node representation
  * @param {string} text - tree statistics text
- * @returns {number[][]}
+ * @returns {InternalNode}
  */
 function parseStatisticsContent(text) {
     const lines = text.trim().split('\n').slice(2);
@@ -117,9 +113,6 @@ function parseStatisticsContent(text) {
 
     return baseNode;
 }
-
-// height;  -; 0 (==split node); size; impurity; DoI; splitting grade; #used features, list of feature IDs; fusion ID; path prediction, split point def; #scores, list of score IDs
-// 0; -; 0; 13361; 0.999982; 0.241935; 1.00015; 1, 0; 1; 2, median; 1, 2-misclass
 
 /**
  * Internal tree data structure
@@ -192,88 +185,4 @@ function getBestClass(classes) {
         }
     }
     return classes[indexOfBest];
-}
-
-function add2dPositions(forest, {
-    rmax = 50,
-    rmin = 10,
-    width = 5,
-    N = 100
-}) {
-    // There is no straightforward way to compute a gaussian distribution in Javascript, therefore this hardcoded array
-    const GAUSSIAN_1D = nj.array([[0.058750, 0.100669, 0.162991, 0.249352, 0.360448,
-        0.492325, 0.635391, 0.774837, 0.892813, 0.972053, 1.000000, 0.972053, 0.892813,
-        0.774837, 0.635391, 0.492325, 0.360448, 0.249352, 0.162991, 0.100669, 0.058750]]);
-    const GAUSSIAN_2D = nj.dot(GAUSSIAN_1D.T, GAUSSIAN_1D);
-    const argmax = arr => arr.indexOf(Math.max(...arr));
-
-    // some pre-calculations
-    const X = math.matrix(Array(N).fill(null).map(el => math.range(1, 101)));
-    const Y = math.transpose(X);
-
-
-    const treeStrengths = forest.trees.map(tree => tree.strength);
-
-    // Init empty output matrix (x and y coordiates for each tree)
-    let position = math.zeros(2, treeStrengths.length);
-
-    // Init empty NxN voting spaces for each tree
-    let votingMatrices = math.zeros(N, N, treeStrengths.length);
-
-    console.time('Computing forest map');
-    for (let t1 = 0; t1 < treeStrengths.length; t1++) {
-        // find tree with current maximal strength
-        const i = argmax(treeStrengths);
-        // if its the first tree, define position as center
-        if (t1 === 0) {
-            position = math.subset(position, math.index([0,1], i), [[N / 2],[N / 2]])
-        } else {
-            // else get current voting space of this tree
-            const tmp = math.subset(votingMatrices, math.index(math.range(0, N), math.range(0, N), i));
-            // Set the coordinates of the maximum index of the voting space
-            const pos = argmax(math.flatten(tmp).valueOf());
-            const ix = pos / N;
-            const iy = pos % N;
-            position = math.subset(position, math.index([0, 1], i), [[ix], [iy]])
-        }
-        for (let t = 0; t < treeStrengths.length; t++) {
-            // skip current tree
-            if (t === i) continue;
-
-            // transform correlation into distance
-            const distance = (1 - forest.correlationMatrix[i][t]) * rmax + rmin;
-
-            // produce voting image
-            const r = math.sqrt(
-                math.add(
-                    math.dotPow(math.subtract(X, position.valueOf()[0][i]), 2),
-                    math.dotPow(math.subtract(Y, position.valueOf()[1][i]), 2)
-                )
-            );
-            const votingImage = math.number(math.smaller(math.abs(math.subtract(r, distance)), width));
-
-            // Pad voting image with zeros to 120x120, so the convolution will return a 100x100 result
-            const paddedVotingImage = math.subset(math.zeros(N + 20, N + 20), math.index(math.range(10, N + 10), math.range(10, N + 10)), votingImage);
-            const tmp = math.matrix(nj.array(paddedVotingImage.valueOf()).convolve(GAUSSIAN_2D).tolist());
-
-            // vote
-            const oldVotingImage = math.subset(votingMatrices, math.index(math.range(0, N), math.range(0, N), t));
-            const newVotingImage = math.add(oldVotingImage, math.reshape(tmp, [N, N, 1]));
-            votingMatrices = math.subset(votingMatrices, math.index(math.range(0, N), math.range(0, N), t), newVotingImage)
-        }
-
-        // "delete" current tree from list
-        treeStrengths[i] = 0;
-    }
-    console.timeEnd('Computing forest map');
-
-    // Set coordinates
-    forest.trees = forest.trees.map((tree, i) => {
-        const coordinates = math.subset(position, math.index([0, 1], i)).valueOf();
-        tree.x = coordinates[0][0];
-        tree.y = coordinates[1][0];
-        return tree;
-    });
-    
-    return forest;
 }
