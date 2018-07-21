@@ -4,6 +4,7 @@ import {drawForest} from "./draw_forest.js";
 
 import "../scss/style.scss"
 
+
 (async function() {
     const forest = await (await fetch(window.location.origin + "/data")).json();
 
@@ -14,18 +15,10 @@ import "../scss/style.scss"
     const treeColumnWidth = d3.select("#tree-column").node().offsetWidth - 2 * PADDING;
     const leftColumnWidth = d3.select("#left-column").node().offsetWidth - 2 * PADDING;
 
-    // -----------------------
-    const forestSvg = d3.select('#forest');
-    drawForest({
-        svg: forestSvg,
-        forest: forest,
-
-        width: leftColumnWidth,
-    });
-    // -----------------------
+    // Poll forest positions until they are available
+    updateForestVisualization(forest, leftColumnWidth);
 
     const treeSvg = d3.select('#tree');
-
     let treeId = 0;
     let trunkLength = 100;
     let maxDepth = Number.MAX_SAFE_INTEGER;
@@ -105,3 +98,36 @@ import "../scss/style.scss"
         updateTreeVisualization();
     });
 })();
+
+
+/**
+ * Polls the "/positions" endpoint until the forest position computation is done and returns the results
+ */
+function updateForestVisualization(forest, size, interval = 1) {
+    const forestSvg = d3.select('#forest');
+
+    const checkCondition = (resolve, reject) => {
+        fetch(window.location.origin + "/positions")
+            .then(res => res.json())
+            .then(json => {
+                if (json.status === "DONE") {
+                    drawForest({
+                        svg: forestSvg,
+                        positions: json.positions,
+                        size: size,
+                    });
+                } else if (json.status === "PENDING") {
+                    drawForest({
+                        svg: forestSvg,
+                        positions: [],
+                        size: size,
+                    });
+                    setTimeout(checkCondition, interval * 1000, resolve, reject);
+                } else {
+                    reject(new Error("Unknown state."))
+                }
+            })
+            .catch(console.error);
+    };
+    return new Promise(checkCondition);
+}

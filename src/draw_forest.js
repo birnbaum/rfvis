@@ -4,22 +4,15 @@ export {drawForest};
 
 function drawForest({
     svg,
-    forest,
-
-    width = 300,
-    height = 300,
+    positions,
+    size = 300,
 }) {
-    const size = Math.min(width, height);
-
     // Adapt SVG size
     svg.style("width", size).style("height", size);
 
-
-    console.log(forest);
-
     // Draw trees
     svg.selectAll("circle")
-        .data(forest.trees)
+        .data(positions)
         .enter().append("circle")
         .attr("cy", d => d.y / 100 * size)
         .attr("cx", d => d.x / 100 * size)
