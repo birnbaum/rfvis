@@ -22,3 +22,9 @@ svg#forest {
 svg line:hover {
   cursor: pointer;
 }
+
+span#forest-progress {
+  position: absolute;
+  margin-left: 10px;
+  margin-top: 5px;
+}

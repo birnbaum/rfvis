@@ -31,9 +31,9 @@ async function runGui(args) {
     app.get("/positions", (req, res) => {
         // If the positions are already created return them, otherwise return an Error
         if (positions) {
-            res.json({status: "DONE", positions: positions});
+            res.json({progress: 100, positions: positions});
         } else {
-            res.json({status: "PENDING", positions: null});
+            res.json({progress: 0, positions: []});
         }
     });
 

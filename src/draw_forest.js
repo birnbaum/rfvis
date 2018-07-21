@@ -10,14 +10,24 @@ function drawForest({
     // Adapt SVG size
     svg.style("width", size).style("height", size);
 
-    // Draw trees
-    svg.selectAll("circle")
-        .data(positions)
-        .enter().append("circle")
-        .attr("cy", d => d.y / 100 * size)
-        .attr("cx", d => d.x / 100 * size)
-        .attr("r", d => Math.sqrt(d.strength / Math.PI) * 5 + 2)  // TODO adapt to size
-        .style("fill", d => treeColor(d));
+    const forestText = d3.select('#forest-progress');
+
+    // Clear forest view
+    //svg.selectAll("circle").remove();
+
+    if (positions.length > 0) {
+        forestText.remove();
+        // Draw trees
+        svg.selectAll("circle")
+            .data(positions)
+            .enter().append("circle")
+            .attr("cy", d => d.y / 100 * size)
+            .attr("cx", d => d.x / 100 * size)
+            .attr("r", d => Math.sqrt(d.strength / Math.PI) * 5 + 2)  // TODO adapt to size
+            .style("fill", d => treeColor(d));
+    } else {
+        forestText.text("Computing forest positions...");
+    }
 }
 
 function treeColor(tree) {

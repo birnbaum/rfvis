@@ -110,21 +110,13 @@ function updateForestVisualization(forest, size, interval = 1) {
         fetch(window.location.origin + "/positions")
             .then(res => res.json())
             .then(json => {
-                if (json.status === "DONE") {
-                    drawForest({
-                        svg: forestSvg,
-                        positions: json.positions,
-                        size: size,
-                    });
-                } else if (json.status === "PENDING") {
-                    drawForest({
-                        svg: forestSvg,
-                        positions: [],
-                        size: size,
-                    });
+                drawForest({
+                    svg: forestSvg,
+                    positions: json.positions,
+                    size: size,
+                });
+                if (json.progress !== 100) {
                     setTimeout(checkCondition, interval * 1000, resolve, reject);
-                } else {
-                    reject(new Error("Unknown state."))
                 }
             })
             .catch(console.error);
