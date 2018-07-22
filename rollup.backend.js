@@ -4,7 +4,7 @@ const {dependencies, devDependencies} = JSON.parse(fs.readFileSync("./package.js
 const external = ["fs", "path", "util", "child_process", ...Object.keys(dependencies), ...Object.keys(devDependencies)];
 
 export default {
-    input: "./index.js",
+    input: "./src/index.js",
     output: {
         file: "./dist/index.js",
         format: "cjs",

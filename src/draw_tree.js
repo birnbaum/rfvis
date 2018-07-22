@@ -1,9 +1,13 @@
 import * as d3 from "d3";
-import {drawPie} from "./pie.js";
-import {branchTemplate, leafTemplate} from "./html-templates.js";
+import {drawPie} from "./draw_pie.js";
+import {branchTemplate, leafTemplate} from "./html_templates.js";
 
 export {drawTree, resetTree};
 
+/**
+ * Draws the visualization of a binary decision tree of the provided SVG
+ * @param {Object} options - For details see generateTreeElements()
+ */
 function drawTree(options) {
     const {
         svg,
@@ -69,6 +73,10 @@ function drawTree(options) {
     }
 }
 
+/**
+ * Resets all elements currently plotted in the provided SVG
+ * @param svg {Selection} - D3 selection of the target SVG
+ */
 function resetTree(svg) {
     svg.selectAll('line').remove();
     svg.selectAll('circle').remove();
@@ -90,13 +98,21 @@ const addBranchInformation = (treeNode, index, x, y, angle, length, depth, paren
     })
 };
 
-const removeChildReferences = (node) => {
-    const nodeCopy = Object.assign({}, node);
-    delete nodeCopy.children;
-    return nodeCopy;
-};
-
-function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, shorteningFactor = 0.9, minBranchLength = 4) {
+/**
+ * Computes all the elements necessary to plot a single binary decision tree.
+ * @param tree {Tree} - Tree object which shall be processed
+ * @param totalSamples {number} - Number of samples the tree was fitted on
+ * @param maxDepth {number} - Max depth until the tree shall be rendered. Cut of branches are displayed as pie charts
+ * @param width {number} - Width of the SVG
+ * @param height {number} - Height of the SVG
+ * @param trunkLength {number} - Length of the trunk which resembles the base node. All other branch lengths depend on
+ *      this length.
+ * @param maxShorteningFactor {number} - Maximum shortening factor of the branch length of two successive branches
+ * @param minBranchLength {number} - Minimum branch length
+ * @returns {{branches: Array, leafs: Array, bunches: Array}}
+ */
+function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, maxShorteningFactor = 0.9,
+    minBranchLength = 4) {
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -104,7 +120,6 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
     // recursive function that adds branch objects to "branches"
     function branch(node) {
 
-        //branches.push(removeChildReferences(node));
         branches.push(node);
 
         if (node.depth === maxDepth - 1) {
@@ -135,8 +150,8 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
         const leftChild = node.children[0];
         const rightChild = node.children[1];
 
-        const length1 = Math.max(Math.min(leftChild.samples / node.samples, shorteningFactor) * node.length, minBranchLength);
-        const length2 = Math.max(Math.min(rightChild.samples / node.samples, shorteningFactor) * node.length, minBranchLength);
+        const length1 = Math.max(Math.min(leftChild.samples / node.samples, maxShorteningFactor) * node.length, minBranchLength);
+        const length2 = Math.max(Math.min(rightChild.samples / node.samples, maxShorteningFactor) * node.length, minBranchLength);
 
         const angle1 = node.angle - Math.abs(leftChild.samples / node.samples - 1);
         const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
@@ -163,6 +178,11 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
     return {branches, leafs, bunches};
 }
 
+/**
+ * Walks the entire tree and returns all leaf nodes
+ * @param node {InternalNode} - Base node of the tree
+ * @returns {LeafNode[]} - List of all lead nodes of the tree
+ */
 function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {
@@ -177,13 +197,15 @@ function getLeafNodes(node) {
     return leafNodes;
 }
 
-function getLeafWeightedAverage(node) {
-    const leafNodes = getLeafNodes(node);
-    const leafImpuritiesAndSamples = leafNodes.map(leaf => ({impurity: leaf.impurity, samples: leaf.samples}));
-    const weightedSum = leafImpuritiesAndSamples.reduce((acc, current) => acc + current.impurity * current.samples, 0);
-    return weightedSum / leafNodes.length / node.samples;
-}
-
+/**
+ * Computes a histogram over the samples contained the leaf nodes of a sub branch
+ * @param node {InternalNode} - Base node of the sub branch
+ * @param type {string} - Type of property over which the histogram shall be computed.
+ *      Can be either IMPURITY or BEST_CLASS.
+ * @param weighted {boolean} - If false al leafs have the same cardinality. If true the leafs are weighted by the number
+ *      of contained samples.
+ * @returns {{value: number, color: string, sortKey: (number|string)}[]} - See drawPie() for more information
+ */
 function getHistogram(node, type, weighted) {
     const leafNodes = getLeafNodes(node);
     const histObj = {};
@@ -223,7 +245,8 @@ function getHistogram(node, type, weighted) {
     }
 }
 
-/* ------- Tree mapping functions ------- */
+
+/* --------------------- Mapping functions for properties on colors/thickness/size --------------------- */
 
 function branchColor(type, branch) {
     if (type === "IMPURITY") {

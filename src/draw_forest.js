@@ -2,6 +2,12 @@ import * as d3 from "d3";
 
 export {drawForest};
 
+/**
+ * Draws a forest on the provided SVG if it contains any trees or prints "Computing forest positions..." otherwise
+ * @param svg {Selection} - D3 selection of the target SVG
+ * @param positions {TreePosition[]} - List of tree positions as returned by computeForestMap()
+ * @param size {number} - Height and width of the target SVG
+ */
 function drawForest({
     svg,
     positions,

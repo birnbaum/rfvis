@@ -28,16 +28,26 @@ function readDataFolder(dataFolder) {
 }
 
 /**
- * Reads the provided txt files and constructs a forest object of the following form:
- *  {
- *      strength: float,
- *      totalSamples: int,
- *      correlationMatrix: float[][],
- *      trees: {strength: float, baseNode: InternalNode}[]
- *  }
+ * Internal representation of a binary decision tree
+ * @typedef {Object} Tree
+ * @property {number} strength - Strength of the tree. Between 0 and 1
+ * @property {InternalNode} baseNode - X coordinate of the tree. Between 0 and N
+ */
+
+/**
+ * Internal representation of a forest
+ * @typedef {Object} Forest
+ * @property {number} strength - Strength of the forest. Between 0 and 1
+ * @property {number} totalSamples - Number of samples the forest was fitted on
+ * @property {number[][]} correlationMatrix - Correlation matrix of all the trees in the forest
+ * @property {Tree[]} trees - List of all the trees in the forest
+ */
+
+/**
+ * Reads and parses the provided txt files and returns an internal representation of the data
  *
  * @param {Object} args - User provided arguments
- * @returns {Object}
+ * @returns {Forest}
  */
 async function createForest(args) {
     const rawData = await readDataFolder(args.data);

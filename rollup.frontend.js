@@ -4,9 +4,9 @@ import copy from "rollup-plugin-copy";
 import sass from "rollup-plugin-scss";
 
 export default {
-    input: "./src/main.js",
+    input: "./src/frontend.js",
     output: {
-        file: "./dist/public/js/main.js",
+        file: "./dist/public/js/frontend.js",
         format: "iife",
         sourcemap: true
     },

@@ -4,7 +4,11 @@ import {drawForest} from "./draw_forest.js";
 
 import "../scss/style.scss"
 
-
+/**
+ * Main frontend function which is executed on load.
+ *
+ * Initializes the tree and forest views and all UI element listeners + keyboard shortcuts
+ */
 (async function() {
     const forest = await (await fetch(window.location.origin + "/data")).json();
 

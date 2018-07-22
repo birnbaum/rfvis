@@ -1,75 +1,15 @@
 import yargs from "yargs";
 import express from "express";
-import {createForest} from "./src/parser.js";
+import {createForest} from "./parser.js";
 import * as path from "path";
-import {drawTree} from "./src/draw_tree";
+import {drawTree} from "./draw_tree";
 import D3Node from "d3-node";
 import * as fs from "fs";
 import * as child_process from "child_process";
 
-
-async function runGui(args) {
-    const forest = await createForest(args);
-
-    // As the positions are computationally expensive, we start the calculation in a subprocess
-    // and offer the HTTP endpoint "/positions" to poll the result periodically
-    let positions = null;
-    const computation_process = child_process.fork(path.join(__dirname, "_compute_coordinates.js"), [], {
-        execArgv: []  // This flag is necessary to debug child processes in Webstorm
-    });
-    computation_process.on("message", result => {
-        positions = result;
-    });
-    computation_process.on("error", console.error);
-    computation_process.send(forest);
-
-
-    console.log("Starting server");
-    const app = express();
-    app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
-    app.get("/data", (req, res) => res.json(forest));
-    app.get("/positions", (req, res) => {
-        // If the positions are already created return them, otherwise return an Error
-        if (positions) {
-            res.json({progress: 100, positions: positions});
-        } else {
-            res.json({progress: 0, positions: []});
-        }
-    });
-
-    app.use(express.static(path.join(__dirname, "public")));
-    app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
-}
-
-async function runCli(args) {
-    const forest = await createForest(args);
-    const outDir = args.out ? path.resolve(args.out) : __dirname;
-    if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
-
-    for (const [index, tree] of forest.trees.entries()) {
-        const d3n = new D3Node();
-        const svg = d3n.createSVG(args.width, args.height).append("g");
-        drawTree({
-            svg: svg,
-            tree: tree,
-            totalSamples: forest.totalSamples,
-
-            width: args.width,
-            height: args.height,
-            trunkLength: args.trunkLength,
-
-            maxDepth: args.depth,
-
-            branchColor: args.branchColor.toUpperCase(),
-            leafColor: args.leafColor.toUpperCase()
-        });
-        const filePath = path.join(outDir, `tree-${index}.svg`);
-        fs.writeFile(filePath, d3n.svgString(), () => {
-            console.log(`>> Exported "${filePath}"`);
-        });
-    }
-}
-
+/**
+ * This function initializes all CLI commands and processes them accordingly when the application is called
+ */
 const argv = yargs
     .command(
         "cli <data>",
@@ -157,4 +97,72 @@ const argv = yargs
 
 if (!argv._[0]) {
     yargs.showHelp();
+}
+
+/**
+ * Starts a webserver serving the GUI
+ */
+async function runGui(args) {
+    const forest = await createForest(args);
+
+    // As the positions are computationally expensive, we start the calculation in a subprocess
+    // and offer the HTTP endpoint "/positions" to poll the result periodically
+    let positions = null;
+    const computation_process = child_process.fork(path.join(__dirname, "_compute_coordinates.js"), [], {
+        execArgv: []  // This flag is necessary to debug child processes in Webstorm
+    });
+    computation_process.on("message", result => {
+        positions = result;
+    });
+    computation_process.on("error", console.error);
+    computation_process.send(forest);
+
+
+    console.log("Starting server");
+    const app = express();
+    app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
+    app.get("/data", (req, res) => res.json(forest));
+    app.get("/positions", (req, res) => {
+        // If the positions are already created return them, otherwise return an Error
+        if (positions) {
+            res.json({progress: 100, positions: positions});
+        } else {
+            res.json({progress: 0, positions: []});
+        }
+    });
+
+    app.use(express.static(path.join(__dirname, "public")));
+    app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
+}
+
+/**
+ * Produces a SVG file for each tree in the forest and stores them at the provided "out" folder
+ */
+async function runCli(args) {
+    const forest = await createForest(args);
+    const outDir = args.out ? path.resolve(args.out) : __dirname;
+    if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
+
+    for (const [index, tree] of forest.trees.entries()) {
+        const d3n = new D3Node();
+        const svg = d3n.createSVG(args.width, args.height).append("g");
+        drawTree({
+            svg: svg,
+            tree: tree,
+            totalSamples: forest.totalSamples,
+
+            width: args.width,
+            height: args.height,
+            trunkLength: args.trunkLength,
+
+            maxDepth: args.depth,
+
+            branchColor: args.branchColor.toUpperCase(),
+            leafColor: args.leafColor.toUpperCase()
+        });
+        const filePath = path.join(outDir, `tree-${index}.svg`);
+        fs.writeFile(filePath, d3n.svgString(), () => {
+            console.log(`>> Exported "${filePath}"`);
+        });
+    }
 }
