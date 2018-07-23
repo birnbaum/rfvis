@@ -2,7 +2,7 @@
  * This module provides functions to change the content of the info sidebar
  */
 
-export {showForestAndTreeInfo, branchMouseover, leafMouseover, mouseout};
+export {showForestAndTreeInfo, treeMouseover, branchMouseover, leafMouseover, mouseout};
 
 const $forest = $("#forest-info");
 const $hover = $("#hover-info");
@@ -11,6 +11,11 @@ function showForestAndTreeInfo(forest, treeId) {
     $forest.empty();
     $forest.append(forestAndTreeTemplate(forest, treeId));
     $forest.show();
+}
+
+function treeMouseover(tree) {
+    $forest.hide(0);
+    $hover.append(treeTemplate(tree));
 }
 
 function branchMouseover(branch) {
@@ -49,6 +54,23 @@ function forestAndTreeTemplate(forest, treeId) {
         <tr>
           <td>Tree Strength</td>
           <td>${forest.trees[treeId].strength}</td>
+        </tr>
+    </table>`;
+}
+
+function treeTemplate(tree) {
+    return `<table class="table is-fullwidth">
+        <tr>
+          <td style="font-weight: bold">Tree</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Tree</td>
+          <td>#${tree.id}</td>
+        </tr>
+        <tr>
+          <td>Tree Strength</td>
+          <td>${tree.strength}</td>
         </tr>
     </table>`;
 }

@@ -64,6 +64,7 @@ import {showForestAndTreeInfo} from "./frontend_sidebar";
             treeId++;
         }
         updateTreeVisualization();
+        showForestAndTreeInfo(forest, treeId);
     }
 
     function previousTree() {
@@ -73,6 +74,7 @@ import {showForestAndTreeInfo} from "./frontend_sidebar";
             treeId--;
         }
         updateTreeVisualization();
+        showForestAndTreeInfo(forest, treeId);
     }
 
     document.onkeyup = function(e) {
@@ -120,9 +122,15 @@ function updateForestVisualization(forest, size, interval = 1) {
         fetch(window.location.origin + "/positions")
             .then(res => res.json())
             .then(json => {
+                const trees = forest.trees.map((tree, i) => {
+                    tree.id = i + 1;
+                    tree.x = json.positions[i].x;
+                    tree.y = json.positions[i].y;
+                    return tree;
+                });
                 drawForest({
                     svg: forestSvg,
-                    positions: json.positions,
+                    trees: trees,
                     size: size,
                 });
                 if (json.progress !== 100) {

@@ -1,16 +1,17 @@
 import * as d3 from "d3";
+import {treeMouseover, mouseout} from "./frontend_sidebar";
 
 export {drawForest};
 
 /**
  * Draws a forest on the provided SVG if it contains any trees or prints "Computing forest positions..." otherwise
  * @param svg {Selection} - D3 selection of the target SVG
- * @param positions {TreePosition[]} - List of tree positions as returned by computeForestMap()
+ * @param trees {Tree[]} - List of trees extended with coordinates
  * @param size {number} - Height and width of the target SVG
  */
 function drawForest({
     svg,
-    positions,
+    trees,
     size = 300,
 }) {
     // Adapt SVG size
@@ -21,16 +22,18 @@ function drawForest({
     // Clear forest view
     //svg.selectAll("circle").remove();
 
-    if (positions.length > 0) {
+    if (trees.length > 0) {
         forestText.remove();
         // Draw trees
         svg.selectAll("circle")
-            .data(positions)
+            .data(trees)
             .enter().append("circle")
             .attr("cy", d => d.y / 100 * size)
             .attr("cx", d => d.x / 100 * size)
-            .attr("r", d => Math.sqrt(d.strength / Math.PI) * 5 + 2)  // TODO adapt to size
-            .style("fill", d => treeColor(d));
+            .attr("r", d => /* Math.sqrt(d.strength / Math.PI ) * 5 + */ size / 50)
+            .style("fill", d => treeColor(d))
+            .on("mouseover", treeMouseover)
+            .on("mouseout", mouseout);
     } else {
         forestText.text("Computing forest positions...");
     }
