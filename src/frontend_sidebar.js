@@ -2,7 +2,7 @@
  * This module provides functions to change the content of the info sidebar
  */
 
-export {updateForestAndTreeInfo, treeMouseover, branchMouseover, leafMouseover, mouseout};
+export {updateForestAndTreeInfo, treeMouseover, pieMouseover, branchMouseover, leafMouseover, mouseout};
 
 const $forest = $("#forest-info");
 const $hover = $("#hover-info");
@@ -17,6 +17,11 @@ function updateForestAndTreeInfo(forest, treeId) {
 function treeMouseover(tree) {
     $forest.hide(0);
     $hover.append(treeTemplate(tree));
+}
+
+function pieMouseover(bunch, classHistogram) {
+    $forest.hide(0);
+    $hover.append(pieTemplate(bunch, classHistogram));
 }
 
 function branchMouseover(branch) {
@@ -76,6 +81,34 @@ function treeTemplate(tree) {
     </table>`;
 }
 
+function pieTemplate(bunch, classHistogram) {
+    console.log(classHistogram)
+    const classNames = classHistogram.reduce((accumulator, current) => {
+        return accumulator + `<td>${current.sortKey}</td>`
+    }, "");
+    const classFreq = classHistogram.reduce((accumulator, current) => {
+        return accumulator + `<td>${current.value}</td>`
+    }, "");
+    const classColors = classHistogram.reduce((accumulator, current) => {
+        return accumulator + `<td><div style="background: ${current.color}; width: 15px; height: 10px;"></div></td>`
+    }, "");
+    return `<table class="table is-fullwidth">
+        <tr>
+          <td style="font-weight: bold">Consolidation Node</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Height</td>
+          <td>${bunch.baseNode.height}</td>
+        </tr>
+        <tr>
+          <td>Samples</td>
+          <td>${bunch.samples}</td>
+        </tr>
+    </table>
+    ${getClassFrequencyTable(classNames, classFreq, classColors)}`;
+}
+
 function branchTemplate(branch) {
     return `<table class="table is-fullwidth">
         <tr>
@@ -126,7 +159,11 @@ function leafTemplate(leaf) {
           <td>${leaf.impurity}</td>
         </tr>
     </table>
-    <table class="table is-fullwidth">
+    ${getClassFrequencyTable(classNames, classFreq, classColors)}`;
+}
+
+function getClassFrequencyTable(classNames, classFreq, classColors) {
+    return `<table class="table is-fullwidth">
         <tr style="text-transform: uppercase; font-size: 12px">
           ${classNames}
         </tr>

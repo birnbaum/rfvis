@@ -69,7 +69,13 @@ function drawTree(options) {
         .on("mouseout", mouseout);
 
     for (const bunch of bunches) {
-        drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), getHistogram(bunch.baseNode, leafColorType, true));
+        drawPie(
+            svg,
+            bunch,
+            leafSize(bunch, "SAMPLES", totalSamples),
+            getHistogram(bunch.baseNode, leafColorType, true),
+            getHistogram(bunch.baseNode, "BEST_CLASS", true)  // TODO inefficient
+        );
     }
 }
 
