@@ -3,7 +3,7 @@ import {drawTree, resetTree} from "./draw_tree.js";
 import {drawForest} from "./draw_forest.js";
 
 import "../scss/style.scss"
-import {showForestAndTreeInfo} from "./frontend_sidebar";
+import {updateForestAndTreeInfo} from "./frontend_sidebar";
 
 /**
  * Main frontend function which is executed on load.
@@ -27,11 +27,11 @@ import {showForestAndTreeInfo} from "./frontend_sidebar";
     let branchColor = "IMPURITY";
     let leafColor = "IMPURITY";
 
-	function updateTreeVisualization() {
+	function updateTreeVisualization(id) {
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
-            tree: forest.trees[treeId],
+            tree: forest.trees[id],
             totalSamples: forest.totalSamples,
 
             width: treeColumnWidth,
@@ -43,38 +43,37 @@ import {showForestAndTreeInfo} from "./frontend_sidebar";
             branchColor: branchColor,
             leafColor: leafColor,
 		});
+        updateForestAndTreeInfo(forest, id);  // Update sidebar info
+        treeId = id;
 	}
 
     // Init forest view
-    updateForestVisualization(forest, leftColumnWidth);
+    updateForestVisualization(forest, leftColumnWidth, updateTreeVisualization);
 
 	// Init tree view with first tree
-	updateTreeVisualization();
-
-	// Init side bar forest information
-    showForestAndTreeInfo(forest, treeId);
+	updateTreeVisualization(treeId);
 
 
 	/* --- UI Element & Keyboard Bindings for Previous/Next Tree --- */
 
     function nextTree() {
+        let id;
         if (treeId === forest.trees.length - 1) {
-            treeId = 0;
+            id = 0;
         } else {
-            treeId++;
+            id = treeId + 1;
         }
-        updateTreeVisualization();
-        showForestAndTreeInfo(forest, treeId);
+        updateTreeVisualization(id);
     }
 
     function previousTree() {
+        let id;
         if (treeId === 0) {
-            treeId = forest.trees.length - 1;
+            id = forest.trees.length - 1;
         } else {
-            treeId--;
+            id = treeId - 1;
         }
-        updateTreeVisualization();
-        showForestAndTreeInfo(forest, treeId);
+        updateTreeVisualization(id);
     }
 
     document.onkeyup = function(e) {
@@ -115,7 +114,7 @@ import {showForestAndTreeInfo} from "./frontend_sidebar";
 /**
  * Polls the "/positions" endpoint until the forest position computation is done and returns the results
  */
-function updateForestVisualization(forest, size, interval = 1) {
+function updateForestVisualization(forest, size, updateFunction, interval = 1) {
     const forestSvg = d3.select('#forest');
 
     const checkCondition = (resolve, reject) => {
@@ -126,6 +125,7 @@ function updateForestVisualization(forest, size, interval = 1) {
                     tree.id = i + 1;
                     tree.x = json.positions[i].x;
                     tree.y = json.positions[i].y;
+                    tree.updateVisualization = () => updateFunction(i);
                     return tree;
                 });
                 drawForest({

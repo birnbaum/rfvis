@@ -2,12 +2,13 @@
  * This module provides functions to change the content of the info sidebar
  */
 
-export {showForestAndTreeInfo, treeMouseover, branchMouseover, leafMouseover, mouseout};
+export {updateForestAndTreeInfo, treeMouseover, branchMouseover, leafMouseover, mouseout};
 
 const $forest = $("#forest-info");
 const $hover = $("#hover-info");
 
-function showForestAndTreeInfo(forest, treeId) {
+function updateForestAndTreeInfo(forest, treeId) {
+    $hover.empty();
     $forest.empty();
     $forest.append(forestAndTreeTemplate(forest, treeId));
     $forest.show();

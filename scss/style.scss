@@ -30,6 +30,10 @@ h1.title {
 svg#forest {
   background: #ebf7f1;
   border: 1px solid #aaa;
+
+  circle:hover {
+    cursor: pointer;
+  }
 }
 
 svg line:hover {

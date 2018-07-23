@@ -1,12 +1,13 @@
 import * as d3 from "d3";
 import {treeMouseover, mouseout} from "./frontend_sidebar";
+import {drawTree, resetTree} from "./draw_tree";
 
 export {drawForest};
 
 /**
  * Draws a forest on the provided SVG if it contains any trees or prints "Computing forest positions..." otherwise
  * @param svg {Selection} - D3 selection of the target SVG
- * @param trees {Tree[]} - List of trees extended with coordinates
+ * @param trees {Tree[]} - List of trees extended with coordinates, ids and an update function
  * @param size {number} - Height and width of the target SVG
  */
 function drawForest({
@@ -33,7 +34,8 @@ function drawForest({
             .attr("r", d => /* Math.sqrt(d.strength / Math.PI ) * 5 + */ size / 50)
             .style("fill", d => treeColor(d))
             .on("mouseover", treeMouseover)
-            .on("mouseout", mouseout);
+            .on("mouseout", mouseout)
+            .on("click", d => d.updateVisualization());
     } else {
         forestText.text("Computing forest positions...");
     }
