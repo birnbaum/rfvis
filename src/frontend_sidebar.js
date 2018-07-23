@@ -29,17 +29,17 @@ function mouseout() {
 }
 
 function forestAndTreeTemplate(forest, treeId) {
-    return `<table class="table">
+    return `<table class="table is-fullwidth">
         <tr>
           <td>Forest Strength</td>
           <td>${forest.strength}</td>
         </tr>
         <tr>
-          <td>Number of trees</td>
+          <td>Number of Trees</td>
           <td>${forest.trees.length}</td>
         </tr>
         <tr>
-          <td style="border: 0; padding-bottom: 30px;">Number of samples</td>
+          <td style="border: 0; padding-bottom: 30px;">Number of Samples</td>
           <td style="border: 0; padding-bottom: 30px;">${forest.totalSamples}</td>
         </tr>
         <tr>
@@ -54,7 +54,7 @@ function forestAndTreeTemplate(forest, treeId) {
 }
 
 function branchTemplate(branch) {
-    return `<table class="table">
+    return `<table class="table is-fullwidth">
         <tr>
           <td style="font-weight: bold">Branch</td>
           <td></td>
@@ -72,17 +72,27 @@ function branchTemplate(branch) {
           <td>${branch.impurityDrop}</td>
         </tr>
         <tr>
-          <td>Samples</td>
+          <td>Number of Samples</td>
           <td>${branch.samples}</td>
         </tr>
     </table>`;
 }
 
 function leafTemplate(leaf) {
-    return `<table class="table">
+    const classNames = leaf.classes.reduce((accumulator, current) => {
+        return accumulator + `<td>${current.name}</td>`
+    }, "");
+    const classFreq = leaf.classes.reduce((accumulator, current) => {
+        return accumulator + `<td>${current.count}</td>`
+    }, "");
+    const classColors = leaf.classes.reduce((accumulator, current) => {
+        return accumulator + `<td><div style="background: rgb(${current.color}); width: 15px; height: 10px;"></div></td>`
+    }, "");
+    return `
+    <table class="table is-fullwidth">
         <tr>
           <td style="font-weight: bold">Leaf</td>
-          <td></td>
+          <td>#${leaf.leafId}</td>
         </tr>
         <tr>
           <td>Height</td>
@@ -92,13 +102,16 @@ function leafTemplate(leaf) {
           <td>Impurity</td>
           <td>${leaf.impurity}</td>
         </tr>
-        <tr>
-          <td>Leaf ID</td>
-          <td>${leaf.leafId}</td>
+    </table>
+    <table class="table is-fullwidth">
+        <tr style="text-transform: uppercase; font-size: 12px">
+          ${classNames}
+        </tr>
+        <tr style="font-size: 12px">
+          ${classFreq}
         </tr>
         <tr>
-          <td>Class Frequency</td>
-          <td>${leaf.classFrequency}</td>
+          ${classColors}
         </tr>
     </table>`;
 }

@@ -1,13 +1,26 @@
 @import "../node_modules/bulma/bulma";
 
-body {
-  padding: 20px 0;
-  height: 100vh;
-  background: darkseagreen;
+html {
+  overflow: hidden;
 }
 
-.columns.box {
-  height: calc(100vh - 20px);
+body {
+  padding: 20px 0;
+  background: darkseagreen;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: visible;
+  overflow-y: auto;
+}
+
+#main {
+  width: 1344px;
+  margin: 0 auto;
+  min-height: calc(100vh - 20px);
+}
+
+#info {
+  min-height: 250px;
 }
 
 h1.title {
