@@ -3,6 +3,7 @@ import {drawTree, resetTree} from "./draw_tree.js";
 import {drawForest} from "./draw_forest.js";
 
 import "../scss/style.scss"
+import {showForestAndTreeInfo} from "./frontend_sidebar";
 
 /**
  * Main frontend function which is executed on load.
@@ -18,9 +19,6 @@ import "../scss/style.scss"
     const treeColumnHeight = d3.select("#tree-column").node().offsetHeight - PADDING;
     const treeColumnWidth = d3.select("#tree-column").node().offsetWidth - 2 * PADDING;
     const leftColumnWidth = d3.select("#left-column").node().offsetWidth - 2 * PADDING;
-
-    // Poll forest positions until they are available
-    updateForestVisualization(forest, leftColumnWidth);
 
     const treeSvg = d3.select('#tree');
     let treeId = 0;
@@ -46,7 +44,15 @@ import "../scss/style.scss"
             leafColor: leafColor,
 		});
 	}
+
+    // Init forest view
+    updateForestVisualization(forest, leftColumnWidth);
+
+	// Init tree view with first tree
 	updateTreeVisualization();
+
+	// Init side bar forest information
+    showForestAndTreeInfo(forest, treeId);
 
 
 	/* --- UI Element & Keyboard Bindings for Previous/Next Tree --- */

@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import {drawPie} from "./draw_pie.js";
-import {branchTemplate, leafTemplate} from "./html_templates.js";
+import {branchMouseover, leafMouseover, mouseout} from "./frontend_sidebar.js";
 
 export {drawTree, resetTree};
 
@@ -45,8 +45,8 @@ function drawTree(options) {
         .style('stroke-width', d => branchThickness(d, "SAMPLES", totalSamples))
         .style('stroke', d => branchColor(branchColorType, d))
         //.attr('id', d => 'branch-' + d.index)  // This attr is currently not used
-        .on("mouseover", d => $("#hover-area").append(branchTemplate(d)))
-        .on("mouseout", d => $("#hover-area").empty())
+        .on("mouseover", branchMouseover)
+        .on("mouseout", mouseout)
         .on("click", d => {
             resetTree(svg);
             const newOptions = Object.assign({}, options);
@@ -65,8 +65,8 @@ function drawTree(options) {
         .attr("cy", d => d.y)
         .attr("r", d => leafSize(d, "SAMPLES", totalSamples))
         .style("fill", d => leafColor(leafColorType, d))
-        .on("mouseover", d => $("#hover-area").append(leafTemplate(d)))
-        .on("mouseout", d => $("#hover-area").empty());
+        .on("mouseover", leafMouseover)
+        .on("mouseout", mouseout);
 
     for (const bunch of bunches) {
         drawPie(svg, bunch.x, bunch.y, leafSize(bunch, "SAMPLES", totalSamples), getHistogram(bunch.baseNode, leafColorType, true));
