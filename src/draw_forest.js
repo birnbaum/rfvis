@@ -16,7 +16,7 @@ function drawForest({
     size = 300,
 }) {
     // Adapt SVG size
-    svg.style("width", size).style("height", size);
+    svg.style("width", size + "px").style("height", size + "px");
 
     const forestText = d3.select('#forest-progress');
 

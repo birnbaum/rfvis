@@ -31,7 +31,7 @@ function drawTree(options) {
     } = generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength);
 
     // Adapt SVG size
-    svg.style("width", width).style("height", height);
+    svg.style("width", width + "px").style("height", height + "px");
 
     // Draw branches
     svg.selectAll('line')

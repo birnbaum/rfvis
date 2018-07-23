@@ -15,9 +15,6 @@ import {updateForestAndTreeInfo} from "./frontend_sidebar";
 
     const PADDING = 12;  // Hardcoded for now;
 
-    // TODO use jQuery
-    const treeColumnHeight = d3.select("#tree-column").node().offsetHeight - PADDING;
-    const treeColumnWidth = d3.select("#tree-column").node().offsetWidth - 2 * PADDING;
     const leftColumnWidth = d3.select("#left-column").node().offsetWidth - 2 * PADDING;
 
     const treeSvg = d3.select('#tree');
@@ -34,8 +31,8 @@ import {updateForestAndTreeInfo} from "./frontend_sidebar";
             tree: forest.trees[id],
             totalSamples: forest.totalSamples,
 
-            width: treeColumnWidth,
-            height: treeColumnHeight,
+            width: d3.select("#tree-column").node().offsetWidth - 2 * PADDING,
+            height: d3.select("#tree-column").node().offsetHeight - PADDING,
             trunkLength: trunkLength,
 
             maxDepth: maxDepth,
@@ -50,8 +47,8 @@ import {updateForestAndTreeInfo} from "./frontend_sidebar";
     // Init forest view
     updateForestVisualization(forest, leftColumnWidth, updateTreeVisualization);
 
-	// Init tree view with first tree
-	updateTreeVisualization(treeId);
+	// Init tree view with first tree after short timeout, so the tree size can be adapted to the viewport size
+    setTimeout(() => updateTreeVisualization(treeId), 200);
 
 
 	/* --- UI Element & Keyboard Bindings for Previous/Next Tree --- */
@@ -87,27 +84,45 @@ import {updateForestAndTreeInfo} from "./frontend_sidebar";
 
 	/* --- UI Element Bindings for Settings --- */
 
-    d3.select("#reset-zoom").on('click', updateTreeVisualization);
+    d3.select("#reset-zoom").on('click', function() {
+        updateTreeVisualization(treeId);
+    });
 
     d3.select("#tree-depth").on("input", function() {
         maxDepth = this.value;
-        updateTreeVisualization();
+        updateTreeVisualization(treeId);
     });
 
     d3.select("#trunk-length").on("input", function() {
         trunkLength = this.value;
-        updateTreeVisualization();
+        updateTreeVisualization(treeId);
     });
 
     d3.select("#branch-color").on("change", function() {
         branchColor = this.value;
-        updateTreeVisualization();
+        updateTreeVisualization(treeId);
     });
 
     d3.select("#leaf-color").on("change", function() {
         leafColor = this.value;
-        updateTreeVisualization();
+        updateTreeVisualization(treeId);
     });
+
+
+    /* ------ Window resize adaptations ------ */
+
+    // Snipped taken from https://developer.mozilla.org/en-US/docs/Web/Events/resize
+    window.addEventListener("resize", resizeThrottler, false);
+    let resizeTimeout;
+    function resizeThrottler() {
+        // ignore resize events as long as an actualResizeHandler execution is in the queue
+        if (!resizeTimeout) {
+            resizeTimeout = setTimeout(() => {
+                resizeTimeout = null;
+                updateTreeVisualization(treeId);
+            }, 500);
+        }
+    }
 })();
 
 
