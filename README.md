@@ -93,11 +93,14 @@ You can now open up your browser at <http://localhost:3000> to see something lik
 
 ![Tree](images/screenshot.png)
 
+As the computation of the forest visualization is relatively slow, the server starts right away. The computation is 
+carried out in the background and the forest will pop up in the frontend automatically once its done.
+
 
 ## Input Data
 The input data is expected to come in text files in the following folder structure:
-- `./statistcis/forest.txt`: A text file containing the correlation matrix, tree strengths and overall forest strength
-- `./statistcis/tree_<index>.txt`: One text file per tree in the forest with semicolon-separated values in the following format:
+- `./forest.txt`: A text file containing the correlation matrix, tree strengths and overall forest strength
+- `./tree_<index>.txt`: One text file per tree in the forest with semicolon-separated values in the following format:
     - `Internal nodes`: height;  -; 0; size; impurity; drop of impurity; splitting grade; list of used feature IDs; fusion ID; path prediction, split point def; list of score IDs
     - `Leaf nodes`: height; ID; 1; size; impurity; class frequency
 
