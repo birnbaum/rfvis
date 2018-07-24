@@ -108,12 +108,12 @@ function parseStatisticsContent(text) {
     for (const node of nodes) {
         let latest = stack[stack.length - 1];
 
-        if (node.height === latest.height + 1) {  // Child Node
+        if (node.depth === latest.depth + 1) {  // Child Node
             // Do nothing
-        } else if (node.height === latest.height) {  // Sibling Node
+        } else if (node.depth === latest.depth) {  // Sibling Node
             stack.pop();
-        } else if (node.height < latest.height) {
-            stack = stack.slice(0, node.height)
+        } else if (node.depth < latest.depth) {
+            stack = stack.slice(0, node.depth)
         } else {
             throw "No no no no no"
         }
@@ -131,7 +131,7 @@ function parseStatisticsContent(text) {
  */
 class InternalNode {
     constructor(fields) {
-        this.height = Number.parseInt(fields[0]);
+        this.depth = Number.parseInt(fields[0]);
         this.samples = Number.parseInt(fields[3]);
         this.impurity = Number.parseFloat(fields[4]);
         this.impurityDrop = Number.parseFloat(fields[5]);
@@ -147,7 +147,7 @@ class InternalNode {
 
 class LeafNode {
     constructor(fields) {
-        this.height = Number.parseInt(fields[0]);
+        this.depth = Number.parseInt(fields[0]);
         this.leafId = Number.parseInt(fields[1]);
         this.samples = Number.parseInt(fields[3]);
         this.impurity = Number.parseFloat(fields[4]);

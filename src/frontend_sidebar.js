@@ -4,8 +4,12 @@
 
 export {updateForestAndTreeInfo, treeMouseover, pieMouseover, branchMouseover, leafMouseover, mouseout};
 
-const $forest = $("#forest-info");
-const $hover = $("#hover-info");
+let $forest;
+let $hover;
+if (typeof $ !== "undefined") {
+    $forest = $("#forest-info");
+    $hover = $("#hover-info");
+}
 
 function updateForestAndTreeInfo(forest, treeId) {
     $hover.empty();
@@ -98,8 +102,8 @@ function pieTemplate(bunch, classHistogram) {
           <td></td>
         </tr>
         <tr>
-          <td>Height</td>
-          <td>${bunch.baseNode.height}</td>
+          <td>Depth</td>
+          <td>${bunch.baseNode.depth}</td>
         </tr>
         <tr>
           <td>Samples</td>
@@ -116,8 +120,8 @@ function branchTemplate(branch) {
           <td></td>
         </tr>
         <tr>
-          <td>Height</td>
-          <td>${branch.height}</td>
+          <td>Depth</td>
+          <td>${branch.depth}</td>
         </tr>
         <tr>
           <td>Impurity</td>
@@ -151,8 +155,8 @@ function leafTemplate(leaf) {
           <td>#${leaf.leafId}</td>
         </tr>
         <tr>
-          <td>Height</td>
-          <td>${leaf.height}</td>
+          <td>Depth</td>
+          <td>${leaf.depth}</td>
         </tr>
         <tr>
           <td>Impurity</td>

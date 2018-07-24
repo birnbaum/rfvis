@@ -145,7 +145,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
                 impurity: node.impurity,
                 samples: node.samples,
                 leafId: node.leafId,
-                height: node.height,
+                depth: node.depth,
                 noClasses: node.noClasses,
                 classes: node.classes,
                 bestClass: node.bestClass,
