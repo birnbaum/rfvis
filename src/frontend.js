@@ -22,7 +22,6 @@ import "../scss/style.scss"
     let leafColor = "IMPURITY";
 
 	function updateTreeVisualization(id) {
-	    console.log($("#tree-depth").val());
         resetTree(treeSvg);
         drawTree({
             svg: treeSvg,
@@ -111,18 +110,17 @@ import "../scss/style.scss"
     });
 
     d3.select("#tree-depth").on("input", function() {
-        updateTreeVisualization(currentTreeId);
+        redrawThrottler();
     });
 
     d3.select("#reset-tree-depth").on("click", function() {
-        console.log("lol")
         updateMaxDepthInput(forest.trees[currentTreeId], true);
         updateTreeVisualization(currentTreeId);
     });
 
     d3.select("#trunk-length").on("input", function() {
         trunkLength = this.value;
-        updateTreeVisualization(currentTreeId);
+        redrawThrottler();
     });
 
     d3.select("#branch-color").on("change", function() {
@@ -137,18 +135,29 @@ import "../scss/style.scss"
 
 
     /* ------ Window resize adaptations ------ */
+    window.addEventListener("resize", redrawThrottler, false);
 
-    // Snipped taken from https://developer.mozilla.org/en-US/docs/Web/Events/resize
-    window.addEventListener("resize", resizeThrottler, false);
-    let resizeTimeout;
-    function resizeThrottler() {
-        // ignore resize events as long as an actualResizeHandler execution is in the queue
-        if (!resizeTimeout) {
-            resizeTimeout = setTimeout(() => {
-                resizeTimeout = null;
-                updateTreeVisualization(currentTreeId);
-            }, 500);
+
+    let redrawTimeout;
+    let lastEventTime = Date.now();
+
+    /**
+     * Updates the tree visualization only after this function was not called for <delta> milliseconds.
+     * This allows the user to change the depth and trunk length quickly without the UI freezing because
+     * of too many redraws.
+     *
+     * @param {number} delta
+     */
+    function redrawThrottler(delta = 500) {
+        const eventTime = Date.now();
+        if (eventTime < lastEventTime + delta) {
+            clearTimeout(redrawTimeout);
         }
+        lastEventTime = eventTime;
+        redrawTimeout = setTimeout(() => {
+            redrawTimeout = null;
+            updateTreeVisualization(currentTreeId);
+        }, delta);
     }
 })();
 

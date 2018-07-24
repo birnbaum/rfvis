@@ -51,26 +51,11 @@ const argv = yargs
                     choices: ["impurity", "class"],
                     default: "impurity",
                 },
-                /*
-                "leaf-impurity-threshold": {
-                    describe: "Between 0 and 1. By default the impurity is mapped from 0 to 1 on a linear color gradient between red and green. If you set this flag, everything below the provided threshold is visualized red and the gradient will be linear between <threshold> and 1",
-                    implies: "leaf-color",
-                    default: 0,
-                    number: true,
-                },*/
                 "branch-color": {
                     describe: "Color of the branches. Either the node impurity or the node drop-of-impurity.",
                     choices: ["impurity", "impurity-drop"],
                     default: "impurity",
-                },
-                /*
-                "branch-impurity-threshold": {
-                    describe: "program specifications",
-                    implies: "branch-color",
-                    default: 0,
-                    number: true,
-                }*/
-                // TODO threshold for impurity drop?
+                }
             }),
         runCli
     )
@@ -160,7 +145,7 @@ async function runCli(args) {
             branchColor: args.branchColor.toUpperCase(),
             leafColor: args.leafColor.toUpperCase()
         });
-        const filePath = path.join(outDir, `tree-${index}.svg`);
+        const filePath = path.join(outDir, `tree-${index + 1}.svg`);
         fs.writeFile(filePath, d3n.svgString(), () => {
             console.log(`>> Exported "${filePath}"`);
         });

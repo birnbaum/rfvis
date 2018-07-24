@@ -86,7 +86,6 @@ function treeTemplate(tree) {
 }
 
 function pieTemplate(bunch, classHistogram) {
-    console.log(classHistogram)
     const classNames = classHistogram.reduce((accumulator, current) => {
         return accumulator + `<td>${current.sortKey}</td>`
     }, "");
