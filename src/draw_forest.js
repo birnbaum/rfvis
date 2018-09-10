@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import {treeMouseover, mouseout} from "./frontend_sidebar";
-import {drawTree, resetTree} from "./draw_tree";
 
 export {drawForest};
 
@@ -18,27 +17,17 @@ function drawForest({
     // Adapt SVG size
     svg.style("width", size + "px").style("height", size + "px");
 
-    const forestText = d3.select('#forest-progress');
-
-    // Clear forest view
-    //svg.selectAll("circle").remove();
-
-    if (trees.length > 0) {
-        forestText.remove();
-        // Draw trees
-        svg.selectAll("circle")
-            .data(trees)
-            .enter().append("circle")
-            .attr("cy", d => d.y / 100 * size)
-            .attr("cx", d => d.x / 100 * size)
-            .attr("r", d => /* Math.sqrt(d.strength / Math.PI ) * 5 + */ size / 50)
-            .style("fill", d => treeColor(d))
-            .on("mouseover", treeMouseover)
-            .on("mouseout", mouseout)
-            .on("click", d => d.updateVisualization());
-    } else {
-        forestText.text("Computing forest positions...");
-    }
+    // Draw trees
+    svg.selectAll("circle")
+        .data(trees)
+        .enter().append("circle")
+        .attr("cy", d => d.y / 100 * size)
+        .attr("cx", d => d.x / 100 * size)
+        .attr("r", d => treeSize(d, size / 20))
+        .style("fill", d => treeColor(d))
+        .on("mouseover", treeMouseover)
+        .on("mouseout", mouseout)
+        .on("click", d => d.updateVisualization());
 }
 
 function treeColor(tree) {
@@ -46,4 +35,12 @@ function treeColor(tree) {
             .domain([1, 0.5, 0])
             .range(["green", "green", "red"])
             (tree.strength);
+}
+
+function treeSize(tree, maxRadius) {
+    const radius = Math.sqrt(tree.strength / Math.PI);
+    return d3.scaleLinear()
+        .domain([0, Math.sqrt(1 / Math.PI)])
+        .range([1, maxRadius])
+        (radius)
 }

@@ -3,6 +3,7 @@ import express from "express";
 import {createForest} from "./parser.js";
 import * as path from "path";
 import {drawTree} from "./draw_tree";
+import {computeForestMap} from "./compute_coordinates";
 import D3Node from "d3-node";
 import * as fs from "fs";
 import * as child_process from "child_process";
@@ -89,19 +90,9 @@ if (!argv._[0]) {
  */
 async function runGui(args) {
     const forest = await createForest(args);
-
     // As the positions are computationally expensive, we start the calculation in a subprocess
     // and offer the HTTP endpoint "/positions" to poll the result periodically
-    let positions = null;
-    const computation_process = child_process.fork(path.join(__dirname, "_compute_coordinates.js"), [], {
-        execArgv: []  // This flag is necessary to debug child processes in Webstorm
-    });
-    computation_process.on("message", result => {
-        positions = result;
-    });
-    computation_process.on("error", console.error);
-    computation_process.send(forest);
-
+    const positions = computeForestMap({forest});
 
     console.log("Starting server");
     const app = express();
@@ -109,11 +100,7 @@ async function runGui(args) {
     app.get("/data", (req, res) => res.json(forest));
     app.get("/positions", (req, res) => {
         // If the positions are already created return them, otherwise return an Error
-        if (positions) {
-            res.json({progress: 100, positions: positions});
-        } else {
-            res.json({progress: 0, positions: []});
-        }
+        res.json({progress: 100, positions: positions});
     });
 
     app.use(express.static(path.join(__dirname, "public")));
