@@ -3,8 +3,6 @@
  * as it is computationally expensive and would otherwise block the event loop.
  */
 
-import * as fs from "fs";
-// improt D3Node = require("d3-node");
 import Vector from "./Vector.js";
 
 export {computeForestMap}
@@ -38,6 +36,7 @@ function computeForestMap({
     forest,
 }) {
     const coordinates = arrangeInitial(forest.trees.length);
+    console.log("Computing coordinated for " + coordinates.length + " trees");
 
     // compute D and D*
     const D = [];
@@ -145,11 +144,29 @@ function arrangeInitial(numberOfTrees, minDist = 1) {
 }
 
 function centerWorld(coordinates, pixel = 100, border = 5) {
-    const maxRadius = coordinates.reduce((max, cur) => Math.max(max, cur.getLength()));
+    let minX = Number.MAX_SAFE_INTEGER;
+    let minY = Number.MAX_SAFE_INTEGER;
+    let maxX = Number.MIN_SAFE_INTEGER;
+    let maxY = Number.MIN_SAFE_INTEGER;
+    let maxRadius = 0;
+
+    // get the bounding
+    for (const coordinate of coordinates) {
+        minX = Math.min( minX, coordinate.x);
+        minY = Math.min( minY, coordinate.y);
+        maxX = Math.max( maxX, coordinate.x);
+        maxY = Math.max( maxY, coordinate.y);
+        maxRadius = Math.max(maxRadius, coordinate.getLength());
+    }
+
+    const center = new Vector((minX + maxX) / 2, (minY + maxY) / 2);
     const factor = ((pixel - border) / maxRadius) / 2;
 
     // center and calculate new size
     return coordinates.map(coordinate => {
-        return coordinate.multiply(factor).add(new Vector(50, 50));
+        return coordinate
+            .subtract(center)
+            .multiply(factor)
+            .add(new Vector(50, 50));
     });
 }

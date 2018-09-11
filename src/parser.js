@@ -68,7 +68,7 @@ async function createForest(args) {
         strength: totalStrength,
         totalSamples: trees[0].baseNode.samples,
         correlationMatrix: correlationMatrix,
-        trees: trees.slice(0, 15)
+        trees: trees
     };
 }
 

@@ -4,6 +4,7 @@ import {drawForest} from "./draw_forest.js";
 import {updateForestAndTreeInfo} from "./frontend_sidebar";
 
 import "../scss/style.scss"
+import {computeForestMap} from "./compute_coordinates";
 
 /**
  * Main frontend function which is executed on load.
@@ -11,9 +12,8 @@ import "../scss/style.scss"
  * Initializes the tree and forest views and all UI element listeners + keyboard shortcuts
  */
 (async function() {
-    const PADDING = 12;
     const forest = await (await fetch(window.location.origin + "/data")).json();
-    const leftColumnWidth = d3.select("#left-column").node().offsetWidth - 2 * PADDING;
+    const leftColumnWidth = d3.select("#sidebar").node().offsetWidth;
 
     const treeSvg = d3.select('#tree');
     let currentTreeId = 0;
@@ -28,8 +28,8 @@ import "../scss/style.scss"
             tree: forest.trees[id],
             totalSamples: forest.totalSamples,
 
-            width: d3.select("#tree-column").node().offsetWidth - 2 * PADDING,
-            height: $(window).height() - 60,
+            width: d3.select("#content").node().offsetWidth,
+            height: $(window).height() - 40,
             trunkLength: trunkLength,
 
             maxDepth: $("#tree-depth").val(),
@@ -161,39 +161,22 @@ import "../scss/style.scss"
     }
 })();
 
-
-/**
- * Polls the "/positions" endpoint until the forest position computation is done and returns the results
- */
-function updateForestVisualization(forest, size, updateFunction, interval = 1) {
+function updateForestVisualization(forest, size, updateFunction) {
     const forestSvg = d3.select("#forest");
-
-    const checkCondition = (resolve, reject) => {
-        fetch(window.location.origin + "/positions")
-            .then(res => res.json())
-            .then(json => {
-                const trees = json.positions.map((position, i) => {
-                    const tree = forest.trees[i];
-                    tree.id = i + 1;
-                    tree.x = position.x;
-                    tree.y = position.y;
-                    tree.updateVisualization = () => updateFunction(i);
-                    return tree;
-                });
-                drawForest({
-                    svg: forestSvg,
-                    trees: trees,
-                    size: size,
-                });
-                if (json.progress !== 100) {
-                    setTimeout(checkCondition, interval * 1000, resolve, reject);
-                }
-            })
-            .catch(console.error);
-    };
-    return new Promise(checkCondition);
+    const trees = computeForestMap({forest}).map((position, i) => {
+        const tree = forest.trees[i];
+        tree.id = i + 1;
+        tree.x = position.x;
+        tree.y = position.y;
+        tree.updateVisualization = () => updateFunction(i);
+        return tree;
+    });
+    drawForest({
+        svg: forestSvg,
+        trees: trees,
+        size: size,
+    });
 }
-
 /**
  * Finds the maximal depth of a tree
  * @param {Tree} tree

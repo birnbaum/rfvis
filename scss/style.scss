@@ -1,47 +1,122 @@
 @import "../node_modules/bulma/bulma";
+@import "theme";
 
-html {
-  overflow: hidden;
+
+html, body, #root{
+  height: 100%;
 }
 
 body {
-  padding: 20px 0;
-  background: darkseagreen;
-  height: 100vh;
-  min-height: 100vh;
-  overflow: visible;
-  overflow-y: auto;
+  margin: 0;
+  padding-top: 0.1px; // Prevent header h1 margin from pushing body down
 }
 
-#main {
-  width: 1344px;
-  margin: 0 auto;
-  min-height: calc(100vh - 20px);
+#root {
+  display: flex;
 }
 
-#info {
-  min-height: 250px;
+#drawer {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 256px;
+  max-width: 256px;
+  height: 100%;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+  .label {
+    font-weight: 500;
+  }
 }
 
-h1.title {
-  font-size: 19px;
+.drawer__header {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 64px;
+  padding: 0 16px 32px;
 }
 
-svg#forest {
+.drawer__title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  display: block;
+  margin-top: 0;
+  margin-bottom: -20px;
+
+  &::before {
+    display: inline-block;
+    width: 0;
+    height: 36px;
+    content: "";
+    vertical-align: 0;
+  }
+
+  &::after {
+    display: inline-block;
+    width: 0;
+    height: 20px;
+    content: "";
+    vertical-align: -20px;
+  }
+}
+
+.drawer__subtitle {
+  font-size: 0.875rem;
+  font-weight: 400;
+  display: block;
+  margin-top: 0;
+  line-height: normal;
+  margin-bottom: 0;
+
+  &::before {
+    display: inline-block;
+    width: 0;
+    height: 20px;
+    content: "";
+    vertical-align: 0;
+  }
+}
+
+.drawer__content {
+  margin: 0 16px;
+}
+
+
+#sidebar {
+  flex: 0 1 auto;
+  width: 300px;
+  margin: 20px;
+}
+
+#content {
+  flex: 20 1 auto;
+  min-width: 700px;
+  margin: 20px 20px 20px 0;
+}
+
+
+#forest {
   background: #ebf7f1;
-  border: 1px solid #aaa;
+  // border: 1px solid #aaa;
 
   circle:hover {
     cursor: pointer;
   }
+
+  //background-color: aliceblue;
 }
 
-svg line:hover {
-  cursor: pointer;
+#tree {
+  background-color: aliceblue;
+  width: 100%;
+  height: 100%;
+
+  line:hover {
+    cursor: pointer;
+  }
 }
 
-span#forest-progress {
-  position: absolute;
-  margin-left: 10px;
-  margin-top: 5px;
+.space {
+  height: 20px;
 }
