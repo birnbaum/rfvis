@@ -15,6 +15,10 @@
         </div>
 
         <div class="drawer__content">
+            <div id="forest-info"></div>
+
+            <div class="space"></div>
+
             <div class="field">
                 <label class="label is-small">Tree Depth</label>
                 <div class="field has-addons">
@@ -64,30 +68,65 @@
                 </div>
             </div>
 
-            <div class="space"></div>
 
-            <span id="reset-zoom" class="button">
-                <span class="icon">
-                  <i class="fas fa-undo"></i>
-                </span>
-                <span>Reset Zoom</span>
-            </span>
+            <!-- REMO VE -->
+            <div class="field">
+                <label class="label is-small">Leaf Color</label>
+                <div class="control">
+                    <div class="select is-fullwidth is-small">
+                        <select id="leafs-color">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="BEST_CLASS">Best Class</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-            <div class="space"></div>
+            <div class="field">
+                <label class="label is-small">Leaf Color</label>
+                <div class="control">
+                    <div class="select is-fullwidth is-small">
+                        <select id="leafs-cfolor">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="BEST_CLASS">Best Class</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label is-small">Leaf Color</label>
+                <div class="control">
+                    <div class="select is-fullwidth is-small">
+                        <select id="leasfs-color">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="BEST_CLASS">Best Class</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-            <div class="buttons has-addons">
-                    <span id="previous-tree" class="button">
-                        <span class="icon">
-                          <i class="fas fa-arrow-alt-circle-left"></i>
-                        </span>
-                        <span>Previous</span>
-                    </span>
-                <span id="next-tree" class="button">
-                        <span>Next</span>
-                        <span class="icon">
-                          <i class="fas fa-arrow-alt-circle-right"></i>
-                        </span>
-                    </span>
+            <div class="field">
+                <label class="label is-small">Leaf Color</label>
+                <div class="control">
+                    <div class="select is-fullwidth is-small">
+                        <select id="leaf-codlor">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="BEST_CLASS">Best Class</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label is-small">Leaf Color</label>
+                <div class="control">
+                    <div class="select is-fullwidth is-small">
+                        <select id="lseaf-color">
+                            <option value="IMPURITY">Impurity</option>
+                            <option value="BEST_CLASS">Best Class</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -96,12 +135,38 @@
             <svg id="forest"></svg>
         </div>
 
+        <div class="buttons has-addons">
+            <span id="previous-tree" class="button is-small">
+                <span class="icon">
+                    <i class="fas fa-arrow-alt-circle-left"></i>
+                </span>
+                <span>Previous</span>
+            </span>
+            <span id="next-tree" class="button is-small">
+                <span>Next</span>
+                <span class="icon">
+                    <i class="fas fa-arrow-alt-circle-right"></i>
+                </span>
+            </span>
+        </div>
+
         <div class="space"></div>
 
         <div id="info">
-            <div id="forest-info"></div>
             <div id="hover-info"></div>
         </div>
+
+        <div class="space"></div>
+
+        <span id="reset-zoom" class="button is-small">
+            <span class="icon">
+                <i class="fas fa-undo"></i>
+            </span>
+            <span>Reset Zoom</span>
+        </span>
+
+        <div class="space"></div>
+
     </div>
     <div id="content">
         <svg id="tree"></svg>

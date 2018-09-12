@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import {drawPie} from "./draw_pie.js";
-import {branchMouseover, leafMouseover, mouseout} from "./frontend_sidebar.js";
+import {branchMouseover, leafMouseover, mouseout} from "./sidebar_templates.js";
 
 export {drawTree, resetTree};
 

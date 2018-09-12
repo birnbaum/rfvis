@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import {component} from "d3-component";
-import {mouseout, pieMouseover} from "./frontend_sidebar";
+import {mouseout, pieMouseover} from "./sidebar_templates";
 
 export {drawPie};
 

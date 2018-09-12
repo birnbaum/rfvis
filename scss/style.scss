@@ -24,6 +24,7 @@ body {
   max-width: 256px;
   height: 100%;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: auto;
 
   .label {
     font-weight: 500;
@@ -34,11 +35,11 @@ body {
   flex-shrink: 0;
   box-sizing: border-box;
   min-height: 64px;
-  padding: 0 16px 32px;
+  padding: 0 16px 16px;
 }
 
 .drawer__title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 500;
   display: block;
   margin-top: 0;
@@ -82,12 +83,23 @@ body {
   margin: 0 16px;
 }
 
-
 #sidebar {
+  position: relative;
   flex: 0 1 auto;
   width: 300px;
   margin: 20px;
 }
+
+#previous-tree, #next-tree {
+  width: 50%;
+}
+
+#reset-zoom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 
 #content {
   flex: 20 1 auto;
@@ -98,13 +110,14 @@ body {
 
 #forest {
   background: #ebf7f1;
-  // border: 1px solid #aaa;
 
   circle:hover {
     cursor: pointer;
   }
 
-  //background-color: aliceblue;
+  circle.active {
+    fill: cornflowerblue;
+  }
 }
 
 #tree {
@@ -119,4 +132,8 @@ body {
 
 .space {
   height: 20px;
+}
+
+table {
+  font-size: 0.875rem;
 }

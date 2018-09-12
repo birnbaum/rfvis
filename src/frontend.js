@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import {drawTree, resetTree} from "./draw_tree.js";
 import {drawForest} from "./draw_forest.js";
-import {updateForestAndTreeInfo} from "./frontend_sidebar";
+import {updateForestAndTreeInfo} from "./sidebar_templates";
 
 import "../scss/style.scss"
 import {computeForestMap} from "./compute_coordinates";
@@ -69,7 +69,9 @@ import {computeForestMap} from "./compute_coordinates";
     updateForestVisualization(forest, leftColumnWidth, updateTreeVisualization);
 
 	// Init tree view with first tree after short timeout, so the tree size can be adapted to the viewport size
-    setTimeout(() => updateTreeVisualization(currentTreeId), 200);
+    setTimeout(() => {
+        updateTreeVisualization(currentTreeId);
+    }, 200);
 
 
 	/* --- UI Element & Keyboard Bindings for Previous/Next Tree --- */
