@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import {drawPie} from "./draw_pie.js";
-import {branchMouseover, leafMouseover, mouseout} from "./frontend_sidebar.js";
+import {branchMouseover, leafMouseover, mouseout} from "./sidebar_templates.js";
+import {InternalNode, LeafNode} from "./TreeNodes";
 
 export {drawTree, resetTree};
 
@@ -90,9 +91,8 @@ function resetTree(svg) {
 }
 
 // Helper functions
-const addBranchInformation = (treeNode, index, x, y, angle, length, depth, parent) => {
+const addBranchInformation = (treeNode, x, y, angle, length, depth) => {
     return Object.assign(treeNode, {
-        index,
         x,
         y,
         x2: x + length * Math.sin(angle),
@@ -100,7 +100,6 @@ const addBranchInformation = (treeNode, index, x, y, angle, length, depth, paren
         angle,
         length,
         depth,
-        parent
     })
 };
 
@@ -163,14 +162,15 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
         const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
 
         if (leftChild !== undefined) {
-            branch(addBranchInformation(leftChild, branches.length, node.x2, node.y2, angle1, length1, node.depth + 1, node.index));
+            branch(addBranchInformation(leftChild, node.x2, node.y2, angle1, length1, node.depth + 1));
         }
         if (rightChild !== undefined) {
-            branch(addBranchInformation(rightChild, branches.length, node.x2, node.y2, angle2, length2, node.depth + 1, node.index));
+            branch(addBranchInformation(rightChild, node.x2, node.y2, angle2, length2, node.depth + 1));
         }
     }
 
-    const baseNode = addBranchInformation(tree.baseNode, 0, width/2, height, 0, trunkLength, 0, null);
+    const baseNode = addBranchInformation(tree.baseNode, width/2, height, 0, trunkLength, 0);
+    markPathElements([1], baseNode);
     branch(baseNode);
 
     const sortBySamples = (a,b) => {
@@ -192,7 +192,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
 function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {
-        if (!node.children) {
+        if (node instanceof LeafNode) {
             leafNodes.push(node);
         } else {
             searchLeafs(node.children[0]);
@@ -201,6 +201,37 @@ function getLeafNodes(node) {
     }
     searchLeafs(node);
     return leafNodes;
+}
+
+function walkAndApply(node, fn) {
+    fn(node);
+    if (node instanceof InternalNode) {
+        walkAndApply(node.children[0], fn);
+        walkAndApply(node.children[1], fn);
+    }
+}
+
+function markPathElements(leafIds, tree) {
+    // Reset current tree
+    walkAndApply(tree, (node => {
+        node.selectedPathElement = false;
+    }));
+
+    const leafs = getLeafNodes(tree)
+        .filter(leaf => leafIds.includes(leaf.leafId));
+
+    function walkUpAndApply(node, fn) {
+        fn(node);
+        if (node.parent) {
+            walkUpAndApply(node.parent, fn);
+        }
+    }
+
+    for (const leaf of leafs) {
+        walkUpAndApply(leaf, node => {
+            node.selectedPathElement = true;
+        })
+    }
 }
 
 /**
@@ -249,6 +280,10 @@ function getHistogram(node, type, weighted) {
         });
         return ordered;
     }
+    // TODO
+    if (type === "PATH") {
+        return [{value: 1, color: "rgba(0, 0, 0, 0.5)", sortKey: "0"}]
+    }
 }
 
 
@@ -270,6 +305,15 @@ function branchColor(type, branch) {
     }
     if (type === "BLACK") {
         return "black";
+    }
+    if (type === "PATH") {
+        if (branch.selectedPathElement) {
+            return d3.rgb(255, 0, 0);
+        } else {
+            const c = d3.rgb(0, 0, 0);
+            c.opacity = 0.5;
+            return c;
+        }
     }
     console.log(this);
     throw "Unsupported setting";
@@ -296,6 +340,15 @@ function leafColor(type, leaf) {
     }
     if (type === "BEST_CLASS") {
         return d3.rgb(...leaf.bestClass.color);
+    }
+    if (type === "PATH") {
+        if (leaf.selectedPathElement) {
+            return d3.rgb(255, 0, 0);
+        } else {
+            const c = d3.rgb(0, 0, 0);
+            c.opacity = 0.5;
+            return c;
+        }
     }
     console.log(this);
     throw "Unsupported setting";

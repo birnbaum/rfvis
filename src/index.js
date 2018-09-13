@@ -1,6 +1,7 @@
 import yargs from "yargs";
 import express from "express";
 import {createForest} from "./parser.js";
+import {readDataFolder} from "./read_data.js"
 import * as path from "path";
 import {drawTree} from "./draw_tree";
 import {computeForestMap} from "./compute_coordinates";
@@ -89,19 +90,12 @@ if (!argv._[0]) {
  * Starts a webserver serving the GUI
  */
 async function runGui(args) {
-    const forest = await createForest(args);
-    // As the positions are computationally expensive, we start the calculation in a subprocess
-    // and offer the HTTP endpoint "/positions" to poll the result periodically
-    const positions = computeForestMap({forest});
+    const data = await readDataFolder(args.data);
 
     console.log("Starting server");
     const app = express();
     app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
-    app.get("/data", (req, res) => res.json(forest));
-    app.get("/positions", (req, res) => {
-        // If the positions are already created return them, otherwise return an Error
-        res.json({progress: 100, positions: positions});
-    });
+    app.get("/data", (req, res) => res.json(data));
 
     app.use(express.static(path.join(__dirname, "public")));
     app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
@@ -111,7 +105,8 @@ async function runGui(args) {
  * Produces a SVG file for each tree in the forest and stores them at the provided "out" folder
  */
 async function runCli(args) {
-    const forest = await createForest(args);
+    const rawData = await readDataFolder(args.data);
+    const forest = createForest(rawData);
     const outDir = args.out ? path.resolve(args.out) : __dirname;
     if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
 

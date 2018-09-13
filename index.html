@@ -7,76 +7,73 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 </head>
 <body>
-<div id="main">
-    <div class="columns box">
-        <div class="column is-3" id="left-column">
-
-            <h1 class="title">Random Forest Visualization Tool</h1>
-
-            <hr>
-
-            <div id="forest-view">
-                <span id="forest-progress"></span>
-                <svg id="forest"></svg>
-            </div>
-
-            <hr>
-
-            <div id="info">
-                <div id="forest-info"></div>
-                <div id="hover-info"></div>
-            </div>
+<div id="root">
+    <div id="drawer">
+        <div class="drawer__header">
+            <h3 class="drawer__title">grid-20k-1</h3>
+            <h6 class="drawer__subtitle">Uniform Distributed Splitpoint, 20,000 Samples, 1 Test Candidate</h6>
         </div>
-        <div class="column is-7" id="tree-column">
-            <svg id="tree"></svg>
-        </div>
-        <div class="column is-2" id="right-column">
 
-            <h1 class="title">Settings</h1>
+        <div class="drawer__content">
+            <div id="forest-info"></div>
 
-            <hr>
+            <div class="space"></div>
 
             <div class="field">
-                <label class="label">Tree Depth</label>
+                <label class="label is-small">Tree Depth</label>
                 <div class="field has-addons">
                     <div class="control is-expanded">
                         <!-- Value and Max will be set on load of each tree -->
-                        <input id="tree-depth" class="input" type="number" min="1" max="" value="" step="1">
+                        <input id="tree-depth" class="input is-small" type="number" min="1" max="" value="" step="1">
                     </div>
                     <div class="control">
-                        <a id="reset-tree-depth" class="button">
+                        <a id="reset-tree-depth" class="button is-small">
                             MAX
                         </a>
                     </div>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Trunk Length</label>
+                <label class="label is-small">Trunk Length</label>
                 <div class="control">
-                    <input id="trunk-length" class="input" type="number" min="10" max="500" step="10" value="100">
+                    <input id="trunk-length" class="input is-small" type="number" min="10" max="500" step="10" value="100">
                 </div>
             </div>
 
-            <hr>
+            <div class="space"></div>
+
+            <div class="tabs">
+                <ul>
+                    <li class="is-active"><a>Color</a></li>
+                    <li><a>Path</a></li>
+                </ul>
+            </div>
 
             <div class="field">
-                <label class="label">Branch Color</label>
+                <label class="label is-small">Color Path to LeafID</label>
                 <div class="control">
-                    <div class="select is-fullwidth">
+                    <input id="path-input" class="input is-small" type="number" min="0" step="1" value="0">
+                </div>
+            </div>
+
+            <!--
+            <div class="field">
+                <label class="label is-small">Branch Color</label>
+                <div class="control">
+                    <div class="select is-fullwidth is-small">
                         <select id="branch-color">
                             <option value="IMPURITY">Impurity</option>
                             <option value="DROP_OF_IMPURITY">Drop of Impurity</option>
                             <option value="BLACK">Black</option>
-                            <!--<option>Path</option>-->
                         </select>
                     </div>
                 </div>
             </div>
 
             <div class="field">
-                <label class="label">Leaf Color</label>
+                <label class="label is-small">Leaf Color</label>
                 <div class="control">
-                    <div class="select is-fullwidth">
+                    <div class="select is-fullwidth is-small">
                         <select id="leaf-color">
                             <option value="IMPURITY">Impurity</option>
                             <option value="BEST_CLASS">Best Class</option>
@@ -85,34 +82,69 @@
                 </div>
             </div>
 
-            <hr>
-            <span id="reset-zoom" class="button">
-                <span class="icon">
-                  <i class="fas fa-undo"></i>
-                </span>
-                <span>Reset Zoom</span>
-            </span>
-            <hr>
-
-            <div class="buttons has-addons">
-                <span id="previous-tree" class="button">
-                    <span class="icon">
-                      <i class="fas fa-arrow-alt-circle-left"></i>
-                    </span>
-                    <span>Previous</span>
-                </span>
-                <span id="next-tree" class="button">
-                    <span>Next</span>
-                    <span class="icon">
-                      <i class="fas fa-arrow-alt-circle-right"></i>
-                    </span>
-                </span>
-            </div>
+            -->
 
         </div>
     </div>
+    <div id="sidebar">
+        <div id="forest-view">
+            <svg id="forest"></svg>
+            <span id="download-forest" class="button is-small">
+                <span class="icon">
+                    <i class="fas fa-save"></i>
+                </span>
+                <span>Save as SVG</span>
+            </span>
+        </div>
+
+        <div class="buttons has-addons">
+            <span id="previous-tree" class="button is-small">
+                <span class="icon">
+                    <i class="fas fa-arrow-alt-circle-left"></i>
+                </span>
+                <span>Previous</span>
+            </span>
+            <span id="next-tree" class="button is-small">
+                <span>Next</span>
+                <span class="icon">
+                    <i class="fas fa-arrow-alt-circle-right"></i>
+                </span>
+            </span>
+        </div>
+
+        <div class="space"></div>
+
+        <div id="info">
+            <div id="hover-info"></div>
+        </div>
+
+        <div class="space"></div>
+
+        <span id="reset-zoom" class="button is-small">
+            <span class="icon">
+                <i class="fas fa-undo"></i>
+            </span>
+            <span>Reset Zoom</span>
+        </span>
+
+        <div class="space"></div>
+
+    </div>
+    <div id="content">
+        <div id="tree-view">
+            <svg id="tree"></svg>
+            <span id="download-tree" class="button is-small">
+            <span class="icon">
+                <i class="fas fa-save"></i>
+            </span>
+            <span>Save as SVG</span>
+        </span>
+        </div>
+    </div>
+
 </div>
 
+<noscript>You need to enable JavaScript to run this app.</noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="js/frontend.js"></script>
 

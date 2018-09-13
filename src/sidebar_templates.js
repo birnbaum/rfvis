@@ -12,41 +12,39 @@ if (typeof $ !== "undefined") {
 }
 
 function updateForestAndTreeInfo(forest, treeId) {
-    $hover.empty();
     $forest.empty();
     $forest.append(forestAndTreeTemplate(forest, treeId));
-    $forest.show();
 }
 
 function treeMouseover(tree) {
-    $forest.hide(0);
+    $hover.empty();
     $hover.append(treeTemplate(tree));
 }
 
 function pieMouseover(bunch, classHistogram) {
-    $forest.hide(0);
+    $hover.empty();
     $hover.append(pieTemplate(bunch, classHistogram));
 }
 
 function branchMouseover(branch) {
-    $forest.hide(0);
+    $hover.empty();
     $hover.append(branchTemplate(branch));
 }
 
 function leafMouseover(leaf) {
-    $forest.hide(0);
+    $hover.empty();
     $hover.append(leafTemplate(leaf));
 }
 
 function mouseout() {
     $hover.empty();
-    $forest.show();
 }
 
 function forestAndTreeTemplate(forest, treeId) {
-    return `<table class="table is-fullwidth">
+    return `<label class="label is-small">Forest</label>
+    <table class="table is-fullwidth is-narrow is-bordered is-striped">
         <tr>
-          <td>Forest Strength</td>
+          <td>Strength</td>
           <td>${forest.strength}</td>
         </tr>
         <tr>
@@ -54,15 +52,18 @@ function forestAndTreeTemplate(forest, treeId) {
           <td>${forest.trees.length}</td>
         </tr>
         <tr>
-          <td style="border: 0; padding-bottom: 30px;">Number of Samples</td>
-          <td style="border: 0; padding-bottom: 30px;">${forest.totalSamples}</td>
+          <td>Number of Samples</td>
+          <td>${forest.totalSamples}</td>
         </tr>
+    </table>
+    <label class="label is-small">Selected Tree</label>
+    <table class="table is-fullwidth is-narrow is-bordered is-striped">
         <tr>
-          <td>Tree</td>
+          <td>ID</td>
           <td>#${treeId + 1}</td>
         </tr>
         <tr>
-          <td>Tree Strength</td>
+          <td>Strength</td>
           <td>${forest.trees[treeId].strength}</td>
         </tr>
     </table>`;
@@ -113,7 +114,7 @@ function pieTemplate(bunch, classHistogram) {
 }
 
 function branchTemplate(branch) {
-    return `<table class="table is-fullwidth">
+    return `<table class="table is-fullwidth is-narrow is-bordered is-striped">
         <tr>
           <td style="font-weight: bold">Branch</td>
           <td></td>
@@ -138,43 +139,40 @@ function branchTemplate(branch) {
 }
 
 function leafTemplate(leaf) {
-    const classNames = leaf.classes.reduce((accumulator, current) => {
-        return accumulator + `<td>${current.name}</td>`
-    }, "");
-    const classFreq = leaf.classes.reduce((accumulator, current) => {
-        return accumulator + `<td>${current.count}</td>`
-    }, "");
-    const classColors = leaf.classes.reduce((accumulator, current) => {
-        return accumulator + `<td><div style="background: rgb(${current.color}); width: 15px; height: 10px;"></div></td>`
-    }, "");
-    return `
-    <table class="table is-fullwidth">
-        <tr>
-          <td style="font-weight: bold">Leaf</td>
-          <td>#${leaf.leafId}</td>
-        </tr>
-        <tr>
-          <td>Depth</td>
-          <td>${leaf.depth}</td>
-        </tr>
-        <tr>
-          <td>Impurity</td>
-          <td>${leaf.impurity}</td>
-        </tr>
-    </table>
-    ${getClassFrequencyTable(classNames, classFreq, classColors)}`;
-}
+    let tableRows = "";
+    for (const cls of leaf.classes) {
+        tableRows += `<tr>
+          <td><div class="class-distribution-table__color-patch" style="background: rgb(${cls.color})"></div></td>
+          <td>${cls.name}</td>
+          <td>${cls.count}</td>
+        </tr>`;
+    }
 
-function getClassFrequencyTable(classNames, classFreq, classColors) {
-    return `<table class="table is-fullwidth">
-        <tr style="text-transform: uppercase; font-size: 12px">
-          ${classNames}
-        </tr>
-        <tr style="font-size: 12px">
-          ${classFreq}
-        </tr>
-        <tr>
-          ${classColors}
-        </tr>
+    return `<label class="label is-small">Leaf</label>
+    <div class=leaf-info>
+        <div class="leaf-info__left">
+            <table class="leaf-info__table table is-fullwidth is-narrow is-bordered is-striped">
+                <tr>
+                  <td>ID</td>
+                  <td>#${leaf.leafId}</td>
+                </tr>
+                <tr>
+                  <td>Depth</td>
+                  <td>${leaf.depth}</td>
+                </tr>
+                <tr>
+                  <td>Impurity</td>
+                  <td>${leaf.impurity}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="leaf-info__right">
+            <div style="width: 80px; height: 80px; background: pink;"></div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <label class="label is-small">Class Distribution</label>
+    <table class="class-distribution-table table is-fullwidth is-narrow">
+        ${tableRows}
     </table>`;
 }

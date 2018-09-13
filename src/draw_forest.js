@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {treeMouseover, mouseout} from "./frontend_sidebar";
+import {treeMouseover, mouseout} from "./sidebar_templates";
 
 export {drawForest};
 
