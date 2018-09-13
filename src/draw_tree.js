@@ -203,6 +203,36 @@ function getLeafNodes(node) {
     return leafNodes;
 }
 
+function walkAndApply(node, fn) {
+    fn(node);
+    if (node.children) {
+        walkAndApply(node.children[0], fn);
+        walkAndApply(node.children[1], fn);
+    }
+}
+
+function markPathElements(leafIds, tree) {
+    // Reset current tree
+    walkAndApply(tree, (node => {
+        node.selectedPathElement = false;
+    }));
+
+    const leafs = getLeafNodes(node)
+        .filter(leaf => leafIds.includes(leaf.leafId));
+
+    function walkUpAndApply(node, fn) {
+        fn(node);
+        if (node.parent !== null) {
+            walkUpAndApply()
+        }
+    }
+
+    for (const leaf of leafs) {
+        node.selectedPathElement = true;
+        walkUpAndApply()
+    }
+}
+
 /**
  * Computes a histogram over the samples contained the leaf nodes of a sub branch
  * @param node {InternalNode} - Base node of the sub branch
@@ -271,6 +301,15 @@ function branchColor(type, branch) {
     if (type === "BLACK") {
         return "black";
     }
+    if (type === "PATH") {
+        if (branch.selectedPathElement) {
+            return d3.rgb(255, 0, 0);
+        } else {
+            const c = d3.rgb(0, 0, 0);
+            c.opacity = 0.5;
+            return c;
+        }
+    }
     console.log(this);
     throw "Unsupported setting";
 }
@@ -296,6 +335,15 @@ function leafColor(type, leaf) {
     }
     if (type === "BEST_CLASS") {
         return d3.rgb(...leaf.bestClass.color);
+    }
+    if (type === "PATH") {
+        if (leaf.selectedPathElement) {
+            return d3.rgb(255, 0, 0);
+        } else {
+            const c = d3.rgb(0, 0, 0);
+            c.opacity = 0.5;
+            return c;
+        }
     }
     console.log(this);
     throw "Unsupported setting";

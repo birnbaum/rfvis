@@ -22,8 +22,8 @@ import {createForest} from "./parser";
     const treeSvg = d3.select('#tree');
     let currentTreeId = 0;
     let trunkLength = 100;
-    let branchColor = "IMPURITY";
-    let leafColor = "IMPURITY";
+    let branchColor = "PATH";
+    let leafColor = "PATH";
 
 	function updateTreeVisualization(id) {
         resetTree(treeSvg);
