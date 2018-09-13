@@ -16,6 +16,11 @@ class InternalNode {
     add(node) {
         if(this.children.length >= 2) throw `Node ${this} already has two children`;
         this.children.push(node);
+        node.setParent(this);
+    }
+
+    setParent(node) {
+        this.parent = node;
     }
 }
 
@@ -58,6 +63,10 @@ class LeafNode {
             },
         ];
         this.bestClass = LeafNode.getBestClass(this.classes);
+    }
+
+    setParent(node) {
+        this.parent = node;
     }
 
     static getBestClass(classes) {
