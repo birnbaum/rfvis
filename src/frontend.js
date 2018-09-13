@@ -20,6 +20,7 @@ import {createForest} from "./parser";
 
     const leftColumnWidth = d3.select("#sidebar").node().offsetWidth;
     const treeSvg = d3.select('#tree');
+    const forestSvg = d3.select("#forest");
     let currentTreeId = 0;
     let trunkLength = 100;
     let branchColor = "PATH";
@@ -70,7 +71,7 @@ import {createForest} from "./parser";
     updateMaxDepthInput(forest.trees[currentTreeId]);
 
     // Init forest view
-    updateForestVisualization(forest, leftColumnWidth, updateTreeVisualization);
+    updateForestVisualization(forestSvg, forest, leftColumnWidth, updateTreeVisualization);
 
 	// Init tree view with first tree after short timeout, so the tree size can be adapted to the viewport size
     setTimeout(() => {
@@ -139,6 +140,13 @@ import {createForest} from "./parser";
         updateTreeVisualization(currentTreeId);
     });
 
+    d3.select("#download-forest").on("click", function() {
+        downloadSvg(forestSvg, `forest.svg`);
+    });
+
+    d3.select("#download-tree").on("click", function() {
+        downloadSvg(treeSvg, `tree-${currentTreeId}.svg`);
+    });
 
     /* ------ Window resize adaptations ------ */
     window.addEventListener("resize", redrawThrottler, false);
@@ -167,8 +175,7 @@ import {createForest} from "./parser";
     }
 })();
 
-function updateForestVisualization(forest, size, updateFunction) {
-    const forestSvg = d3.select("#forest");
+function updateForestVisualization(forestSvg, forest, size, updateFunction) {
     const trees = computeForestMap({forest}).map((position, i) => {
         const tree = forest.trees[i];
         tree.id = i + 1;
@@ -199,4 +206,36 @@ function getMaxDepth(tree) {
     }
     findMaxDepth(tree.baseNode);
     return maxDepth;
+}
+
+function downloadSvg(svg, filename) {
+    const svgNode = svg.node().cloneNode(true);  // Deep clone of SVG DOM element
+
+    // Adding SVG attributes and removing HTML attributes
+    svgNode.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svgNode.setAttribute("version", "1.1");
+    svgNode.removeAttribute("id");
+
+    svgNode.setAttribute("width", svgNode.style.width);
+    svgNode.style.width = "";
+    svgNode.setAttribute("height", svgNode.style.height);
+    svgNode.style.height = "";
+
+    const svgContent = svgNode.outerHTML;
+    const blob = new Blob([svgContent], {type: "image/svg+xml;charset=utf-8;"});
+    if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, filename);
+    } else {
+        const link = document.createElement("a");
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
 }

@@ -101,6 +101,18 @@ body {
   right: 0;
 }
 
+#download-forest {
+  position: absolute;
+  bottom: 10px;
+  right: 4px;
+}
+
+#download-tree {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+}
+
 
 #content {
   flex: 20 1 auto;
@@ -108,9 +120,9 @@ body {
   margin: 20px 20px 20px 0;
 }
 
-
 #forest {
   background: #ebf7f1;
+  position: relative;
 
   circle:hover {
     cursor: pointer;
@@ -129,6 +141,10 @@ body {
   line:hover {
     cursor: pointer;
   }
+}
+
+#forest-view, #tree-view {
+  position: relative;
 }
 
 .space {
