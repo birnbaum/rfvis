@@ -167,7 +167,9 @@ function leafTemplate(leaf) {
             </table>
         </div>
         <div class="leaf-info__right">
-            <div style="width: 80px; height: 80px; background: pink;"></div>
+            <div style="width: 80px; height: 80px; background: #eee;">
+                <img src="${window.location.origin}/patches/${leaf.leafId}.png">
+            </div>
         </div>
     </div>
     <div class="space"></div>

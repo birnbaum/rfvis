@@ -96,6 +96,10 @@ async function runGui(args) {
     const app = express();
     app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
     app.get("/data", (req, res) => res.json(data));
+    app.get("/patches/:id", (req, res) => {
+        console.log("Requested " + req.params.id);
+        res.sendFile(path.join(args.data, "leafData", "tree-0_id-0--f0.png"));
+    });
 
     app.use(express.static(path.join(__dirname, "public")));
     app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));

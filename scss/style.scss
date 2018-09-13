@@ -101,18 +101,11 @@ body {
   right: 0;
 }
 
-#download-forest {
+#download-forest, #download-tree {
   position: absolute;
   bottom: 10px;
   right: 4px;
 }
-
-#download-tree {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-}
-
 
 #content {
   flex: 20 1 auto;
