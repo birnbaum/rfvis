@@ -1,3 +1,5 @@
+import {InternalNode, LeafNode} from "./TreeNodes";
+
 export {createForest};
 
 
@@ -88,7 +90,7 @@ function parseStatisticsContent(text) {
         } else if (node.depth < latest.depth) {
             stack = stack.slice(0, node.depth)
         } else {
-            throw "No no no no no"
+            throw "Malformed statistics content";
         }
 
         latest = stack[stack.length - 1];
@@ -97,77 +99,4 @@ function parseStatisticsContent(text) {
     }
 
     return baseNode;
-}
-
-/**
- * Internal tree data structure
- */
-class InternalNode {
-    constructor(fields) {
-        this.depth = Number.parseInt(fields[0]);
-        this.samples = Number.parseInt(fields[3]);
-        this.impurity = Number.parseFloat(fields[4]);
-        this.impurityDrop = Number.parseFloat(fields[5]);
-        this.children = [];
-    }
-
-    /** Adds a child node */
-    add(node) {
-        if(this.children.length >= 2) throw `Node ${this} already has two children`;
-        this.children.push(node);
-    }
-}
-
-class LeafNode {
-    constructor(fields) {
-        this.depth = Number.parseInt(fields[0]);
-        this.leafId = Number.parseInt(fields[1]);
-        this.samples = Number.parseInt(fields[3]);
-        this.impurity = Number.parseFloat(fields[4]);
-
-        const parts = fields[5].split(",").map(c => Number.parseInt(c));
-        this.noClasses = parts[0];
-
-        // TODO Currently hardcoded
-        this.classes = [
-            {
-                name: "city",
-                color: [0,0,255],
-                count: parts[1]
-            },
-            {
-                name: "streets",
-                color: [255,0,0],
-                count: parts[2]
-            },
-            {
-                name: "forest",
-                color: [0,128,0],
-                count: parts[3]
-            },
-            {
-                name: "field",
-                color: [0,255,255],
-                count: parts[4]
-            },
-            {
-                name: "shrubland",
-                color: [0,255,0],
-                count: parts[5]
-            },
-        ];
-        this.bestClass = getBestClass(this.classes);
-    }
-}
-
-function getBestClass(classes) {
-    let best;
-    let indexOfBest;
-    for (let i = 0; i < classes.length; i++) {
-        if (!best || classes[i].count > best.count) {
-            best = classes[i];
-            indexOfBest = i;
-        }
-    }
-    return classes[indexOfBest];
 }

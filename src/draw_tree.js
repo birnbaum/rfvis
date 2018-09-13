@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import {drawPie} from "./draw_pie.js";
 import {branchMouseover, leafMouseover, mouseout} from "./sidebar_templates.js";
+import {InternalNode, LeafNode} from "./TreeNodes";
 
 export {drawTree, resetTree};
 
@@ -192,7 +193,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
 function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {
-        if (!node.children) {
+        if (node instanceof LeafNode) {
             leafNodes.push(node);
         } else {
             searchLeafs(node.children[0]);
@@ -205,7 +206,7 @@ function getLeafNodes(node) {
 
 function walkAndApply(node, fn) {
     fn(node);
-    if (node.children) {
+    if (node instanceof InternalNode) {
         walkAndApply(node.children[0], fn);
         walkAndApply(node.children[1], fn);
     }
@@ -278,6 +279,10 @@ function getHistogram(node, type, weighted) {
             ordered.push({value: histObj[key][0], color: color, sortKey: key});
         });
         return ordered;
+    }
+    // TODO
+    if (type === "PATH") {
+        return [{value: 1, color: "rgba(0, 0, 0, 0.5)", sortKey: "0"}]
     }
 }
 
