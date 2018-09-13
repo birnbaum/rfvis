@@ -139,43 +139,40 @@ function branchTemplate(branch) {
 }
 
 function leafTemplate(leaf) {
-    const classNames = leaf.classes.reduce((accumulator, current) => {
-        return accumulator + `<td>${current.name}</td>`
-    }, "");
-    const classFreq = leaf.classes.reduce((accumulator, current) => {
-        return accumulator + `<td>${current.count}</td>`
-    }, "");
-    const classColors = leaf.classes.reduce((accumulator, current) => {
-        return accumulator + `<td><div style="background: rgb(${current.color}); width: 15px; height: 10px;"></div></td>`
-    }, "");
-    return `<label class="label is-small">Leaf</label>
-    <table class="table is-fullwidth is-narrow is-bordered is-striped">
-        <tr>
-          <td style="font-weight: bold">ID</td>
-          <td>#${leaf.leafId}</td>
-        </tr>
-        <tr>
-          <td>Depth</td>
-          <td>${leaf.depth}</td>
-        </tr>
-        <tr>
-          <td>Impurity</td>
-          <td>${leaf.impurity}</td>
-        </tr>
-    </table>
-    ${getClassFrequencyTable(classNames, classFreq, classColors)}`;
-}
+    let tableRows = "";
+    for (const cls of leaf.classes) {
+        tableRows += `<tr>
+          <td><div class="class-distribution-table__color-patch" style="background: rgb(${cls.color})"></div></td>
+          <td>${cls.name}</td>
+          <td>${cls.count}</td>
+        </tr>`;
+    }
 
-function getClassFrequencyTable(classNames, classFreq, classColors) {
-    return `<table class="table is-fullwidth">
-        <tr style="text-transform: uppercase; font-size: 12px">
-          ${classNames}
-        </tr>
-        <tr style="font-size: 12px">
-          ${classFreq}
-        </tr>
-        <tr>
-          ${classColors}
-        </tr>
+    return `<label class="label is-small">Leaf</label>
+    <div class=leaf-info>
+        <div class="leaf-info__left">
+            <table class="leaf-info__table table is-fullwidth is-narrow is-bordered is-striped">
+                <tr>
+                  <td>ID</td>
+                  <td>#${leaf.leafId}</td>
+                </tr>
+                <tr>
+                  <td>Depth</td>
+                  <td>${leaf.depth}</td>
+                </tr>
+                <tr>
+                  <td>Impurity</td>
+                  <td>${leaf.impurity}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="leaf-info__right">
+            <div style="width: 80px; height: 80px; background: pink;"></div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <label class="label is-small">Class Distribution</label>
+    <table class="class-distribution-table table is-fullwidth is-narrow">
+        ${tableRows}
     </table>`;
 }

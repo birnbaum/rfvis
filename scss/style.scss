@@ -154,3 +154,39 @@ body {
 table {
   font-size: 0.875rem;
 }
+
+.leaf-info {
+  display: flex;
+}
+
+.leaf-info__left {
+  flex: 1 1 auto;
+  margin-right: 3px;
+}
+
+.leaf-info__right {
+  flex: 0 0 auto;
+}
+
+.leaf-info__table {
+  tr td:last-child {
+    width: 60%;
+    text-align: right;
+  }
+}
+
+.class-distribution-table {
+  tr td:first-child {
+    width: 50px;
+  }
+  tr td:last-child {
+    text-align: right;
+  }
+}
+
+.class-distribution-table__color-patch {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  border-radius: 10%;
+}
