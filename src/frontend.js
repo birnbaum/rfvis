@@ -5,6 +5,7 @@ import {updateForestAndTreeInfo} from "./sidebar_templates";
 
 import "../scss/style.scss"
 import {computeForestMap} from "./compute_coordinates";
+import {createForest} from "./parser";
 
 /**
  * Main frontend function which is executed on load.
@@ -12,9 +13,12 @@ import {computeForestMap} from "./compute_coordinates";
  * Initializes the tree and forest views and all UI element listeners + keyboard shortcuts
  */
 (async function() {
-    const forest = await (await fetch(window.location.origin + "/data")).json();
-    const leftColumnWidth = d3.select("#sidebar").node().offsetWidth;
+    const rawData = await (await fetch(window.location.origin + "/data")).json();
+    console.log(rawData);
+    const forest = createForest(rawData);
+    console.log(forest);
 
+    const leftColumnWidth = d3.select("#sidebar").node().offsetWidth;
     const treeSvg = d3.select('#tree');
     let currentTreeId = 0;
     let trunkLength = 100;

@@ -1,31 +1,5 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as util from "util";
-const fs_readFile = util.promisify(fs.readFile);
-
 export {createForest};
 
-
-/**
- * Reads the text files from the provided data folder
- * @param {string} dataFolder - Folder containing the forest data text files
- * @returns {Promise<{forestFileContent: string, treeFileContents: [string]}>}
- */
-function readDataFolder(dataFolder) {
-    const dataPath = path.resolve(dataFolder);
-    const forestFile = path.join(dataPath, "forest.txt");
-    const forestFileContent = fs.readFileSync(forestFile, "utf8");
-
-    const treeFileContentPromises = {};
-    for (const file of fs.readdirSync(dataPath)) {
-        if (file.startsWith("tree") && file.endsWith(".txt")) {
-            const id = Number.parseInt(file.split(".")[0].split("_")[1]);
-            treeFileContentPromises[id] = fs_readFile(path.join(dataPath, file), "utf8");
-        }
-    }
-    return Promise.all(Object.values(treeFileContentPromises))
-        .then(treeFileContents => ({forestFileContent, treeFileContents}));
-}
 
 /**
  * Internal representation of a binary decision tree
@@ -44,13 +18,12 @@ function readDataFolder(dataFolder) {
  */
 
 /**
- * Reads and parses the provided txt files and returns an internal representation of the data
+ * Reads and parses the provided txt files and returns an internal representation of the data TODO
  *
  * @param {Object} args - User provided arguments
  * @returns {Forest}
  */
-async function createForest(args) {
-    const rawData = await readDataFolder(args.data);
+function createForest(rawData) {
     const forestDataParts = rawData.forestFileContent.split('\n\n');
 
     const correlationMatrix = parseCorrelationMatrix(forestDataParts[0]);
