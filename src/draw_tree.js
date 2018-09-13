@@ -170,6 +170,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
     }
 
     const baseNode = addBranchInformation(tree.baseNode, width/2, height, 0, trunkLength, 0);
+    markPathElements([1], baseNode);
     branch(baseNode);
 
     const sortBySamples = (a,b) => {
@@ -216,19 +217,20 @@ function markPathElements(leafIds, tree) {
         node.selectedPathElement = false;
     }));
 
-    const leafs = getLeafNodes(node)
+    const leafs = getLeafNodes(tree)
         .filter(leaf => leafIds.includes(leaf.leafId));
 
     function walkUpAndApply(node, fn) {
         fn(node);
-        if (node.parent !== null) {
-            walkUpAndApply()
+        if (node.parent) {
+            walkUpAndApply(node.parent, fn);
         }
     }
 
     for (const leaf of leafs) {
-        node.selectedPathElement = true;
-        walkUpAndApply()
+        walkUpAndApply(leaf, node => {
+            node.selectedPathElement = true;
+        })
     }
 }
 
