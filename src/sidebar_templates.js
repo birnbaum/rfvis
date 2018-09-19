@@ -80,8 +80,8 @@ function treeTemplate(tree) {
           <td>#${tree.id}</td>
         </tr>
         <tr>
-          <td>Tree Strength</td>
-          <td>${tree.strength}</td>
+          <td>Out-of-bag error</td>
+          <td>${tree.oobError}</td>
         </tr>
     </table>`;
 }

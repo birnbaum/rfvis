@@ -23,13 +23,14 @@ function drawTree(options) {
 
         branchColor: branchColorType,
         leafColor: leafColorType,
+        pathLeafID,
     } = options;
 
     const {
         branches,
         leafs,
         bunches,
-    } = generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength);
+    } = generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, pathLeafID);
 
     // Adapt SVG size
     svg.style("width", width + "px").style("height", height + "px");
@@ -116,8 +117,8 @@ const addBranchInformation = (treeNode, x, y, angle, length, depth) => {
  * @param minBranchLength {number} - Minimum branch length
  * @returns {{branches: Array, leafs: Array, bunches: Array}}
  */
-function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, maxShorteningFactor = 0.9,
-    minBranchLength = 4) {
+function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, pathLeafID,
+    maxShorteningFactor = 0.9, minBranchLength = 4) {
     // TODO Improvement: These lists shouldn't contain new objects but pointers to the tree data structure nodes
     const branches = [];
     const leafs = [];
@@ -172,7 +173,11 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
     }
 
     const baseNode = addBranchInformation(tree.baseNode, width/2, height, 0, trunkLength, 0);
-    markPathElements([1], baseNode);
+
+    if (pathLeafID !== null) {
+        markPathElements([pathLeafID], baseNode);
+    }
+
     branch(baseNode);
 
     const sortBySamples = (a,b) => {

@@ -29,8 +29,9 @@ import {createForest} from "./parser";
     const forestSvg = d3.select("#forest");
     let currentTreeId = 0;
     let trunkLength = 100;
-    let branchColor = "PATH";
-    let leafColor = "PATH";
+    let branchColor = "IMPURITY";
+    let leafColor = "IMPURITY";
+    let pathLeafID = null;
 
 	function updateTreeVisualization(id) {
         resetTree(treeSvg);
@@ -47,6 +48,7 @@ import {createForest} from "./parser";
 
             branchColor: branchColor,
             leafColor: leafColor,
+            pathLeafID: pathLeafID
 		});
         updateForestAndTreeInfo(forest, id);
         if (id !== currentTreeId) {
@@ -136,22 +138,57 @@ import {createForest} from "./parser";
         redrawThrottler();
     });
 
-    d3.select("#branch-color").on("change", function() {
-        branchColor = this.value;
-        updateTreeVisualization(currentTreeId);
-    });
-
-    d3.select("#leaf-color").on("change", function() {
-        leafColor = this.value;
-        updateTreeVisualization(currentTreeId);
-    });
-
-    d3.select("#download-forest").on("click", function() {
+    /* ------ SVG Download Buttons ------ */
+    $("#download-forest").click(function() {
         downloadSvg(forestSvg, `forest.svg`);
     });
 
-    d3.select("#download-tree").on("click", function() {
+    $("#download-tree").click(function() {
         downloadSvg(treeSvg, `tree-${currentTreeId}.svg`);
+    });
+
+    /* ------ Branch/Leaf coloring ------ */
+    const $colorTab = $("#color-tab");
+    const $pathTab = $("#path-tab");
+    const $colorView = $("#color-view");
+    const $pathView = $("#path-view");
+    const $branchColorSelect = $("#branch-color-select");
+    const $leafColorSelect = $("#leaf-color-select");
+    const $pathLeafInput = $("#path-leaf-input");
+    $pathView.hide();
+
+    $colorTab.click(function() {
+        $colorTab.addClass("is-active");
+        $pathTab.removeClass("is-active");
+        $colorView.show();
+        $pathView.hide();
+        branchColor = $branchColorSelect.val();
+        leafColor = $leafColorSelect.val();
+        pathLeafID = null;
+        updateTreeVisualization(currentTreeId);
+    });
+    $branchColorSelect.change(function() {
+        branchColor = $branchColorSelect.val();
+        updateTreeVisualization(currentTreeId);
+    });
+    $leafColorSelect.change(function() {
+        leafColor = $leafColorSelect.val();
+        updateTreeVisualization(currentTreeId);
+    });
+
+    $pathTab.click(function() {
+        $colorTab.removeClass("is-active");
+        $pathTab.addClass("is-active");
+        $colorView.hide();
+        $pathView.show();
+        branchColor = "PATH";
+        leafColor = "PATH";
+        pathLeafID = Number.parseInt($pathLeafInput.val());
+        updateTreeVisualization(currentTreeId);
+    });
+    $pathLeafInput.on("input", function() {
+        pathLeafID = Number.parseInt($pathLeafInput.val());
+        updateTreeVisualization(currentTreeId);
     });
 
     /* ------ Window resize adaptations ------ */

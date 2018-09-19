@@ -44,42 +44,43 @@
 
             <div class="tabs">
                 <ul>
-                    <li class="is-active"><a>Color</a></li>
-                    <li><a>Path</a></li>
+                    <li id="color-tab" class="is-active"><a>Color</a></li>
+                    <li id="path-tab"><a>Path</a></li>
                 </ul>
             </div>
 
-            <!--
-            <div class="field">
-                <label class="label is-small">Color Path to LeafID</label>
-                <div class="control">
-                    <input id="path-input" class="input is-small" type="number" min="0" step="1" value="0">
+            <div id="color-view">
+                <div class="field">
+                    <label class="label is-small">Branch Color</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-small">
+                            <select id="branch-color-select">
+                                <option value="IMPURITY">Impurity</option>
+                                <option value="DROP_OF_IMPURITY">Drop of Impurity</option>
+                                <option value="BLACK">Black</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-
-            -->
-            <div class="field">
-                <label class="label is-small">Branch Color</label>
-                <div class="control">
-                    <div class="select is-fullwidth is-small">
-                        <select id="branch-color">
-                            <option value="IMPURITY">Impurity</option>
-                            <option value="DROP_OF_IMPURITY">Drop of Impurity</option>
-                            <option value="BLACK">Black</option>
-                        </select>
+                <div class="field">
+                    <label class="label is-small">Leaf Color</label>
+                    <div class="control">
+                        <div class="select is-fullwidth is-small">
+                            <select id="leaf-color-select">
+                                <option value="IMPURITY">Impurity</option>
+                                <option value="BEST_CLASS">Best Class</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="field">
-                <label class="label is-small">Leaf Color</label>
-                <div class="control">
-                    <div class="select is-fullwidth is-small">
-                        <select id="leaf-color">
-                            <option value="IMPURITY">Impurity</option>
-                            <option value="BEST_CLASS">Best Class</option>
-                        </select>
+            <div id="path-view">
+                <div class="field">
+                    <label class="label is-small">Color Path to LeafID</label>
+                    <div class="control">
+                        <input id="path-leaf-input" class="input is-small" type="number" min="0" step="1" value="0">
                     </div>
                 </div>
             </div>
