@@ -95,6 +95,7 @@ async function runGui(args) {
     console.log("Starting server");
     const app = express();
     app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
+    app.get("/info", (req, res) => res.json({name: args.data}));
     app.get("/data", (req, res) => res.json(data));
     app.get("/patches/:id", (req, res) => {
         console.log("Requested " + req.params.id);

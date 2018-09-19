@@ -63,8 +63,8 @@ function forestAndTreeTemplate(forest, treeId) {
           <td>#${treeId + 1}</td>
         </tr>
         <tr>
-          <td>Strength</td>
-          <td>${forest.trees[treeId].strength}</td>
+          <td>Out-of-bag error</td>
+          <td>${forest.trees[treeId].oobError}</td>
         </tr>
     </table>`;
 }

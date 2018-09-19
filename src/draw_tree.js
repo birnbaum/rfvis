@@ -118,6 +118,7 @@ const addBranchInformation = (treeNode, x, y, angle, length, depth) => {
  */
 function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunkLength, maxShorteningFactor = 0.9,
     minBranchLength = 4) {
+    // TODO Improvement: These lists shouldn't contain new objects but pointers to the tree data structure nodes
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -137,7 +138,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
             return;  // End of recursion
         }
 
-        if (!node.children) {
+        if (node instanceof LeafNode) {
             leafs.push({
                 x: node.x2,
                 y: node.y2,
@@ -148,6 +149,7 @@ function generateTreeElements(tree, totalSamples, maxDepth, width, height, trunk
                 noClasses: node.noClasses,
                 classes: node.classes,
                 bestClass: node.bestClass,
+                selectedPathElement: node.selectedPathElement,
             });
             return;  // End of recursion
         }

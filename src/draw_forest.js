@@ -23,7 +23,7 @@ function drawForest({
         .enter().append("circle")
         .attr("cy", d => d.y / 100 * size)
         .attr("cx", d => d.x / 100 * size)
-        .attr("r", d => treeSize(d, size / 20))
+        .attr("r", d => treeSize(d, size / 30))
         .style("fill", d => treeColor(d))
         .on("mouseover", treeMouseover)
         .on("mouseout", mouseout)
@@ -32,13 +32,13 @@ function drawForest({
 
 function treeColor(tree) {
         return d3.scaleLinear()
-            .domain([1, 0.5, 0])
-            .range(["green", "green", "red"])
-            (tree.strength);
+            .domain([1, 0.5, 0.05, 0])
+            .range(["red", "red", "green", "green"])
+            (tree.oobError);
 }
 
 function treeSize(tree, maxRadius) {
-    const radius = Math.sqrt(tree.strength / Math.PI);
+    const radius = Math.sqrt((1 - tree.oobError) / Math.PI);
     return d3.scaleLinear()
         .domain([0, Math.sqrt(1 / Math.PI)])
         .range([1, maxRadius])

@@ -46,7 +46,7 @@ function computeForestMap({
         DStar.push([]);
         for (let j = 0; j < forest.trees.length; j++ ) {
             if (i !== j) {
-                const c = forest.correlationMatrix[i][j];   // supportpoints are ordered by strength ?!?!?!?!?!?
+                const c = forest.correlationMatrix[i][j];  // supportpoints are ordered by strength ?!?!?!?!?!?
                 D[i][j] = 1 / Math.max(0.05, c);
                 DStar[i][j] = coordinates[i].subtract(coordinates[j]).getLength();
             }

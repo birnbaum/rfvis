@@ -18,6 +18,12 @@ import {createForest} from "./parser";
     const forest = createForest(rawData);
     console.log(forest);
 
+    fetch(window.location.origin + "/info")
+        .then(res => res.json())
+        .then(json => {
+            $(".drawer__subtitle").first().text(json.name);
+        });
+
     const leftColumnWidth = d3.select("#sidebar").node().offsetWidth;
     const treeSvg = d3.select('#tree');
     const forestSvg = d3.select("#forest");
