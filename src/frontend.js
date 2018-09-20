@@ -54,6 +54,10 @@ import {createForest} from "./parser";
         if (id !== currentTreeId) {
             updateMaxDepthInput(forest.trees[id]);
         }
+        $(".tree-circle").each(function() {
+            $(this).css("opacity", 0);
+        });
+        $("#tree-circle-" + id).css("opacity", 1);
         currentTreeId = id;
 	}
 
@@ -248,7 +252,7 @@ function getMaxDepth(tree) {
         }
     }
     findMaxDepth(tree.baseNode);
-    return maxDepth;
+    return maxDepth + 1;
 }
 
 function downloadSvg(svg, filename) {

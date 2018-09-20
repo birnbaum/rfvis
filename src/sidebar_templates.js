@@ -44,8 +44,8 @@ function forestAndTreeTemplate(forest, treeId) {
     return `<label class="label is-small">Forest</label>
     <table class="table is-fullwidth is-narrow is-bordered is-striped">
         <tr>
-          <td>Strength</td>
-          <td>${forest.strength}</td>
+          <td>Error</td>
+          <td>${forest.error}</td>
         </tr>
         <tr>
           <td>Number of Trees</td>
@@ -63,7 +63,7 @@ function forestAndTreeTemplate(forest, treeId) {
           <td>#${treeId + 1}</td>
         </tr>
         <tr>
-          <td>Out-of-bag error</td>
+          <td>Out-of-bag Error</td>
           <td>${forest.trees[treeId].oobError}</td>
         </tr>
     </table>`;
@@ -80,7 +80,7 @@ function treeTemplate(tree) {
           <td>#${tree.id}</td>
         </tr>
         <tr>
-          <td>Out-of-bag error</td>
+          <td>Out-of-bag Error</td>
           <td>${tree.oobError}</td>
         </tr>
     </table>`;

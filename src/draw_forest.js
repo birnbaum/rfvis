@@ -17,13 +17,27 @@ function drawForest({
     // Adapt SVG size
     svg.style("width", size + "px").style("height", size + "px");
 
-    // Draw trees
-    svg.selectAll("circle")
+    // Active tree circles
+    svg.append("g").selectAll("circle")
         .data(trees)
         .enter().append("circle")
         .attr("cy", d => d.y / 100 * size)
         .attr("cx", d => d.x / 100 * size)
-        .attr("r", d => treeSize(d, size / 30))
+        .attr("r", d => treeSize(d, size / 25) + size / 100)
+        .attr("class", "tree-circle")
+        .attr("id", (d, i) => "tree-circle-" + i)
+        .style("fill", "white")
+        .style("opacity", 0)
+        .style("stroke", d => treeColor(d))
+        .style("stroke", size / 300);
+
+    // Draw trees
+    svg.append("g").selectAll("circle")
+        .data(trees)
+        .enter().append("circle")
+        .attr("cy", d => d.y / 100 * size)
+        .attr("cx", d => d.x / 100 * size)
+        .attr("r", d => treeSize(d, size / 25))
         .style("fill", d => treeColor(d))
         .on("mouseover", treeMouseover)
         .on("mouseout", mouseout)
@@ -31,16 +45,16 @@ function drawForest({
 }
 
 function treeColor(tree) {
-        return d3.scaleLinear()
-            .domain([1, 0.5, 0.05, 0])
-            .range(["red", "red", "green", "green"])
-            (tree.oobError);
+    return d3.scaleLinear()
+        .domain([1, 0.5, 0.05, 0])
+        .range(["red", "red", "green", "green"])
+        (tree.oobError);
 }
 
 function treeSize(tree, maxRadius) {
-    const radius = Math.sqrt((1 - tree.oobError) / Math.PI);
+    const radius = area => Math.sqrt(area / Math.PI);
     return d3.scaleLinear()
-        .domain([0, Math.sqrt(1 / Math.PI)])
-        .range([1, maxRadius])
-        (radius)
+        .domain([0, radius(0.6), radius(1)])
+        .range([maxRadius / 2, maxRadius / 2, maxRadius])
+        (radius(1 - tree.oobError))
 }

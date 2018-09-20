@@ -30,7 +30,7 @@ function createForest(rawData) {
 
     const correlationMatrix = parseCorrelationMatrix(forestDataParts[0]);
     const treeOobErrors = forestDataParts[1].split('\n').map(Number.parseFloat);
-    const totalStrength = Number.parseFloat(forestDataParts[2]);
+    const error = Number.parseFloat(forestDataParts[2]);
 
     const trees = rawData.treeFileContents.map((treeFileContent, index) => {
         return {
@@ -40,7 +40,7 @@ function createForest(rawData) {
     });
 
     return {
-        strength: totalStrength,
+        error: error,
         totalSamples: trees[0].baseNode.samples,
         correlationMatrix: correlationMatrix,
         trees: trees

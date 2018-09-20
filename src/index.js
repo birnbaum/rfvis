@@ -132,7 +132,7 @@ async function runCli(args) {
             branchColor: args.branchColor.toUpperCase(),
             leafColor: args.leafColor.toUpperCase()
         });
-        const filePath = path.join(outDir, `tree-${index + 1}.svg`);
+        const filePath = path.join(outDir, `tree-${index}.svg`);
         fs.writeFile(filePath, d3n.svgString(), () => {
             console.log(`>> Exported "${filePath}"`);
         });
