@@ -4,15 +4,14 @@ import {createForest} from "./parser.js";
 import {readDataFolder} from "./read_data.js"
 import * as path from "path";
 import {drawTree} from "./draw_tree";
-import {computeForestMap} from "./compute_coordinates";
 import D3Node from "d3-node";
 import * as fs from "fs";
-import * as child_process from "child_process";
 
 /**
  * This function initializes all CLI commands and processes them accordingly when the application is called
  */
 const argv = yargs
+    .scriptName("rfvis")
     .command(
         "cli <data>",
         "Command line interface to generate SVGs",
@@ -79,7 +78,6 @@ const argv = yargs
         runGui
     )
     .help("help")
-    .version("0.1.0")
     .argv;
 
 if (!argv._[0]) {

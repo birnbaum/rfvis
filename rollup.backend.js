@@ -1,4 +1,6 @@
 import fs from "fs";
+import shebang from 'rollup-plugin-shebang';
+
 const {dependencies, devDependencies} = JSON.parse(fs.readFileSync("./package.json"));
 const external = ["fs", "path", "util", "child_process", ...Object.keys(dependencies), ...Object.keys(devDependencies)];
 
@@ -9,5 +11,8 @@ export default {
         format: "cjs",
         sourcemap: true
     },
-    external: external
+    external: external,
+    plugins: [
+        shebang()
+    ]
 };
