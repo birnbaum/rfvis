@@ -16,20 +16,9 @@ export {computeForestMap}
  */
 
 /**
- *
- * Computes the 2D spacial coordinates of a given forest
- *
- * This is an implementation of the algorithm proposed by:
- * > Hänsch, R. and Hellwich, O. (2015).
- * > Performance assessment and interpretation of random forests by three-dimensional visualizations. pages 149–156.
- *
- * To understand the options, consult this paper.
+ * Computes the 2D spacial coordinates from the correlation matrix of a given forest
  *
  * @param {Object} forest - Forest object as returned by parser.createForest()
- * @param {number} [rmax = 50] - Max distance
- * @param {number} [rmin = 10] - Min distance
- * @param {number} [width = 5] - Width of the ring around each tree used to compute the voting space
- * @param {number} [N = 100] - Length & Width of the space where the trees shall be placed
  * @returns {TreePosition[]} - List of tree positions for all trees in the forest
  */
 function computeForestMap({
@@ -70,7 +59,7 @@ function computeForestMap({
             }
             coordinates[i] = coordinate;
 
-            //update DStar
+            // update DStar
             for (let j = 0; j < D[i].length; j++) {
                 if (i !== j) {
                     DStar[i][j] = coordinates[i].subtract(coordinates[j]).getLength();

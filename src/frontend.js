@@ -10,7 +10,8 @@ import {createForest} from "./parser";
 /**
  * Main frontend function which is executed on load.
  *
- * Initializes the tree and forest views and all UI element listeners + keyboard shortcuts
+ * Initializes the tree and forest views and all UI element listeners + keyboard shortcuts.
+ * This function should be refactored using a proper frontend lib (vue.js/React/Angular) instead of jQuery.
  */
 (async function() {
     const rawData = await (await fetch(window.location.origin + "/data")).json();
@@ -237,9 +238,11 @@ function updateForestVisualization(forestSvg, forest, size, updateFunction) {
         size: size,
     });
 }
+
 /**
  * Finds the maximal depth of a tree
  * @param {Tree} tree
+ * @returns {number}
  */
 function getMaxDepth(tree) {
     let maxDepth = 0;
@@ -255,6 +258,11 @@ function getMaxDepth(tree) {
     return maxDepth + 1;
 }
 
+/**
+ * Downloads the provided SVG DOM element as an SVG file
+ * @param {Object} svg - SVG DOM element
+ * @param {string} filename - Name of the output file
+ */
 function downloadSvg(svg, filename) {
     const svgNode = svg.node().cloneNode(true);  // Deep clone of SVG DOM element
 

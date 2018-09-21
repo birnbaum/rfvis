@@ -6,14 +6,14 @@ export {createForest};
 /**
  * Internal representation of a binary decision tree
  * @typedef {Object} Tree
- * @property {number} strength - Strength of the tree. Between 0 and 1
+ * @property {number} oobError - Out-of-bad error of the tree. Between 0 and 1
  * @property {InternalNode} baseNode - X coordinate of the tree. Between 0 and N
  */
 
 /**
  * Internal representation of a forest
  * @typedef {Object} Forest
- * @property {number} strength - Strength of the forest. Between 0 and 1
+ * @property {number} error - Validation error of the forest. Between 0 and 1
  * @property {number} totalSamples - Number of samples the forest was fitted on
  * @property {number[][]} correlationMatrix - Correlation matrix of all the trees in the forest
  * @property {Tree[]} trees - List of all the trees in the forest
@@ -22,7 +22,7 @@ export {createForest};
 /**
  * Reads and parses the provided txt files and returns an internal representation of the data TODO
  *
- * @param {Object} args - User provided arguments
+ * @param {Object} rawData - Raw content of input files
  * @returns {Forest}
  */
 function createForest(rawData) {

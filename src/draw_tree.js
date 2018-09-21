@@ -210,6 +210,11 @@ function getLeafNodes(node) {
     return leafNodes;
 }
 
+/**
+ * Walks down a tree (depth first) and applies a function to each node
+ * @param {InternalNode | LeafNode} node - Base node
+ * @param {function} fn - function which shall be executed on each node
+ */
 function walkAndApply(node, fn) {
     fn(node);
     if (node instanceof InternalNode) {
@@ -218,6 +223,13 @@ function walkAndApply(node, fn) {
     }
 }
 
+/**
+ * Marks the provided leaf nodes and all of their parent nodes with a flag.
+ * This function works in-place.
+ *
+ * @param {number[]} leafIds - List of leaf IDs
+ * @param {InternalNode} tree - Tree on which the marking shall be performed
+ */
 function markPathElements(leafIds, tree) {
     // Reset current tree
     walkAndApply(tree, (node => {
