@@ -20,7 +20,6 @@
     "watch:frontend": "rollup -c rollup.frontend.js --watch"
   },
   "dependencies": {
-    "bulma": "^0.7.1",
     "d3": "^5.7.0",
     "d3-component": "^3.1.0",
     "d3-node": "^2.0.1",
@@ -28,11 +27,12 @@
     "yargs": "^12.0.2"
   },
   "devDependencies": {
+    "bulma": "^0.7.1",
+    "bulmaswatch": "^0.7.1",
     "rollup": "^0.66.2",
     "rollup-plugin-commonjs": "^9.1.8",
     "rollup-plugin-copy": "^0.2.3",
     "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-scss": "^0.4.0",
-    "rollup-plugin-shebang": "^0.1.5"
+    "rollup-plugin-scss": "^0.4.0"
   }
 }
