@@ -1,4 +1,8 @@
-# Random Forest Visualization Tool
+# RFVis
+
+[![npm version](https://badge.fury.io/js/rfvis.svg)](https://www.npmjs.com/package/rfvis)
+[![Dependency Status](https://david-dm.org/birnbaum/rfvis.svg)](https://david-dm.org/birnbaum/rfvis)
+[![devDependency Status](https://david-dm.org/birnbaum/rfvis/dev-status.svg)](https://david-dm.org/birnbaum/rfvis#info=devDependencies)
 
 A tool for visualizing the structure and performance of Random Forests.
 
@@ -6,25 +10,11 @@ A tool for visualizing the structure and performance of Random Forests.
 
 ## Getting Started 
 
-As prerequisites you need [Node.js](https://nodejs.org/en/download/) an a local copy of this repository. 
-To install all required project dependencies run:
+As a prerequisite you need [Node.js](https://nodejs.org/en/download/) v8 or higher. To install RFVis run:
 ```
-$ npm install
+$ npm install -g rfvis
 ```
 
-The web-based GUI is currently only tested on Google Chrome.
-
-### Build
-
-To build the project run:
-```
-$ npm run build
-```
-This will generate a `./dist` folder which contains the "compiled" Javascript files for the frontend and backend, as well as the necessary assets and HTML.
-
-### Run
-TODO
-The entrypoint of the tool is the `./dist/index.js` which is generated in the previous build step.
 
 The tool offers a command line interface to either generate SVG files directly from your input data (`rfvis cli <data>`) or to spin up a web-based GUI for a more interactive analysis (`rfvis gui <data>`).
 
@@ -42,6 +32,21 @@ Options:
   --help     Show help                                                 [boolean]
   --version  Show version number                                       [boolean]
 ```
+
+## The Graphical User Interface
+To interactively analyze your forest with the web-based GUI run:
+```
+$ rfvis gui /path/to/data
+Starting server
+GUI running at http://localhost:3000
+```
+You can now open up your browser at <http://localhost:3000> to see something like this:
+
+![Tree](images/screenshot.png)
+
+Note: The web-based GUI is currently only tested on Google Chrome.
+
+
 
 ## The Command Line Interface
 To use the command line interface and generate SVG files for each tree in the input data, run:
@@ -83,21 +88,6 @@ Options:
                     [choices: "impurity", "impurity-drop"] [default: "impurity"]
 ```
 
-## The Graphical User Interface
-To interactively analyze your forest with the web-based GUI run:
-```
-$ rfvis gui /path/to/data
-Starting server
-GUI running at http://localhost:3000
-```
-You can now open up your browser at <http://localhost:3000> to see something like this:
-
-![Tree](images/screenshot.png)
-
-As the computation of the forest visualization is relatively slow, the server starts right away. The computation is 
-carried out in the background and the forest will pop up in the frontend automatically once its done.
-
-
 ## Input Data
 The input data is expected to come in text files in the following folder structure:
 - `./forest.txt`: A text file containing the correlation matrix, tree strengths and overall forest strength
@@ -107,6 +97,8 @@ The input data is expected to come in text files in the following folder structu
 
 
 ## Development
+To build and use the project locally just run `npm run build` and `npm link`.
+
 In order to make development more convenient (which means not having to run `npm run build` after every change) you can run watchers on the source files. The recommended setup for development is to open two terminal processes and run:
 1. `npm run watch:frontend` to automatically build any changes in the frontend related JS or SCSS files
 2. `npm run watch:backend` to automatically build any changes in the command line interface or the server related JS files
@@ -121,3 +113,10 @@ Note that many files are used by the frontend _and_ backend, e.g. the logic for 
 * [Bulma](https://bulma.io/) - Lightweight CSS Framework
 * [Express](https://expressjs.com/) - Web Application Framework
 * [rollup.js](https://rollupjs.org/) - Module Bundler / Build Tool
+
+
+## TODOs
+
+* Simplify and document input data format
+* Provide scripts to export RFVis-readable data for the most common Random Forest implementations, e.g. [sklearn.ensemble.RandomForestClassifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+* Refactor the project to use a proper frontend lib instead of jQuery to be able to add more features in the future
