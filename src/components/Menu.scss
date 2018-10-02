@@ -1,0 +1,67 @@
+.Menu {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 256px;
+  max-width: 256px;
+  height: 100%;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: auto;
+
+  .label {
+    font-weight: 500;
+  }
+}
+
+.Menu-header {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 64px;
+  padding: 0 16px 16px;
+}
+
+.Menu-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  display: block;
+  margin-top: 0;
+  margin-bottom: -20px;
+
+  &::before {
+    display: inline-block;
+    width: 0;
+    height: 36px;
+    content: "";
+    vertical-align: 0;
+  }
+
+  &::after {
+    display: inline-block;
+    width: 0;
+    height: 20px;
+    content: "";
+    vertical-align: -20px;
+  }
+}
+
+.Menu-subtitle {
+  font-size: 0.875rem;
+  font-weight: 400;
+  display: block;
+  margin-top: 0;
+  line-height: normal;
+  margin-bottom: 0;
+
+  &::before {
+    display: inline-block;
+    width: 0;
+    height: 20px;
+    content: "";
+    vertical-align: 0;
+  }
+}
+
+.Menu-content {
+  margin: 0 16px;
+}

@@ -1,0 +1,16 @@
+@import "../node_modules/bulma/bulma";
+@import "../node_modules/bulmaswatch/cosmo/_variables.scss";
+@import "../node_modules/bulmaswatch/cosmo/_overrides.scss";
+
+html, body, #root{
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding-top: 0.1px;
+}
+
+#root {
+  display: flex;
+}

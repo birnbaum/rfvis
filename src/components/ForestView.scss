@@ -1,0 +1,16 @@
+#ForestView {
+  position: relative;
+}
+
+#Forest {
+  background: #ebf7f1;
+  position: relative;
+
+  circle:hover {
+    cursor: pointer;
+  }
+
+  circle.active {
+    fill: cornflowerblue;
+  }
+}

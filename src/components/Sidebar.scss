@@ -1,0 +1,17 @@
+.Sidebar {
+  position: relative;
+  flex: 0 1 auto;
+  width: 300px;
+  margin: 20px;
+  overflow: auto;
+}
+
+#Sidebar-treeSwitchButton {
+  width: 50%;
+}
+
+#Sidebar-resetZoom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
