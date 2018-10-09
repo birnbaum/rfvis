@@ -1,4 +1,4 @@
-import "./DownloadButton.scss"
+import "./DownloadButton.css"
 
 import React from "react";
 

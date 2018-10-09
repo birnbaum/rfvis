@@ -1,4 +1,4 @@
-import "./ForestView.scss"
+import "./ForestView.css"
 
 import React from "react";
 import DownloadButton from "./DownloadButton";

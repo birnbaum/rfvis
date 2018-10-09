@@ -2,7 +2,7 @@
 @import "../node_modules/bulmaswatch/cosmo/_variables.scss";
 @import "../node_modules/bulmaswatch/cosmo/_overrides.scss";
 
-html, body, #root{
+html, body, .App {
   height: 100%;
 }
 
@@ -11,6 +11,6 @@ body {
   padding-top: 0.1px;
 }
 
-#root {
+.App {
   display: flex;
 }

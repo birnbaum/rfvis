@@ -1,4 +1,4 @@
-import "./Menu.scss";
+import "./Menu.css";
 
 import React from "react";
 import ColorSelect from "./ColorSelect";
@@ -7,9 +7,9 @@ export default class Menu extends React.Component {
     render() {
         return (
             <div className="Menu">
-                <div className="drawer__header">
+                <div className="Menu-header">
                     <h3 className="Menu-title">Random Forest Visualization</h3>
-                    {/* <h6 className="Menu-subtitle" /> */}
+                    <h6 className="Menu-subtitle" />
                 </div>
 
                 <div className="Menu-content">

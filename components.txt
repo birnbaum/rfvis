@@ -1,0 +1,25 @@
+App
+    props:
+    state:
+        forest
+        leftColumnWidth
+        currentTreeId
+        trunkLength
+        branchColor
+        leafColor
+        // pathLeafID
+
+    components:
+        TreeView
+            props:
+                tree
+                totalSamples
+                width
+                height
+                trunkLength
+                maxDepth
+                branchColor: branchColorType
+                leafColor: leafColorType
+                // pathLeafID
+            state:
+            components:

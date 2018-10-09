@@ -2,11 +2,17 @@
   "name": "rfvis",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
+    "d3": "^5.7.0",
+    "express": "^4.16.3",
     "react": "^16.5.2",
     "react-bulma-components": "^2.0.0",
     "react-dom": "^16.5.2",
-    "react-scripts": "1.1.5"
+    "react-minimal-pie-chart": "^3.3.0",
+    "react-scripts": "1.1.5",
+    "react-svg-piechart": "^2.1.1",
+    "yargs": "^12.0.2"
   },
   "devDependencies": {
     "bulma": "^0.7.1",

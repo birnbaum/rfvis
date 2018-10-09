@@ -1,4 +1,4 @@
-import "./Sidebar.scss";
+import "./Sidebar.css";
 
 import React from "react";
 import ForestView from "./ForestView";

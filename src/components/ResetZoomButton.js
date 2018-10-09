@@ -1,4 +1,4 @@
-import "./ResetZoomButton.scss"
+import "./ResetZoomButton.css"
 
 import React from "react";
 
