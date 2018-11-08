@@ -30,8 +30,8 @@ export default class ForestView extends React.Component {
         });
 
         return (
-            <div className="ForestView" style={svgStyle}>
-                <svg className="Forest">
+            <div className="ForestView">
+                <svg className="Forest" style={svgStyle}>
                     {renderedTrees}
                 </svg>
                 <DownloadButton onClick={this.downloadSVG} />

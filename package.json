@@ -13,6 +13,7 @@
     "react-minimal-pie-chart": "^3.3.0",
     "react-scripts": "1.1.5",
     "react-svg-piechart": "^2.1.1",
+    "react-tabs": "^2.3.0",
     "yargs": "^12.0.2"
   },
   "devDependencies": {

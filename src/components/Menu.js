@@ -3,14 +3,16 @@ import "./Menu.css";
 import React from "react";
 import ColorSelect from "./ColorSelect";
 import PropTypes from "prop-types";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+
 
 export default class Menu extends React.Component {
     render() {
         return (
             <div className="Menu">
                 <div className="Menu-header">
-                    <h3 className="Menu-title">Random Forest Visualization</h3>
-                    <h6 className="Menu-subtitle" />
+                    <h3 className="Menu-title">rfvis</h3>
+                    <h6 className="Menu-subtitle"><a href="https://github.com/birnbaum/rfvis">https://github.com/birnbaum/rfvis</a></h6>
                 </div>
 
                 <div className="Menu-content">
@@ -54,40 +56,42 @@ export default class Menu extends React.Component {
 
                     <div className="space" />
 
-                    <div className="tabs">
-                        <ul>
-                            <li id="color-tab" className="is-active"><a>Color</a></li>
-                            <li id="path-tab"><a>Path</a></li>
-                        </ul>
-                    </div>
-
-                    <div id="color-view">
-                        <ColorSelect name="Branch Color"
-                                     options={[
-                                         {value: "IMPURITY", name: "Impurity"},
-                                         {value: "DROP_OF_IMPURITY", name: "Drop of Impurity"},
-                                         {value: "BLACK", name: "Black"},
-                                     ]}
-                                     value={this.props.branchColor}
-                                     onChange={this.props.changeBranchColor} />
-
-                        <ColorSelect name="Leaf Color"
-                                     options={[
-                                         {value: "IMPURITY", name: "Impurity"},
-                                         {value: "BEST_CLASS", name: "Best Class"},
-                                     ]}
-                                     value={this.props.leafColor}
-                                     onChange={this.props.changeLeafColor} />
-                    </div>
-
-                    <div id="path-view">
-                        <div className="field">
-                            <label className="label is-small">Color Path to LeafID</label>
-                            <div className="control">
-                                <input id="path-leaf-input" className="input is-small" type="number" min="0" step="1" />
-                            </div>
+                    <Tabs selectedTabClassName="is-active">
+                        <div className="tabs">
+                            <TabList>
+                                <Tab><a>Color</a></Tab>
+                                <Tab><a>Path</a></Tab>
+                            </TabList>
                         </div>
-                    </div>
+
+                        <TabPanel>
+                            <ColorSelect name="Branch Color"
+                                         options={[
+                                             {value: "IMPURITY", name: "Impurity"},
+                                             {value: "DROP_OF_IMPURITY", name: "Drop of Impurity"},
+                                             {value: "BLACK", name: "Black"},
+                                         ]}
+                                         value={this.props.branchColor}
+                                         onChange={this.props.changeBranchColor} />
+
+                            <ColorSelect name="Leaf Color"
+                                         options={[
+                                             {value: "IMPURITY", name: "Impurity"},
+                                             {value: "BEST_CLASS", name: "Best Class"},
+                                         ]}
+                                         value={this.props.leafColor}
+                                         onChange={this.props.changeLeafColor} />
+                        </TabPanel>
+                        <TabPanel>
+                            <div className="field">
+                                <label className="label is-small">Color Path to LeafID</label>
+                                <div className="control">
+                                    <input id="path-leaf-input" className="input is-small" type="number" min="0" step="1" />
+                                </div>
+                            </div>
+                        </TabPanel>
+                    </Tabs>
+
                 </div>
             </div>
         );
