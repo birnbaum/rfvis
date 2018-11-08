@@ -14,10 +14,13 @@ export default class ForestView extends React.Component {
             height: this.props.size + "px",
         };
 
-        const treePositions = computeTreePositions(this.props.forest);
-        // TODO active tree circles
+        // Only compute on first render() (performance improvement, may be removed once switching forests is supported)
+        if (!this.treePositions) {
+            this.treePositions = computeTreePositions(this.props.forest);
+        }
+        // TODO Draw active tree circles
 
-        const renderedTrees = treePositions.map((treePosition, i) => {
+        const renderedTrees = this.treePositions.map((treePosition, i) => {
             const treeStyle = {
                 fill: treeColor(treePosition),
             };

@@ -1,8 +1,8 @@
 - Save as SVG
 - Reset Zoom
-- Forest View
-- Color/Path Tabs
 - Performance improvements
 - MAX button
 - Zooming
 - Sidebar templates hovering
+- Draw active tree
+- Improve CSS Layout

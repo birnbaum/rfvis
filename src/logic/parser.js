@@ -1,5 +1,4 @@
-import InternalNode from "./InternalNode";
-import LeafNode from "./LeafNode";
+import {LeafNode, InternalNode} from "./TreeNodes";
 
 
 /**

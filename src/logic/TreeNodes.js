@@ -1,9 +1,23 @@
-export default class LeafNode {
+export {TreeNode, LeafNode, InternalNode}
+
+class TreeNode {
+    constructor(depth, samples, impurity) {
+        this.depth = depth;
+        this.samples = samples;
+        this.impurity = impurity;
+    }
+
+    setParent(node) {
+        this.parent = node;
+    }
+}
+
+class LeafNode extends TreeNode {
     constructor(rawDataFields) {
-        this.depth = Number.parseInt(rawDataFields[0]);
+        super(Number.parseInt(rawDataFields[0]),
+            Number.parseInt(rawDataFields[3]),
+            Number.parseFloat(rawDataFields[4]));
         this.leafId = Number.parseInt(rawDataFields[1]);
-        this.samples = Number.parseInt(rawDataFields[3]);
-        this.impurity = Number.parseFloat(rawDataFields[4]);
 
         const parts = rawDataFields[5].split(",").map(c => Number.parseInt(c));
         this.noClasses = parts[0];
@@ -39,10 +53,6 @@ export default class LeafNode {
         this.bestClass = LeafNode.getBestClass(this.classes);
     }
 
-    setParent(node) {
-        this.parent = node;
-    }
-
     static getBestClass(classes) {
         let best;
         let indexOfBest;
@@ -53,5 +63,22 @@ export default class LeafNode {
             }
         }
         return classes[indexOfBest];
+    }
+}
+
+class InternalNode extends TreeNode {
+    constructor(rawDataFields) {
+        super(Number.parseInt(rawDataFields[0]),
+            Number.parseInt(rawDataFields[3]),
+            Number.parseFloat(rawDataFields[4]));
+        this.impurityDrop = Number.parseFloat(rawDataFields[5]);
+        this.children = [];
+    }
+
+    /** Adds a child node */
+    add(node) {
+        if(this.children.length >= 2) throw `Node ${this} already has two children`;
+        this.children.push(node);
+        node.setParent(this);
     }
 }
