@@ -31,24 +31,6 @@ import {createForest} from "./parser";
         currentTreeId = id;
 	}
 
-    /**
-     * Sets the maxDepth variable and updates the corresponding input element
-     * @param {Tree} tree
-     */
-    function updateMaxDepthInput(tree, reset = false) {
-        const maxDepth = getMaxDepth(tree);
-        const $input = $("#tree-depth");
-        // If the old setting is equal to the old max, we assume the user did
-        // not touch the input and set both values to the new max depth.
-        // Otherwise (e.g. if the user manually set the max depth to 5) we assume
-        // this same setting should be applied even after the tree view updates
-        // and we do not update the value of the input.
-        if ($input.val() === $input.attr("max") || reset) {
-            $input.val(maxDepth);
-        }
-        $input.attr({max: maxDepth});
-    }
-
     // Init max depth input
     updateMaxDepthInput(forest.trees[currentTreeId]);
 
@@ -63,33 +45,10 @@ import {createForest} from "./parser";
 
 	/* --- UI Element & Keyboard Bindings for Previous/Next Tree --- */
 
-    function nextTree() {
-        let id;
-        if (currentTreeId === forest.trees.length - 1) {
-            id = 0;
-        } else {
-            id = currentTreeId + 1;
-        }
-        updateTreeVisualization(id);
-    }
-
-    function previousTree() {
-        let id;
-        if (currentTreeId === 0) {
-            id = forest.trees.length - 1;
-        } else {
-            id = currentTreeId - 1;
-        }
-        updateTreeVisualization(id);
-    }
-
     document.onkeyup = function(e) {
         if (e.key === "ArrowLeft") previousTree();
         else if (e.key === "ArrowRight") nextTree();
     };
-
-	d3.selectAll('#next-tree').on('click', nextTree);
-	d3.selectAll('#previous-tree').on('click', previousTree);
 
 
 	/* --- UI Element Bindings for Settings --- */
@@ -206,25 +165,6 @@ function updateForestVisualization(forestSvg, forest, size, updateFunction) {
         trees: trees,
         size: size,
     });
-}
-
-/**
- * Finds the maximal depth of a tree
- * @param {Tree} tree
- * @returns {number}
- */
-function getMaxDepth(tree) {
-    let maxDepth = 0;
-    function findMaxDepth(node) {
-        if (node.children) {
-            findMaxDepth(node.children[0]);
-            findMaxDepth(node.children[1]);
-        } else if (node.depth > maxDepth) {
-            maxDepth = node.depth;
-        }
-    }
-    findMaxDepth(tree.baseNode);
-    return maxDepth + 1;
 }
 
 /**

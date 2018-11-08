@@ -1,0 +1,7 @@
+- Save as SVG
+- Reset Zoom
+- Forest View
+- Color/Path Tabs
+- Performance improvements
+- MAX button
+- Zooming

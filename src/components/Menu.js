@@ -21,7 +21,13 @@ export default class Menu extends React.Component {
                         <label className="label is-small">Tree Depth</label>
                         <div className="field has-addons">
                             <div className="control is-expanded">
-                                <input id="tree-depth" className="input is-small" type="number" min="1" max=""
+                                <input id="tree-depth"
+                                       className="input is-small"
+                                       type="number"
+                                       value={this.props.depth}
+                                       onChange={this.props.changeDepth}
+                                       min="1"
+                                       max={this.props.maxDepth}
                                        step="1" />
                             </div>
                             <div className="control">
@@ -34,7 +40,14 @@ export default class Menu extends React.Component {
                     <div className="field">
                         <label className="label is-small">Trunk Length</label>
                         <div className="control">
-                            <input id="trunk-length" className="input is-small" type="number" min="10" max="500" step="10" />
+                            <input id="trunk-length"
+                                   className="input is-small"
+                                   value={this.props.trunkLength}
+                                   onChange={this.props.changeTrunkLength}
+                                   type="number"
+                                   min="10"
+                                   max="500"
+                                   step="10" />
                         </div>
                     </div>
 
@@ -48,16 +61,22 @@ export default class Menu extends React.Component {
                     </div>
 
                     <div id="color-view">
-                        <ColorSelect name="Branch Color" options={[
-                            {value: "IMPURITY", name: "Impurity"},
-                            {value: "DROP_OF_IMPURITY", name: "Drop of Impurity"},
-                            {value: "BLACK", name: "Black"},
-                        ]} />
+                        <ColorSelect name="Branch Color"
+                                     options={[
+                                         {value: "IMPURITY", name: "Impurity"},
+                                         {value: "DROP_OF_IMPURITY", name: "Drop of Impurity"},
+                                         {value: "BLACK", name: "Black"},
+                                     ]}
+                                     value={this.props.branchColor}
+                                     onChange={this.props.changeBranchColor} />
 
-                        <ColorSelect name="Leaf Color" options={[
-                            {value: "IMPURITY", name: "Impurity"},
-                            {value: "BEST_CLASS", name: "Best Class"},
-                        ]} />
+                        <ColorSelect name="Leaf Color"
+                                     options={[
+                                         {value: "IMPURITY", name: "Impurity"},
+                                         {value: "BEST_CLASS", name: "Best Class"},
+                                     ]}
+                                     value={this.props.leafColor}
+                                     onChange={this.props.changeLeafColor} />
                     </div>
 
                     <div id="path-view">
