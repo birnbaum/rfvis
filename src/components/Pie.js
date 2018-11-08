@@ -2,7 +2,7 @@ import "./DownloadButton.css"
 
 import React from "react";
 import PieChart from "react-minimal-pie-chart";
-import {LeafNode} from "../logic/TreeNodes";
+import {LeafNode} from "../logic/InternalNode";
 
 // TODO Integrate component
 export default class Pie extends React.Component {

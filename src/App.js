@@ -35,15 +35,16 @@ class App extends React.Component {
     }
 
     render() {
-        let tree;
-        let totalSamples;
-        if (this.state.forest) {
-            tree = this.state.forest.trees[this.state.currentTreeId];
-            totalSamples = this.state.forest.totalSamples;
-        } else {
-            tree = null;
-            totalSamples = 0;
+        if (!this.state.forest) {
+            return (
+                <div className="spinner">
+                    <div className="double-bounce1" />
+                    <div className="double-bounce2" />
+                    <span className="spinner-text">Loading data ...</span>
+                </div>
+            );
         }
+
         return (
             <div className="App">
                 <Menu title={this.state.title}
@@ -57,12 +58,13 @@ class App extends React.Component {
                       leafColor={this.state.leafColor}
                       changeLeafColor={this.changeLeafColor} />
 
-                <Sidebar nextTree={this.nextTree}
-                         previousTree={this.previousTree} />
+                <Sidebar forest={this.state.forest}
+                         currentTreeId={this.state.currentTreeId}
+                         updateTreeVisualization={this.updateTreeVisualization}/>
 
                 <div id="content">
-                    <TreeView tree={tree}
-                              totalSamples={totalSamples}
+                    <TreeView tree={this.state.forest.trees[this.state.currentTreeId]}
+                              totalSamples={this.state.forest.totalSamples}
                               depth={this.state.depth}
                               maxDepth={this.state.maxDepth}
                               width={800}
@@ -89,26 +91,6 @@ class App extends React.Component {
 
     changeLeafColor = (e) => {
         this.setState({leafColor: e.target.value});
-    };
-
-    nextTree = () => {
-        let id;
-        if (this.state.currentTreeId === this.state.forest.trees.length - 1) {
-            id = 0;
-        } else {
-            id = this.state.currentTreeId + 1;
-        }
-        this.updateTreeVisualization(id);
-    };
-
-    previousTree = () => {
-        let id;
-        if (this.state.currentTreeId === 0) {
-            id = this.state.forest.trees.length - 1;
-        } else {
-            id = this.state.currentTreeId - 1;
-        }
-        this.updateTreeVisualization(id);
     };
 
     /**

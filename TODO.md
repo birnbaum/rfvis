@@ -5,3 +5,4 @@
 - Performance improvements
 - MAX button
 - Zooming
+- Sidebar templates hovering

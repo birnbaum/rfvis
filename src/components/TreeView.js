@@ -4,7 +4,8 @@ import React from "react";
 import PropTypes from 'prop-types';
 import DownloadButton from "./DownloadButton";
 
-import {InternalNode, LeafNode} from "../logic/TreeNodes";
+import InternalNode from "../logic/InternalNode";
+import LeafNode from "../logic/LeafNode";
 import * as d3 from "d3";
 
 export default class TreeView extends React.Component {

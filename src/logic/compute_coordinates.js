@@ -5,12 +5,10 @@
 
 import Vector from "./Vector.js";
 
-export {computeForestMap}
-
 /**
- * Object returned by computeForestMap()
+ * Object returned by computeTreePositions()
  * @typedef {Object} TreePosition
- * @property {number} strength - Strength of the tree. Between 0 and 1
+ * @property {number} oobError - Out-of-bag error of the tree. Between 0 and 1
  * @property {number} x - X coordinate of the tree. Between 0 and N
  * @property {number} y - Y coordinate of the tree. Between 0 and N
  */
@@ -21,9 +19,7 @@ export {computeForestMap}
  * @param {Object} forest - Forest object as returned by parser.createForest()
  * @returns {TreePosition[]} - List of tree positions for all trees in the forest
  */
-function computeForestMap({
-    forest,
-}) {
+export default function computeTreePositions(forest) {
     const coordinates = arrangeInitial(forest.trees.length);
     console.log("Computing coordinated for " + coordinates.length + " trees");
 
@@ -103,7 +99,7 @@ function computeForestMap({
 
     return forest.trees.map((tree, i) => {
         return {
-            strength: tree.strength,
+            oobError: tree.oobError,
             x: pixelCoordinated[i].x,
             y: pixelCoordinated[i].y
         };
