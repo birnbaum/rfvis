@@ -1,11 +1,11 @@
 import "./TreeView.css"
 
 import React from "react";
+import PropTypes from 'prop-types';
 import DownloadButton from "./DownloadButton";
 
 import {InternalNode, LeafNode} from "../logic/TreeNodes";
 import * as d3 from "d3";
-import PropTypes from 'prop-types';
 
 export default class TreeView extends React.Component {
     render() {
@@ -72,6 +72,20 @@ export default class TreeView extends React.Component {
         );
     }
 }
+
+TreeView.propTypes = {
+    tree: PropTypes.shape({
+        oobError: PropTypes.number.isRequired,
+        baseNode: PropTypes.any.isRequired,
+    }).isRequired,
+    totalSamples: PropTypes.number,
+    maxDepth: PropTypes.number,
+    trunkLength: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    branchColor: PropTypes.string,
+    leafColor: PropTypes.string,
+};
 
 /**
  * Computes all the elements necessary to plot a single binary decision tree.

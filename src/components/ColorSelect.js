@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from 'prop-types';
+
 
 export default class ColorSelect extends React.Component {
     render() {
@@ -21,3 +23,14 @@ export default class ColorSelect extends React.Component {
         );
     }
 }
+
+ColorSelect.propTypes = {
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    options: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            value: PropTypes.string.isRequired
+        })
+    ).isRequired,
+};

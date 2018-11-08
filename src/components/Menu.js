@@ -2,6 +2,7 @@ import "./Menu.css";
 
 import React from "react";
 import ColorSelect from "./ColorSelect";
+import PropTypes from "prop-types";
 
 export default class Menu extends React.Component {
     render() {
@@ -92,3 +93,15 @@ export default class Menu extends React.Component {
         );
     }
 }
+
+Menu.propTypes = {
+    maxDepth: PropTypes.number.isRequired,
+    depth: PropTypes.number.isRequired,
+    changeDepth: PropTypes.func.isRequired,
+    trunkLength: PropTypes.number.isRequired,
+    changeTrunkLength: PropTypes.func.isRequired,
+    branchColor: PropTypes.string.isRequired,
+    changeBranchColor: PropTypes.func.isRequired,
+    leafColor: PropTypes.string.isRequired,
+    changeLeafColor: PropTypes.func.isRequired,
+};

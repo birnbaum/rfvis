@@ -4,7 +4,7 @@ import React from "react";
 import PieChart from "react-minimal-pie-chart";
 import {LeafNode} from "../logic/TreeNodes";
 
-
+// TODO Integrate component
 export default class Pie extends React.Component {
     render() {
         const data = this.getHistogram(this.props.bunch.baseNode, "IMPURITY", true);

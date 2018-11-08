@@ -1,6 +1,7 @@
 import "./DownloadButton.css"
 
 import React from "react";
+import PropTypes from "prop-types";
 
 export default class DownloadButton extends React.Component {
     render() {
@@ -9,8 +10,12 @@ export default class DownloadButton extends React.Component {
                 <span className="icon">
                     <i className="fas fa-save" />
                 </span>
-                <span>Save as SVG</span>
+                <span onClick={this.props.onClick}>Save as SVG</span>
             </span>
         )
     }
 }
+
+DownloadButton.propTypes = {
+    onClick: PropTypes.func.isRequired,
+};

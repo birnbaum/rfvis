@@ -137,7 +137,7 @@ class App extends React.Component {
     updateTreeVisualization(id, reset = false) {
         const newTree = this.state.forest.trees[id];
         const newMaxDepth = App.getMaxDepth(newTree);
-        console.log(newMaxDepthy)
+        console.log(newMaxDepth)
 
         // If the old setting is equal to the old max, we assume the user did
         // not touch the input and set both values to the new max depth.
