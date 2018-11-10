@@ -12,7 +12,7 @@ export default class App extends React.Component {
         forest: null,
         leftColumnWidth: 1, // ???
         currentTreeId: 0,
-        depth: 0,
+        displayDepth: 0,
         maxDepth: 0,
         trunkLength: 100,
         branchColor: "IMPURITY",
@@ -45,7 +45,7 @@ export default class App extends React.Component {
         return (
             <div className="App">
                 <Menu title={this.state.title}
-                      depth={this.state.depth}
+                      displayDepth={this.state.displayDepth}
                       maxDepth={this.state.maxDepth}
                       changeDepth={this.changeDepth}
                       trunkLength={this.state.trunkLength}
@@ -63,13 +63,12 @@ export default class App extends React.Component {
                 <div id="content">
                     <TreeView tree={this.state.forest.trees[this.state.currentTreeId]}
                               totalSamples={this.state.forest.totalSamples}
-                              depth={this.state.depth}
-                              maxDepth={this.state.maxDepth}
-                              width={800}
-                              height={800}
+                              displayDepth={this.state.displayDepth}
                               trunkLength={this.state.trunkLength}
                               branchColor={this.state.branchColor}
                               leafColor={this.state.leafColor}
+                              width={800}
+                              height={800}
                               resetTree={this.resetTree} />
                 </div>
             </div>
@@ -77,7 +76,7 @@ export default class App extends React.Component {
     }
 
     changeDepth = (e) => {
-        this.setState({maxDepth: Number.parseInt(e.target.value)});
+        this.setState({displayDepth: Number.parseInt(e.target.value)});
     };
 
     changeTrunkLength = (e) => {
@@ -100,7 +99,7 @@ export default class App extends React.Component {
      * Sets the maxDepth variable and updates the corresponding input element
      * @param {Tree} tree
      */
-    updateTreeVisualization(id) {
+    updateTreeVisualization = (id) => {
         const tree = this.state.forest.trees[id];
         const newMaxDepth = getMaxDepth(tree);
 
@@ -109,14 +108,14 @@ export default class App extends React.Component {
         // Otherwise (e.g. if the user manually set the max depth to 5) we assume
         // this same setting should be applied even after the tree view updates
         // and we do not update the value of the input.
-        let depth = this.state.depth;
-        if (this.state.depth === this.state.maxDepths) {
-            depth = newMaxDepth;
+        let newDisplayDepth = this.state.displayDepth;
+        if (newDisplayDepth === this.state.maxDepth) {
+            newDisplayDepth = newMaxDepth;
         }
 
         this.setState({
             currentTreeId: id,
-            depth: depth,
+            displayDepth: newDisplayDepth,
             maxDepth: newMaxDepth,
         });
     }

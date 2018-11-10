@@ -59,7 +59,7 @@ export default class Sidebar extends React.Component {
 
     previousTree = () => {
         let id;
-        if (this.state.currentTreeId === 0) {
+        if (this.props.currentTreeId === 0) {
             id = this.props.forest.trees.length - 1;
         } else {
             id = this.props.currentTreeId - 1;

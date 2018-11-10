@@ -16,9 +16,8 @@ import {TreeNode} from "../logic/TreeNodes";
 
 export default class TreeView extends React.Component {
     state = {
-        displayDepth: 0,  // TODO populate
+        displayTree: null,
     };
-    displayTree = null;
 
     render() {
         if (!this.props.tree) {
@@ -33,7 +32,7 @@ export default class TreeView extends React.Component {
             bunches,
         } = generateTreeElements(tree,
                                  this.props.totalSamples,
-                                 this.state.displayDepth,
+                                 this.props.displayDepth,
                                  this.props.width,
                                  this.props.height,
                                  this.props.trunkLength,
@@ -99,14 +98,16 @@ TreeView.propTypes = {
             }
         },
     }).isRequired,
-    totalSamples: PropTypes.number,  // for calculating the correct leaf/branch sizes
+    totalSamples: PropTypes.number.isRequired,  // for calculating the correct leaf/branch sizes
+    displayDepth: PropTypes.number.isRequired,
 
-    trunkLength: PropTypes.number,
-    branchColor: PropTypes.string,
-    leafColor: PropTypes.string,
+    trunkLength: PropTypes.number.isRequired,
+    branchColor: PropTypes.string.isRequired,
+    leafColor: PropTypes.string.isRequired,
 
-    width: PropTypes.number,
-    height: PropTypes.number,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
 
     resetTree: PropTypes.func.isRequired,
 };
+

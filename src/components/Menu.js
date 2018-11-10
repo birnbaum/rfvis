@@ -27,7 +27,7 @@ export default class Menu extends React.Component {
                                 <input id="tree-depth"
                                        className="input is-small"
                                        type="number"
-                                       value={this.props.depth}
+                                       value={this.props.displayDepth}
                                        onChange={this.props.changeDepth}
                                        min="1"
                                        max={this.props.maxDepth}
@@ -100,7 +100,7 @@ export default class Menu extends React.Component {
 
 Menu.propTypes = {
     maxDepth: PropTypes.number.isRequired,
-    depth: PropTypes.number.isRequired,
+    displayDepth: PropTypes.number.isRequired,
     changeDepth: PropTypes.func.isRequired,
     trunkLength: PropTypes.number.isRequired,
     changeTrunkLength: PropTypes.func.isRequired,
