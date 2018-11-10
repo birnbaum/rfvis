@@ -1,5 +1,3 @@
-import "./DownloadButton.css"
-
 import React from "react";
 import PropTypes from "prop-types";
 

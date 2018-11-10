@@ -14,3 +14,225 @@ body {
 .App {
   display: flex;
 }
+
+
+/** App Stuff, refactor! **/
+#content {
+  flex: 20 1 auto;
+  min-width: 700px;
+  margin: 20px 20px 20px 0;
+}
+
+.space {
+  height: 20px;
+}
+
+table {
+  font-size: 0.875rem;
+}
+
+.leaf-info {
+  display: flex;
+}
+
+.leaf-info__left {
+  flex: 1 1 auto;
+  margin-right: 3px;
+}
+
+.leaf-info__right {
+  flex: 0 0 auto;
+}
+
+.leaf-info__table tr td:last-child {
+  width: 60%;
+  text-align: right;
+}
+
+.class-distribution-table tr td:first-child {
+  width: 50px;
+}
+.class-distribution-table tr td:last-child {
+  text-align: right;
+}
+
+.class-distribution-table__color-patch {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  border-radius: 10%;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+
+  position: relative;
+  margin: 40vh auto;
+}
+
+.spinner-text {
+  position: absolute;
+  left: -50px;
+  bottom: -50px;
+  width: 150px;
+  text-align: center;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #333;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% {
+      transform: scale(1.0);
+      -webkit-transform: scale(1.0);
+    }
+}
+
+/** App Stuff, end **/
+
+.DownloadButton {
+  position: absolute;
+  bottom: 10px;
+  right: 4px;
+}
+
+.ForestView {
+  position: relative;
+}
+
+.Forest {
+  background: #ebf7f1;
+  position: relative;
+
+  circle:hover {
+    cursor: pointer;
+  }
+
+  circle.active {
+    fill: cornflowerblue;
+  }
+}
+
+.Menu {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 256px;
+  max-width: 256px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: auto;
+
+  .label {
+    font-weight: 500;
+  }
+}
+
+.Menu-header {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 64px;
+  padding: 0 16px 16px;
+}
+
+.Menu-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  display: block;
+  margin-top: 0;
+  margin-bottom: -20px;
+
+  &::before {
+    display: inline-block;
+    width: 0;
+    height: 36px;
+    content: "";
+    vertical-align: 0;
+  }
+
+  &::after {
+    display: inline-block;
+    width: 0;
+    height: 20px;
+    content: "";
+    vertical-align: -20px;
+  }
+}
+
+.Menu-subtitle {
+  font-size: 0.875rem;
+  font-weight: 400;
+  display: block;
+  margin-top: 0;
+  line-height: normal;
+  margin-bottom: 0;
+
+  &::before {
+    display: inline-block;
+    width: 0;
+    height: 20px;
+    content: "";
+    vertical-align: 0;
+  }
+}
+
+.Menu-content {
+  margin: 0 16px;
+}
+
+.Sidebar {
+  position: relative;
+  flex: 0 1 auto;
+  width: 300px;
+  margin: 20px;
+  overflow: auto;
+}
+
+#Sidebar-treeSwitchButton {
+  width: 50%;
+}
+
+#Sidebar-resetZoom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.TreeView {
+  position: relative;
+}
+
+.Tree {
+  background-color: aliceblue;
+  width: 100%;
+  height: 100%;
+
+  line:hover {
+    cursor: pointer;
+  }
+}

@@ -1,5 +1,3 @@
-import "./ForestView.css"
-
 import React from "react";
 import DownloadButton from "./DownloadButton";
 import PropTypes from "prop-types";

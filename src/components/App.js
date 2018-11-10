@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import Menu from "./Menu";
 import Sidebar from "./Sidebar";
 import TreeView from "./TreeView";
@@ -10,7 +9,6 @@ export default class App extends React.Component {
     state = {
         title: "",
         forest: null,
-        leftColumnWidth: 1, // ???
         currentTreeId: 0,
         displayDepth: 0,
         maxDepth: 0,
@@ -48,6 +46,7 @@ export default class App extends React.Component {
                       displayDepth={this.state.displayDepth}
                       maxDepth={this.state.maxDepth}
                       changeDepth={this.changeDepth}
+                      resetDepth={this.resetDepth}
                       trunkLength={this.state.trunkLength}
                       changeTrunkLength={this.changeTrunkLength}
                       branchColor={this.state.branchColor}
@@ -74,6 +73,10 @@ export default class App extends React.Component {
             </div>
         );
     }
+
+    resetDepth = () => {
+        this.setState({displayDepth: this.state.maxDepth});
+    };
 
     changeDepth = (e) => {
         this.setState({displayDepth: Number.parseInt(e.target.value)});

@@ -1,5 +1,3 @@
-import "./Sidebar.css";
-
 import React from "react";
 import ForestView from "./ForestView";
 import PropTypes from 'prop-types';
@@ -73,18 +71,4 @@ Sidebar.propTypes = {
     currentTreeId: PropTypes.number.isRequired,
     updateTreeVisualization: PropTypes.func.isRequired,
     resetTree: PropTypes.func.isRequired,
-};
-
-
-const ResetZoomButton = (props) => (
-    <span className="ResetZoomButton button is-small">
-        <span className="icon">
-            <i className="fas fa-undo" />
-        </span>
-        <span onClick={props.onClick}>Reset Zoom</span>
-    </span>
-);
-
-ResetZoomButton.propTypes = {
-    onClick: PropTypes.func.isRequired,
 };

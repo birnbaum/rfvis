@@ -1,5 +1,3 @@
-import "./Menu.css";
-
 import React from "react";
 import ColorSelect from "./ColorSelect";
 import PropTypes from "prop-types";
@@ -12,7 +10,7 @@ export default class Menu extends React.Component {
             <div className="Menu">
                 <div className="Menu-header">
                     <h3 className="Menu-title">rfvis</h3>
-                    <h6 className="Menu-subtitle"><a href="https://github.com/birnbaum/rfvis">https://github.com/birnbaum/rfvis</a></h6>
+                    <h6 className="Menu-subtitle">{this.props.title}</h6>
                 </div>
 
                 <div className="Menu-content">
@@ -34,7 +32,9 @@ export default class Menu extends React.Component {
                                        step="1" />
                             </div>
                             <div className="control">
-                                <a id="reset-tree-depth" className="button is-small">
+                                <a id="reset-tree-depth"
+                                   className="button is-small"
+                                   onClick={this.props.resetDepth}>
                                     MAX
                                 </a>
                             </div>
@@ -99,9 +99,11 @@ export default class Menu extends React.Component {
 }
 
 Menu.propTypes = {
+    title: PropTypes.string.isRequired,
     maxDepth: PropTypes.number.isRequired,
     displayDepth: PropTypes.number.isRequired,
     changeDepth: PropTypes.func.isRequired,
+    resetDepth: PropTypes.func.isRequired,
     trunkLength: PropTypes.number.isRequired,
     changeTrunkLength: PropTypes.func.isRequired,
     branchColor: PropTypes.string.isRequired,

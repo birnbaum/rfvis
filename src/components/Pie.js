@@ -1,5 +1,3 @@
-import "./DownloadButton.css"
-
 import React from "react";
 import PieChart from "react-minimal-pie-chart";
 import {LeafNode} from "../logic/InternalNode";
