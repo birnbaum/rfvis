@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
-import { setLeafColor } from '../actions'
+import {setDisplayDepth, resetDisplayDepth, setLeafColor} from '../actions'
 import Select from '../components/Select'
 import {LEAF_COLORS} from "../constants";
 
 const mapStateToProps = (state, ownProps) => ({
-    name: "Leaf Color",
+    label: "Leaf Color",
     value: state.leafColor,
     options: LEAF_COLORS,
 });

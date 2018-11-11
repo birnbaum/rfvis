@@ -18,6 +18,11 @@ export const setDisplayDepth = displayDepth => ({
     displayDepth
 });
 
+export const resetDisplayDepth = displayDepth => ({
+    type: 'RESET_DISPLAY_DEPTH',
+    displayDepth
+});
+
 export const setMaxDepth = maxDepth => ({
     type: 'SET_MAX_DEPTH',
     maxDepth

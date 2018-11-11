@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 export default class Select extends React.Component {
     static propTypes = {
-        name: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
         value: PropTypes.string.isRequired,
         onChange: PropTypes.func.isRequired,
         options: PropTypes.objectOf(PropTypes.string).isRequired,
@@ -16,7 +16,7 @@ export default class Select extends React.Component {
         });
         return (
             <div className="field">
-                <label className="label is-small">{this.props.name}</label>
+                <label className="label is-small">{this.props.label}</label>
                 <div className="control">
                     <div className="select is-fullwidth is-small">
                         <select value={this.props.value}

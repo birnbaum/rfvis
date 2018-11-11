@@ -4,7 +4,7 @@ import Select from '../components/Select'
 import {BRANCH_COLORS} from "../constants";
 
 const mapStateToProps = (state, ownProps) => ({
-    name: "Branch Color",
+    label: "Branch Color",
     value: state.branchColor,
     options: BRANCH_COLORS,
 });

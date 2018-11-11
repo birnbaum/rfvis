@@ -13,8 +13,8 @@ export default class App extends React.Component {
         displayDepth: 0,
         maxDepth: 0,
         trunkLength: 100,
-        branchColor: "IMPURITY",
-        leafColor: "IMPURITY",
+        branchColor: "IMPURITY",  // TODO remove
+        leafColor: "IMPURITY",  // TODO remove
     };
 
     async componentDidMount() {
@@ -42,17 +42,7 @@ export default class App extends React.Component {
 
         return (
             <div className="App">
-                <Menu title={this.state.title}
-                      displayDepth={this.state.displayDepth}
-                      maxDepth={this.state.maxDepth}
-                      changeDepth={this.changeDepth}
-                      resetDepth={this.resetDepth}
-                      trunkLength={this.state.trunkLength}
-                      changeTrunkLength={this.changeTrunkLength}
-                      branchColor={this.state.branchColor}
-                      changeBranchColor={this.changeBranchColor}
-                      leafColor={this.state.leafColor}
-                      changeLeafColor={this.changeLeafColor} />
+                <Menu title={this.state.title} />
 
                 <Sidebar forest={this.state.forest}
                          currentTreeId={this.state.currentTreeId}
@@ -73,30 +63,6 @@ export default class App extends React.Component {
             </div>
         );
     }
-
-    resetDepth = () => {
-        this.setState({displayDepth: this.state.maxDepth});
-    };
-
-    changeDepth = (e) => {
-        this.setState({displayDepth: Number.parseInt(e.target.value, 10)});
-    };
-
-    changeTrunkLength = (e) => {
-        this.setState({trunkLength: Number.parseInt(e.target.value, 10)});
-    };
-
-    changeBranchColor = (e) => {
-        this.setState({branchColor: e.target.value});
-    };
-
-    changeLeafColor = (e) => {
-        this.setState({leafColor: e.target.value});
-    };
-
-    resetTree = (e) => {
-        // TODO
-    };
 
     /**
      * Sets the maxDepth variable and updates the corresponding input element

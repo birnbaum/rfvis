@@ -32,6 +32,8 @@ const displayDepth = (state = 0, action) => {
     switch (action.type) {
         case 'SET_DISPLAY_DEPTH':
             return action.displayDepth;
+        case 'RESET_DISPLAY_DEPTH':
+            return state.maxDepth;
         default:
             return state
     }
