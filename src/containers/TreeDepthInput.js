@@ -4,7 +4,7 @@ import Input from "../components/Input";
 
 const mapStateToProps = (state, ownProps) => ({
     label: "Trunk Length",
-    displayValue: state.trunkLength,
+    value: state.trunkLength,
     minValue: 10,
     maxValue: 500,
 });

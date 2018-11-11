@@ -4,7 +4,7 @@ import InputWithButton from "../components/InputWithButton";
 
 const mapStateToProps = (state, ownProps) => ({
     label: "Tree Depth",
-    displayValue: state.displayDepth,
+    value: state.displayDepth,
     minValue: 0,
     maxValue: state.maxDepth,
 });

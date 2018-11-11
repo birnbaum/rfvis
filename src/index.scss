@@ -213,14 +213,14 @@ table {
   overflow: auto;
 }
 
-#Sidebar-treeSwitchButton {
-  width: 50%;
-}
-
 #Sidebar-resetZoom {
   position: absolute;
   bottom: 0;
   right: 0;
+}
+
+#TreeNavigation-button {
+  width: 50%;
 }
 
 .TreeView {

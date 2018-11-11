@@ -19,7 +19,7 @@ export default class Select extends React.Component {
                 <label className="label is-small">{this.props.label}</label>
                 <div className="control">
                     <div className="select is-fullwidth is-small">
-                        <select value={this.props.value}
+                        <select value={this.props.options[this.props.value]}
                                 onChange={this.props.onChange}>
                             {options}
                         </select>

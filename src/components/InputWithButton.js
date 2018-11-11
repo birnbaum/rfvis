@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 export default class InputWithButton extends React.Component {
     static propTypes = {
         label: PropTypes.string.isRequired,
-        displayValue: PropTypes.string.isRequired,
-        minValue: PropTypes.string,
-        maxValue: PropTypes.string,
+        value: PropTypes.number.isRequired,
+        minValue: PropTypes.number,
+        maxValue: PropTypes.number,
         inputOnChange: PropTypes.func.isRequired,
         buttonOnClick: PropTypes.func.isRequired,
     };
@@ -20,7 +20,7 @@ export default class InputWithButton extends React.Component {
                     <div className="control is-expanded">
                         <input className="input is-small"
                                type="number"
-                               value={this.props.displayValue}
+                               value={this.props.value}
                                onChange={this.props.inputOnChange}
                                min={this.props.minValue}
                                max={this.props.maxValue}

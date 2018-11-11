@@ -10,7 +10,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    onChange: e => dispatch(setBranchColor(e.target.value))
+    onChange: e => dispatch(setBranchColor(BRANCH_COLORS[e.target.value]))
 });
 
 export default connect(

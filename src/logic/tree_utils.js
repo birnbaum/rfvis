@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import {LeafNode, InternalNode} from "./TreeNodes";
+import {LEAF_COLORS, BRANCH_COLORS} from "../constants";
 
 export {
     generateTreeElements,
@@ -143,23 +144,23 @@ function markPathElements(leafIds, tree) {
 /* --------------------- Mapping functions for properties on colors/thickness/size --------------------- */
 
 function branchColor(type, branch) {
-    if (type === "IMPURITY") {
+    if (type === BRANCH_COLORS.IMPURITY) {
         // Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
         return d3.scaleLinear()
             .domain([0, 1])
             .range(["green", "brown"])
             (branch.impurity);
     }
-    if (type === "DROP_OF_IMPURITY") {
+    if (type === BRANCH_COLORS.DROP_OF_IMPURITY) {
         return d3.scaleLinear()
             .domain([0, 1])
             .range(["red", "green"])
             (branch.impurityDrop);
     }
-    if (type === "BLACK") {
+    if (type === BRANCH_COLORS.BLACK) {
         return "black";
     }
-    if (type === "PATH") {
+    if (type === "PATH") {  // TODO
         if (branch.selectedPathElement) {
             return d3.rgb(255, 0, 0);
         } else {
@@ -168,8 +169,7 @@ function branchColor(type, branch) {
             return c;
         }
     }
-    console.log(this);
-    throw "Unsupported setting";
+    throw new Error(`Unsupported branch color type "${type}"`);
 }
 
 function branchThickness(branch, type, totalSamples) {
@@ -185,16 +185,19 @@ function branchThickness(branch, type, totalSamples) {
 }
 
 function leafColor(type, leaf) {
-    if (type === "IMPURITY") {
+    if (type === LEAF_COLORS.IMPURITY) {
         return d3.scaleLinear()
             .domain([0, 0.5, 1])
             .range(["green", "red", "red"])
             (leaf.impurity);
     }
-    if (type === "BEST_CLASS") {
+    if (type === LEAF_COLORS.BEST_CLASS) {
         return d3.rgb(...leaf.bestClass.color);
     }
-    if (type === "PATH") {
+    if (type === LEAF_COLORS.BLACK) {
+        return "black";
+    }
+    if (type === "PATH") {  // TODO
         if (leaf.selectedPathElement) {
             return d3.rgb(255, 0, 0);
         } else {
@@ -203,8 +206,7 @@ function leafColor(type, leaf) {
             return c;
         }
     }
-    console.log(this);
-    throw "Unsupported setting";
+    throw new Error(`Unsupported leaf color type "${type}"`);
 }
 
 function leafSize(leaf, type, totalSamples) {

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import {setDisplayDepth, resetDisplayDepth, setLeafColor} from '../actions'
+import {setLeafColor} from '../actions'
 import Select from '../components/Select'
 import {LEAF_COLORS} from "../constants";
 
@@ -10,7 +10,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    onChange: e => dispatch(setLeafColor(e.target.value))
+    onChange: e => dispatch(setLeafColor(LEAF_COLORS[e.target.value]))
 });
 
 export default connect(

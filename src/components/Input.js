@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 export default class Input extends React.Component {
     static propTypes = {
         label: PropTypes.string.isRequired,
-        displayValue: PropTypes.string.isRequired,
-        minValue: PropTypes.string,
-        maxValue: PropTypes.string,
+        value: PropTypes.number.isRequired,
+        minValue: PropTypes.number,
+        maxValue: PropTypes.number,
         onChange: PropTypes.func.isRequired,
     };
 
@@ -18,7 +18,7 @@ export default class Input extends React.Component {
                 <div className="control">
                     <input id="trunk-length"
                            className="input is-small"
-                           value={this.props.displayValue}
+                           value={this.props.value}
                            onChange={this.props.onChange}
                            type="number"
                            min={this.props.minValue}
