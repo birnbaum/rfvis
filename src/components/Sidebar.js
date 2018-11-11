@@ -1,5 +1,6 @@
 import React from "react";
 import ForestView from "./ForestView";
+import ResetZoomButton from "./ResetZoomButton";
 import PropTypes from 'prop-types';
 
 export default class Sidebar extends React.Component {

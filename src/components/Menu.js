@@ -1,7 +1,11 @@
 import React from "react";
-import ColorSelect from "./ColorSelect";
+import Select from "./Select";
 import PropTypes from "prop-types";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import {BRANCH_COLORS} from "../constants";
+import LeafColorSelect from '../containers/LeafColorSelect';
+import BranchColorSelect from '../containers/BranchColorSelect';
+import {LEAF_COLORS} from "../constants";
 
 
 export default class Menu extends React.Component {
@@ -65,22 +69,8 @@ export default class Menu extends React.Component {
                         </div>
 
                         <TabPanel>
-                            <ColorSelect name="Branch Color"
-                                         options={[
-                                             {value: "IMPURITY", name: "Impurity"},
-                                             {value: "DROP_OF_IMPURITY", name: "Drop of Impurity"},
-                                             {value: "BLACK", name: "Black"},
-                                         ]}
-                                         value={this.props.branchColor}
-                                         onChange={this.props.changeBranchColor} />
-
-                            <ColorSelect name="Leaf Color"
-                                         options={[
-                                             {value: "IMPURITY", name: "Impurity"},
-                                             {value: "BEST_CLASS", name: "Best Class"},
-                                         ]}
-                                         value={this.props.leafColor}
-                                         onChange={this.props.changeLeafColor} />
+                            <LeafColorSelect />
+                            <BranchColorSelect />
                         </TabPanel>
                         <TabPanel>
                             <div className="field">

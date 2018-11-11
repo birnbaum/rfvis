@@ -71,7 +71,7 @@ function parseStatisticsContent(text) {
         } else if (fields.length === 6) {
             return new LeafNode(fields)
         } else {
-            throw "Unknown tree file format";
+            throw new Error("Unknown tree file format");
         }
     });
 
@@ -88,7 +88,7 @@ function parseStatisticsContent(text) {
         } else if (node.depth < latest.depth) {
             stack = stack.slice(0, node.depth)
         } else {
-            throw "Malformed statistics content";
+            throw new Error("Malformed statistics content");
         }
 
         latest = stack[stack.length - 1];

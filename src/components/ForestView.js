@@ -52,16 +52,16 @@ ForestView.propTypes = {
 };
 
 function treeColor(tree) {
-    return d3.scaleLinear()
+    const scale = d3.scaleLinear()
         .domain([1, 0.5, 0.05, 0])
-        .range(["red", "red", "green", "green"])
-        (tree.oobError);
+        .range(["red", "red", "green", "green"]);
+    return scale(tree.oobError);
 }
 
 function treeSize(tree, maxRadius) {
     const radius = area => Math.sqrt(area / Math.PI);
-    return d3.scaleLinear()
+    const scale =  d3.scaleLinear()
         .domain([0, radius(0.6), radius(1)])
-        .range([maxRadius / 2, maxRadius / 2, maxRadius])
-        (radius(1 - tree.oobError))
+        .range([maxRadius / 2, maxRadius / 2, maxRadius]);
+    return scale(radius(1 - tree.oobError));
 }

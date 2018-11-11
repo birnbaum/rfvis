@@ -79,11 +79,11 @@ export default class App extends React.Component {
     };
 
     changeDepth = (e) => {
-        this.setState({displayDepth: Number.parseInt(e.target.value)});
+        this.setState({displayDepth: Number.parseInt(e.target.value, 10)});
     };
 
     changeTrunkLength = (e) => {
-        this.setState({trunkLength: Number.parseInt(e.target.value)});
+        this.setState({trunkLength: Number.parseInt(e.target.value, 10)});
     };
 
     changeBranchColor = (e) => {
