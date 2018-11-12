@@ -103,7 +103,7 @@ function pieTemplate(bunch, classHistogram) {
         </tr>
         <tr>
           <td>Depth</td>
-          <td>${bunch.baseNode.depth}</td>
+          <td>${bunch.displayNode.depth}</td>
         </tr>
         <tr>
           <td>Samples</td>

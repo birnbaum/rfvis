@@ -1,6 +1,6 @@
 import {combineReducers} from "redux";
 import {BRANCH_COLORS, LEAF_COLORS, DEFAULT_TRUNK_LENGTH} from "../constants"
-import {getMaxDepth} from "../logic/util";
+import {getMaxDepth} from "../selectors";
 
 const title = (state = "", action) => {
     switch (action.type) {
@@ -54,25 +54,6 @@ const displayDepth = (state = 0, action) => {
     switch (action.type) {
         case 'SET_DISPLAY_DEPTH':
             return action.displayDepth;
-        case 'RESET_DISPLAY_DEPTH':
-            return state.maxDepth;
-        case 'SET_CURRENT_TREE_ID':
-            if (state.displayDepth === state.maxDepth) {
-                const tree = state.forest[action.currentTreeId];
-                return getMaxDepth(tree);
-            } else {
-                return state
-            }
-        default:
-            return state
-    }
-};
-
-const maxDepth = (state = 0, action) => {
-    switch (action.type) {
-        case 'SET_CURRENT_TREE_ID':
-            const tree = state.forest[action.currentTreeId];
-            return getMaxDepth(tree);
         default:
             return state
     }
@@ -96,15 +77,21 @@ const branchColor = (state = BRANCH_COLORS.IMPURITY, action) => {
     }
 };
 
-const rootReducer = combineReducers({
-    title,
-    forest,
-    currentTreeId,
-    trunkLength,
-    displayDepth,
-    maxDepth,
-    leafColor,
-    branchColor,
-});
+const rootReducer = (state = {}, action) => {
+    let newState = combineReducers({
+        title,
+        forest,
+        currentTreeId,
+        trunkLength,
+        displayDepth,
+        leafColor,
+        branchColor,
+    })(state, action);
+    if (action.type === 'SET_CURRENT_TREE_ID' ||
+        action.type === 'RESET_DISPLAY_DEPTH') {
+        newState.displayDepth = getMaxDepth(state);
+    }
+    return newState;
+};
 
 export default rootReducer;

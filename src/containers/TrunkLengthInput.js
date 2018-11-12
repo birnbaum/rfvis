@@ -1,20 +1,19 @@
 import { connect } from 'react-redux'
-import { resetDisplayDepth, setDisplayDepth } from '../actions'
-import InputWithButton from "../components/InputWithButton";
+import {setTrunkLength} from '../actions'
+import Input from "../components/Input";
 
 const mapStateToProps = (state, ownProps) => ({
-    label: "Tree Depth",
-    value: state.displayDepth,
-    minValue: 0,
-    maxValue: state.maxDepth,
+    label: "Trunk Length",
+    value: state.trunkLength,
+    minValue: 10,
+    maxValue: 500,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    inputOnChange: e => dispatch(setDisplayDepth(Number.parseInt(e.target.value, 10))),
-    buttonOnClick: () => dispatch(resetDisplayDepth()),
+    onChange: e => dispatch(setTrunkLength(Number.parseInt(e.target.value, 10))),
 });
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(InputWithButton)
+)(Input)

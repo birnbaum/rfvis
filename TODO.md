@@ -1,8 +1,8 @@
 - Save as SVG
-- Reset Zoom
 - Performance improvements
 - MAX button
-- Zooming
 - Sidebar templates hovering
-- Draw active tree
+- Forest Draw active tree
+- Forest Tree selection
 - Improve CSS Layout
+- Next/Prev buttons

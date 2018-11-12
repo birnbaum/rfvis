@@ -12,8 +12,7 @@ export {
 
 /**
  * Computes all the elements necessary to plot a single binary decision tree.
- * @param tree {Tree} - Tree object which shall be processed
- * @param totalSamples {number} - Number of samples the tree was fitted on
+ * @param tree {Tree} - Tree object which shall be processed  TODO changed to baseNode
  * @param displayDepth {number} - Depth until the tree shall be rendered. Cut of branches are displayed as pie charts
  * @param width {number} - Width of the SVG
  * @param height {number} - Height of the SVG
@@ -23,7 +22,7 @@ export {
  * @param minBranchLength {number} - Minimum branch length
  * @returns {{branches: Array, leafs: Array, bunches: Array}}
  */
-function generateTreeElements(tree, totalSamples, displayDepth, width, height, trunkLength, pathLeafID,
+function generateTreeElements(baseNode, displayDepth, width, height, trunkLength, pathLeafID,
     maxShorteningFactor = 0.9, minBranchLength = 4) {
     // TODO Improvement: These lists shouldn't contain new objects but pointers to the tree data structure nodes
     const branches = [];
@@ -78,13 +77,13 @@ function generateTreeElements(tree, totalSamples, displayDepth, width, height, t
         }
     };
 
-    const baseNode = addBranchInformation(tree.baseNode, width/ 2, height, 0, trunkLength, 0);
+    const extendedBaseNode = addBranchInformation(baseNode, width/ 2, height, 0, trunkLength, 0);
 
     if (pathLeafID !== null) {
-        // this.markPathElements([pathLeafID], baseNode);
+        // this.markPathElements([pathLeafID], displayNode);
     }
 
-    branch(baseNode);
+    branch(extendedBaseNode);
 
     const sortBySamples = (a,b) => {
         if (a.samples > b.samples) return -1;

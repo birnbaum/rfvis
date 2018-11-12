@@ -6,36 +6,42 @@ import React from "react";
 
 class Tree extends React.Component {
     static propTypes = {
-        tree: PropTypes.shape({
-            oobError: PropTypes.number.isRequired,
-            baseNode: function(props, propName, componentName) {
-                if (!(props[propName] instanceof TreeNode)) {
-                    return new Error(`Validation failed: ${componentName}.${propName} not of type TreeNode`);
-                }
-            },
-        }).isRequired,
-        totalSamples: PropTypes.number.isRequired,  // for calculating the correct leaf/branch sizes
+        baseNode: function(props, propName, componentName) {
+            if (!(props[propName] instanceof TreeNode)) {
+                return new Error(`Validation failed: ${componentName}.${propName} not of type TreeNode`);
+            }
+        },
         displayDepth: PropTypes.number.isRequired,
-
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,
-
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
     };
 
+    baseNode = null;
+    displayNode = null;
+
     componentDidMount() {
-        // TODO Branch zooming etc
+        // TODO This is a little hacky
+        this.baseNode = this.props.baseNode;
+        this.displayNode = this.props.baseNode;
+    }
+
+    shouldComponentUpdate() {
+        // TODO This is a little hacky
+        this.baseNode = this.props.baseNode;
+        this.displayNode = this.props.baseNode;
+        return true;
     }
 
     render() {
-        if (!this.props.tree) {
+        if (!this.displayNode) {
             return <span>Loading...</span>;
         }
 
-        const {branches, leafs, bunches} = generateTreeElements(this.props.tree,
-            this.props.totalSamples,
+        const {branches, leafs, bunches} = generateTreeElements(
+            this.displayNode,
             this.props.displayDepth,
             this.props.width,
             this.props.height,
@@ -49,7 +55,7 @@ class Tree extends React.Component {
 
         const renderedBranches = branches.map((branch, i) => {
             const lineStyle = {
-                strokeWidth: branchThickness(branch, "SAMPLES", this.props.totalSamples),
+                strokeWidth: branchThickness(branch, "SAMPLES", this.displayNode.samples),
                 stroke: branchColor(this.props.branchColor, branch),
             };
             return (<line key={i}
@@ -57,9 +63,9 @@ class Tree extends React.Component {
                           y1={branch.y}
                           x2={branch.x2}
                           y2={branch.y2}
-                          style={lineStyle} />)
+                          style={lineStyle}
+                          onClick={() => this.renderSubtree(branch)} />)
             // TODO Mouseover
-            // TODO Click
         });
 
         const renderedLeafs = leafs.map((leaf, i) => {
@@ -69,7 +75,7 @@ class Tree extends React.Component {
             return (<circle key={i}
                             cx={leaf.x}
                             cy={leaf.y}
-                            r={leafSize(leaf, "SAMPLES", this.props.totalSamples)}
+                            r={leafSize(leaf, "SAMPLES", this.displayNode.samples)}
                             style={circleStyle} />)
             // TODO Mouseover
         });
@@ -83,17 +89,35 @@ class Tree extends React.Component {
         }); */
 
         return (
-            <svg className="Tree" style={svgStyle}>
-                {renderedBranches}
-                {renderedLeafs}
-            </svg>
+            <div>
+                <svg className="Tree" style={svgStyle}>
+                    {renderedBranches}
+                    {renderedLeafs}
+                </svg>
+
+                <span className="ResetZoomButton button is-small">
+                    <span className="icon">
+                        <i className="fas fa-undo" />
+                    </span>
+                    <span onClick={this.renderBaseTree}>Reset Zoom</span>
+                </span>
+            </div>
         );
     }
+
+    renderSubtree = node => {
+        this.displayNode = node;
+        this.forceUpdate();
+    };
+
+    renderBaseTree = () => {
+        this.displayNode = this.baseNode;
+        this.forceUpdate();
+    };
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    tree: state.forest.trees[state.currentTreeId],
-    totalSamples: state.forest.totalSamples,
+    baseNode: state.forest.trees[state.currentTreeId].baseNode,
     displayDepth: state.displayDepth,
     trunkLength: state.trunkLength,
     branchColor: state.branchColor,

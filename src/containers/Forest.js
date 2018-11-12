@@ -4,12 +4,14 @@ import * as d3 from "d3";
 
 import computeTreePositions from "../logic/compute_coordinates";
 import {connect} from "react-redux";
+import {setCurrentTreeId} from "../actions";
 
 class Forest extends React.Component {
     static propTypes = {
         forest: PropTypes.any.isRequired,
         currentTreeId: PropTypes.number.isRequired,
         size: PropTypes.number.isRequired,
+        selectTree: PropTypes.func.isRequired,
     };
 
     render() {
@@ -36,8 +38,8 @@ class Forest extends React.Component {
                             cx={treePosition.x / 100 * this.props.size}
                             cy={treePosition.y / 100 * this.props.size}
                             r={treeSize(treePosition, this.props.size / 25)}
-                            style={treeStyle} />)
-            // TODO Click
+                            style={treeStyle}
+                            onClick={() => this.props.selectTree(i)} />)
             // TODO Mouseover
         });
 
@@ -70,6 +72,11 @@ const mapStateToProps = (state, ownProps) => ({
     size: 300,  // TODO make dynamic
 });
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    selectTree: id => dispatch(setCurrentTreeId(id))
+});
+
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Forest)

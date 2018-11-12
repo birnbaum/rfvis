@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import TreeView from "./Tree";
 import PropTypes from "prop-types";
 
-import {setForest, setTitle} from "../actions";
+import {setCurrentTreeId, setForest, setTitle} from "../actions";
 import {connect} from "react-redux";
 
 import createForest from "../logic/parser"
@@ -18,7 +18,7 @@ class App extends React.Component {
     };
 
     async componentDidMount() {
-        const rawData = await (await fetch(window.location.origin + "/data")).json();
+        const rawData = await (await fetch(window.location.origin + "/data")).json();  // TODO Error handling
         const forest = createForest(rawData);
         this.props.setForest(forest);
         fetch(window.location.origin + "/info")
@@ -53,7 +53,10 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    setForest: forest => dispatch(setForest(forest)),
+    setForest: forest => {
+        dispatch(setForest(forest));
+        dispatch(setCurrentTreeId(0));
+    },
     setTitle: title => dispatch(setTitle(title))
 });
 
