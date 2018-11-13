@@ -3,14 +3,20 @@ import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize}
 import {TreeNode} from "../logic/TreeNodes";
 import PropTypes from "prop-types";
 import React from "react";
+import ReactDOM from 'react-dom';
+import {TreeTable} from "../components/HoverArea";
+
 
 class Tree extends React.Component {
     static propTypes = {
-        baseNode: function(props, propName, componentName) {
-            if (!(props[propName] instanceof TreeNode)) {
-                return new Error(`Validation failed: ${componentName}.${propName} not of type TreeNode`);
-            }
-        },
+        tree: PropTypes.shape({
+            oobError: PropTypes.number.isRequired,
+            baseNode: function(props, propName, componentName) {
+                if (!(props[propName] instanceof TreeNode)) {
+                    return new Error(`Validation failed: ${componentName}.${propName} not of type TreeNode`);
+                }
+            },
+        }).isRequired,
         displayDepth: PropTypes.number.isRequired,
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
@@ -24,14 +30,14 @@ class Tree extends React.Component {
 
     componentDidMount() {
         // TODO This is a little hacky
-        this.baseNode = this.props.baseNode;
-        this.displayNode = this.props.baseNode;
+        this.baseNode = this.props.tree.baseNode;
+        this.displayNode = this.props.tree.baseNode;
     }
 
     shouldComponentUpdate() {
         // TODO This is a little hacky
-        this.baseNode = this.props.baseNode;
-        this.displayNode = this.props.baseNode;
+        this.baseNode = this.props.tree.baseNode;
+        this.displayNode = this.props.tree.baseNode;
         return true;
     }
 
@@ -52,6 +58,11 @@ class Tree extends React.Component {
             width: this.props.width + "px",
             height: this.props.height + "px",
         };
+
+        const portal = ReactDOM.createPortal(
+            <TreeTable tree={this.props.tree} />,
+            document.getElementById('hover-info')
+        );
 
         const renderedBranches = branches.map((branch, i) => {
             const lineStyle = {
@@ -101,6 +112,8 @@ class Tree extends React.Component {
                     </span>
                     <span onClick={this.renderBaseTree}>Reset Zoom</span>
                 </span>
+
+                {portal}
             </div>
         );
     }
@@ -117,7 +130,7 @@ class Tree extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    baseNode: state.forest.trees[state.currentTreeId].baseNode,
+    tree: state.forest.trees[state.currentTreeId],
     displayDepth: state.displayDepth,
     trunkLength: state.trunkLength,
     branchColor: state.branchColor,

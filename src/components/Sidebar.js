@@ -11,7 +11,7 @@ export default function Sidebar() {
             <div className="space" />
 
             <div id="info">
-                <div id="hover-info" />  {/* TODO Hover Info */}
+                <div id="hover-info" />
             </div>
 
         </div>

@@ -6,3 +6,8 @@
 - Forest Tree selection
 - Improve CSS Layout
 - Next/Prev buttons
+- Draw Pie Charts
+- Command Line Interface
+- Distribution
+- New data format
+- New data parser

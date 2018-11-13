@@ -2,6 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export default class DownloadButton extends React.Component {
+    static propTypes = {
+        onClick: PropTypes.func.isRequired,
+    };
+
     render() {
         return (
             <span className="DownloadButton button is-small">
@@ -13,7 +17,3 @@ export default class DownloadButton extends React.Component {
         )
     }
 }
-
-DownloadButton.propTypes = {
-    onClick: PropTypes.func.isRequired,
-};
