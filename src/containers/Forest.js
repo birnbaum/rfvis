@@ -30,25 +30,33 @@ class Forest extends React.Component {
         if (!this.treePositions) {
             this.treePositions = computeTreePositions(this.props.forest);
         }
-        // TODO Draw active tree circles
 
-        const renderedTrees = this.treePositions.map((treePosition, i) => {
-            const treeStyle = {
-                fill: treeColor(treePosition),
-            };
-            return (<circle key={i}
-                            cx={treePosition.x / 100 * this.props.size}
-                            cy={treePosition.y / 100 * this.props.size}
-                            r={treeSize(treePosition, this.props.size / 25)}
-                            style={treeStyle}
-                            onClick={() => this.props.selectTree(i)}
-                            onMouseEnter={() => this.props.hoverTree(this.props.forest.trees[this.props.currentTreeId])}
-                            onMouseLeave={this.props.unhover} />)
-            // TODO Mouseover
-        });
+        const activeTree = this.treePositions[this.props.currentTreeId];
+        const renderedActiveTree = (
+            <circle cx={activeTree.x / 100 * this.props.size}
+                    cy={activeTree.y / 100 * this.props.size}
+                    r={treeSize(activeTree, this.props.size / 25 + this.props.size / 100)}
+                    style={{
+                        fill: "white",
+                        stroke: treeColor(activeTree),
+                        strokeWidth: this.props.size / 300,
+                    }} />
+        );
+
+        const renderedTrees = this.treePositions.map((treePosition, i) =>
+            <circle key={i}
+                    cx={treePosition.x / 100 * this.props.size}
+                    cy={treePosition.y / 100 * this.props.size}
+                    r={treeSize(treePosition, this.props.size / 25)}
+                    style={{fill: treeColor(treePosition)}}
+                    onClick={() => this.props.selectTree(i)}
+                    onMouseEnter={() => this.props.hoverTree(this.props.forest.trees[this.props.currentTreeId])}
+                    onMouseLeave={this.props.unhover} />
+        );
 
         return (
             <svg className="Forest" style={svgStyle}>
+                {renderedActiveTree}
                 {renderedTrees}
             </svg>
         );

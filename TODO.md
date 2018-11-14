@@ -1,10 +1,7 @@
 - Save as SVG
 - Performance improvements
 - MAX button
-- Forest Draw active tree
-- Forest Tree selection
 - Improve CSS Layout
-- Next/Prev buttons
 - Draw Pie Charts
 - Command Line Interface
 - Distribution
@@ -12,3 +9,5 @@
 - New data parser
 - Button Icons
 - Refactor component structure
+- keyboard navigation
+- BUG: First tree click postpones

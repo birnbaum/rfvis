@@ -13,14 +13,14 @@ class TreeNavigation extends React.Component {
         return (
             <div className="buttons has-addons">
                 <span className="TreeNavigation-button button is-small"
-                      onClick={this.previousTree}>
+                      onClick={this.props.onClickPrevious}>
                     <span className="icon">
                         <i className="fas fa-arrow-alt-circle-left" />
                     </span>
                     <span>Previous</span>
                 </span>
                 <span className="TreeNavigation-button button is-small"
-                      onClick={this.nextTree}>
+                      onClick={this.props.onClickNext}>
                     <span>Next</span>
                     <span className="icon">
                         <i className="fas fa-arrow-alt-circle-right" />

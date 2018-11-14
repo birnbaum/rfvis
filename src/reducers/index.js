@@ -24,18 +24,6 @@ const currentTreeId = (state = 0, action) => {
     switch (action.type) {
         case 'SET_CURRENT_TREE_ID':
             return action.currentTreeId;
-        case 'INCREMENT_CURRENT_TREE_ID':
-            if (state.currentTreeId === state.forest.trees.length - 1) {
-                return 0;
-            } else {
-                return state.currentTreeId + 1;
-            }
-        case 'DECREMENT_CURRENT_TREE_ID':
-            if (state.currentTreeId === 0) {
-                return state.forest.trees.length - 1;
-            } else {
-                return state.currentTreeId - 1;
-            }
         default:
             return state
     }
@@ -100,7 +88,7 @@ const hoverData = (state = null, action) => {
 };
 
 const rootReducer = (state = {}, action) => {
-    let newState = combineReducers({
+    let sss = combineReducers({
         title,
         forest,
         currentTreeId,
@@ -111,10 +99,36 @@ const rootReducer = (state = {}, action) => {
         hoverType,
         hoverData
     })(state, action);
-    if (action.type === 'SET_CURRENT_TREE_ID' ||
-        action.type === 'RESET_DISPLAY_DEPTH') {
-        newState.displayDepth = getMaxDepth(state);
+
+    const displayDepthRequiresUpdate = [
+        'SET_CURRENT_TREE_ID',
+        'INCREMENT_CURRENT_TREE_ID',
+        'DECREMENT_CURRENT_TREE_ID',
+        'RESET_DISPLAY_DEPTH'
+    ].indexOf(action.type) > -1;
+
+    const newState = Object.assign({}, sss);
+
+    if (displayDepthRequiresUpdate) {
+
+        switch (action.type) {
+            case 'INCREMENT_CURRENT_TREE_ID':
+                if (newState.currentTreeId === newState.forest.trees.length - 1) {
+                    newState.currentTreeId = 0;
+                } else {
+                    newState.currentTreeId += 1;
+                }
+                break;
+            case 'DECREMENT_CURRENT_TREE_ID':
+                if (newState.currentTreeId === 0) {
+                    newState.currentTreeId = newState.forest.trees.length - 1;
+                } else {
+                    newState.currentTreeId -= 1;
+                }
+        }
+        newState.displayDepth = getMaxDepth(newState);
     }
+
     return newState;
 };
 
