@@ -77,6 +77,28 @@ const branchColor = (state = BRANCH_COLORS.IMPURITY, action) => {
     }
 };
 
+const hoverType = (state = null, action) => {
+    switch (action.type) {
+        case 'SET_HOVER_STATE':
+            return action.hoverType;
+        case 'UNSET_HOVER_STATE':
+            return null;
+        default:
+            return state
+    }
+};
+
+const hoverData = (state = null, action) => {
+    switch (action.type) {
+        case 'SET_HOVER_STATE':
+            return action.hoverData;
+        case 'UNSET_HOVER_STATE':
+            return null;
+        default:
+            return state
+    }
+};
+
 const rootReducer = (state = {}, action) => {
     let newState = combineReducers({
         title,
@@ -86,6 +108,8 @@ const rootReducer = (state = {}, action) => {
         displayDepth,
         leafColor,
         branchColor,
+        hoverType,
+        hoverData
     })(state, action);
     if (action.type === 'SET_CURRENT_TREE_ID' ||
         action.type === 'RESET_DISPLAY_DEPTH') {

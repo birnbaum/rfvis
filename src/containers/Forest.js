@@ -4,7 +4,7 @@ import * as d3 from "d3";
 
 import computeTreePositions from "../logic/compute_coordinates";
 import {connect} from "react-redux";
-import {setCurrentTreeId} from "../actions";
+import {setCurrentTreeId, setHoverState, unsetHoverState} from "../actions";
 
 class Forest extends React.Component {
     static propTypes = {
@@ -12,6 +12,8 @@ class Forest extends React.Component {
         currentTreeId: PropTypes.number.isRequired,
         size: PropTypes.number.isRequired,
         selectTree: PropTypes.func.isRequired,
+        hoverTree: PropTypes.func.isRequired,
+        unhover: PropTypes.func.isRequired,
     };
 
     render() {
@@ -39,7 +41,9 @@ class Forest extends React.Component {
                             cy={treePosition.y / 100 * this.props.size}
                             r={treeSize(treePosition, this.props.size / 25)}
                             style={treeStyle}
-                            onClick={() => this.props.selectTree(i)} />)
+                            onClick={() => this.props.selectTree(i)}
+                            onMouseEnter={() => this.props.hoverTree(this.props.forest.trees[this.props.currentTreeId])}
+                            onMouseLeave={this.props.unhover} />)
             // TODO Mouseover
         });
 
@@ -73,7 +77,9 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    selectTree: id => dispatch(setCurrentTreeId(id))
+    selectTree: id => dispatch(setCurrentTreeId(id)),
+    hoverTree: tree => dispatch(setHoverState("TREE", tree)),
+    unhover: () => dispatch(unsetHoverState()),
 });
 
 export default connect(

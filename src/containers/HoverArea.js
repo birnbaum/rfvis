@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {connect} from "react-redux";
+
 
 export class DefaultTable extends React.Component {
     static propTypes = {
@@ -12,6 +14,7 @@ export class DefaultTable extends React.Component {
             <div>
                 <label className="label is-small">Forest</label>
                 <table className="table is-fullwidth is-narrow is-bordered is-striped">
+                    <tbody>
                     <tr>
                         <td>Error</td>
                         <td>{this.props.forest.error}</td>
@@ -24,9 +27,11 @@ export class DefaultTable extends React.Component {
                         <td>Number of Samples</td>
                         <td>{this.props.forest.totalSamples}</td>
                     </tr>
+                    </tbody>
                 </table>
                 <label className="label is-small">Selected Tree</label>
                 <table className="table is-fullwidth is-narrow is-bordered is-striped">
+                    <tbody>
                     <tr>
                         <td>ID</td>
                         <td>#{this.props.currentTreeId + 1}</td>
@@ -35,6 +40,7 @@ export class DefaultTable extends React.Component {
                         <td>Out-of-bag Error</td>
                         <td>{this.props.forest.trees[this.props.currentTreeId].oobError}</td>
                     </tr>
+                    </tbody>
                 </table>
             </div>
         )
@@ -49,6 +55,7 @@ export class TreeTable extends React.Component {
     render() {
         return (
             <table className="table is-fullwidth">
+                <tbody>
                 <tr>
                     <td style={{fontWeight: "bold"}}>Tree</td>
                     <td />
@@ -61,6 +68,7 @@ export class TreeTable extends React.Component {
                     <td>Out-of-bag Error</td>
                     <td>{this.props.tree.oobError}</td>
                 </tr>
+                </tbody>
             </table>
         )
     }
@@ -74,8 +82,9 @@ export class BranchTable extends React.Component {
     render() {
         return (
             <table className="table is-fullwidth is-narrow is-bordered is-striped">
+                <tbody>
                 <tr>
-                    <td style="font-weight: bold">Branch</td>
+                    <td style={{fontWeight: "bold"}}>Branch</td>
                     <td />
                 </tr>
                 <tr>
@@ -94,6 +103,7 @@ export class BranchTable extends React.Component {
                     <td>Number of Samples</td>
                     <td>{this.props.branch.samples}</td>
                 </tr>
+                </tbody>
             </table>
         )
     }
@@ -111,6 +121,7 @@ export class LeafTable extends React.Component {
                 <div className="leaf-info">
                     <div className="leaf-info__left">
                         <table className="leaf-info__table table is-fullwidth is-narrow is-bordered is-striped">
+                            <tbody>
                             <tr>
                                 <td>ID</td>
                                 <td>#{this.props.leaf.leafId}</td>
@@ -123,6 +134,7 @@ export class LeafTable extends React.Component {
                                 <td>Impurity</td>
                                 <td>{this.props.leaf.impurity}</td>
                             </tr>
+                            </tbody>
                         </table>
                     </div>
                     {/*
@@ -150,8 +162,9 @@ export class BunchTable extends React.Component {
         return (
             <div>
                 <table className="table is-fullwidth">
+                    <tbody>
                     <tr>
-                        <td style="font-weight: bold">Consolidation Node</td>
+                        <td style={{fontWeight: "bold"}}>Consolidation Node</td>
                         <td />
                     </tr>
                     <tr>
@@ -162,6 +175,7 @@ export class BunchTable extends React.Component {
                         <td>Samples</td>
                         <td>{this.props.bunch.samples}</td>
                     </tr>
+                    </tbody>
                 </table>
                 <div className="space" />
                 <ClassDistributionTable classes={this.props.bunch.classes} />
@@ -177,7 +191,7 @@ export class ClassDistributionTable extends React.Component {
     };
 
     render() {
-        const tableRows = this.props.leaf.classes.map((cls, i) => {
+        const tableRows = this.props.classes.map((cls, i) => {
             const patchStyle = {background: `rgb(${cls.color}`};
             return (
                 <tr key={i}>
@@ -201,3 +215,42 @@ export class ClassDistributionTable extends React.Component {
         )
     }
 }
+
+
+class HoverArea extends React.Component {
+    static propTypes = {
+        hoverType: PropTypes.string,
+        hoverData: PropTypes.any,
+        forest: PropTypes.any.isRequired,
+        currentTreeId: PropTypes.number.isRequired,
+    };
+
+    render() {
+        switch (this.props.hoverType) {
+            case "TREE":
+                return <TreeTable tree={this.props.hoverData}/>;
+            case "BRANCH":
+                return <BranchTable branch={this.props.hoverData}/>;
+            case "LEAF":
+                return <LeafTable leaf={this.props.hoverData}/>;
+            // case "BUNCH":
+            //     return <BunchTable bunch={} classHistogram={}/>;
+            default:
+                return <DefaultTable forest={this.props.forest}
+                                     currentTreeId={this.props.currentTreeId}/>;
+        }
+    }
+}
+
+const mapStateToProps = (state, ownProps) => ({
+    hoverType: state.hoverType,
+    hoverData: state.hoverData,
+    forest: state.forest,
+    currentTreeId: state.currentTreeId,
+});
+
+export default connect(
+    mapStateToProps
+)(HoverArea)
+
+

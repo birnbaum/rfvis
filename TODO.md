@@ -1,7 +1,6 @@
 - Save as SVG
 - Performance improvements
 - MAX button
-- Sidebar templates hovering
 - Forest Draw active tree
 - Forest Tree selection
 - Improve CSS Layout
@@ -11,3 +10,5 @@
 - Distribution
 - New data format
 - New data parser
+- Button Icons
+- Refactor component structure

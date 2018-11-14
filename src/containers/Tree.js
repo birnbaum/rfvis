@@ -3,9 +3,7 @@ import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize}
 import {TreeNode} from "../logic/TreeNodes";
 import PropTypes from "prop-types";
 import React from "react";
-import ReactDOM from 'react-dom';
-import {TreeTable} from "../components/HoverArea";
-
+import {resetDisplayDepth, setDisplayDepth, setHoverState, unsetHoverState} from "../actions";
 
 class Tree extends React.Component {
     static propTypes = {
@@ -23,6 +21,11 @@ class Tree extends React.Component {
         leafColor: PropTypes.string.isRequired,
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
+
+        hoverBranch: PropTypes.func.isRequired,
+        hoverLeaf: PropTypes.func.isRequired,
+        hoverBunch: PropTypes.func.isRequired,
+        unhover: PropTypes.func.isRequired,
     };
 
     baseNode = null;
@@ -59,11 +62,6 @@ class Tree extends React.Component {
             height: this.props.height + "px",
         };
 
-        const portal = ReactDOM.createPortal(
-            <TreeTable tree={this.props.tree} />,
-            document.getElementById('hover-info')
-        );
-
         const renderedBranches = branches.map((branch, i) => {
             const lineStyle = {
                 strokeWidth: branchThickness(branch, "SAMPLES", this.displayNode.samples),
@@ -75,8 +73,9 @@ class Tree extends React.Component {
                           x2={branch.x2}
                           y2={branch.y2}
                           style={lineStyle}
-                          onClick={() => this.renderSubtree(branch)} />)
-            // TODO Mouseover
+                          onClick={() => this.renderSubtree(branch)}
+                          onMouseEnter={() => this.props.hoverBranch(branch)}
+                          onMouseLeave={this.props.unhover} />)
         });
 
         const renderedLeafs = leafs.map((leaf, i) => {
@@ -87,8 +86,9 @@ class Tree extends React.Component {
                             cx={leaf.x}
                             cy={leaf.y}
                             r={leafSize(leaf, "SAMPLES", this.displayNode.samples)}
-                            style={circleStyle} />)
-            // TODO Mouseover
+                            style={circleStyle}
+                            onMouseEnter={() => this.props.hoverLeaf(leaf)}
+                            onMouseLeave={this.props.unhover} />)
         });
 
         /*
@@ -112,8 +112,6 @@ class Tree extends React.Component {
                     </span>
                     <span onClick={this.renderBaseTree}>Reset Zoom</span>
                 </span>
-
-                {portal}
             </div>
         );
     }
@@ -139,6 +137,25 @@ const mapStateToProps = (state, ownProps) => ({
     height: 800,  // TODO make dynamic
 });
 
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    let hoverTimer = null;
+    function postponeDispatch(action) {
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(() => {
+            dispatch(action)
+        }, 100)
+    }
+
+    return {
+        hoverBranch: branch => postponeDispatch(setHoverState("BRANCH", branch)),
+        hoverLeaf: leaf => postponeDispatch(setHoverState("LEAF", leaf)),
+        hoverBunch: bunch => postponeDispatch(setHoverState("BUNCH", bunch)),
+        unhover: () => postponeDispatch(unsetHoverState()),
+    }
+};
+
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Tree)

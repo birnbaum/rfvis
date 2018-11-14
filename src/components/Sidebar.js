@@ -1,6 +1,7 @@
 import React from "react";
 import TreeNavigation from "../containers/TreeNavigation";
 import ForestView from "./ForestView";
+import HoverArea from "../containers/HoverArea";
 
 export default function Sidebar() {
     return (
@@ -10,9 +11,7 @@ export default function Sidebar() {
 
             <div className="space" />
 
-            <div id="info">
-                <div id="hover-info" />
-            </div>
+            <HoverArea />
 
         </div>
     );

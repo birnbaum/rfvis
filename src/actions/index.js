@@ -45,5 +45,12 @@ export const setBranchColor = branchColor => ({
     branchColor
 });
 
+export const setHoverState = (hoverType, hoverData) => ({
+    type: 'SET_HOVER_STATE',
+    hoverType,
+    hoverData
+});
 
-// TODO: Title
+export const unsetHoverState = () => ({
+    type: 'UNSET_HOVER_STATE'
+});
