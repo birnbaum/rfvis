@@ -12,7 +12,7 @@ export {
 
 /**
  * Computes all the elements necessary to plot a single binary decision tree.
- * @param tree {Tree} - Tree object which shall be processed  TODO changed to baseNode
+ * @param baseNode {TreeNode} - The base TreeNode which shall be processed
  * @param displayDepth {number} - Depth until the tree shall be rendered. Cut of branches are displayed as pie charts
  * @param width {number} - Width of the SVG
  * @param height {number} - Height of the SVG
@@ -171,16 +171,12 @@ function branchColor(type, branch) {
     throw new Error(`Unsupported branch color type "${type}"`);
 }
 
-function branchThickness(branch, type, totalSamples) {
-    if (type === "SAMPLES") {
-        // Linear scale that maps the number of samples in a branch to a certain number of pixels
-        return d3.scaleLinear()
-            .domain([1, totalSamples])
-            .range([1, 15])
-            (branch.samples) + 'px';
-    }
-    console.log(this);
-    throw "Unsupported setting";
+function branchThickness(branch, totalSamples) {
+    // Linear scale that maps the number of samples in a branch to a certain number of pixels
+    return d3.scaleLinear()
+        .domain([1, totalSamples])
+        .range([1, 15])
+        (branch.samples) + 'px';
 }
 
 function leafColor(type, leaf) {
@@ -208,17 +204,13 @@ function leafColor(type, leaf) {
     throw new Error(`Unsupported leaf color type "${type}"`);
 }
 
-function leafSize(leaf, type, totalSamples) {
+function leafSize(leaf, totalSamples) {
     const maxRadius = Math.sqrt(totalSamples / Math.PI);
     const radius = Math.sqrt(leaf.samples / Math.PI);
-    if (type === "SAMPLES") {
-        return d3.scaleLinear()
-            .domain([1, maxRadius])
-            .range([1, 100])
-            (radius)
-    }
-    console.log(this);
-    throw "Unsupported setting";
+    return d3.scaleLinear()
+        .domain([1, maxRadius])
+        .range([1, 100])
+        (radius)
 }
 
 function addBranchInformation(treeNode, x, y, angle, length, depth) {
@@ -231,4 +223,24 @@ function addBranchInformation(treeNode, x, y, angle, length, depth) {
         length,
         depth,
     })
+}
+
+
+/**
+ * Walks the entire tree and returns all leaf nodes
+ * @param node {InternalNode} - Base node of the tree
+ * @returns {LeafNode[]} - List of all lead nodes of the tree
+ */
+export function getLeafNodes(node) {
+    const leafNodes = [];
+    function searchLeafs(node) {
+        if (node instanceof LeafNode) {
+            leafNodes.push(node);
+        } else {
+            searchLeafs(node.children[0]);
+            searchLeafs(node.children[1]);
+        }
+    }
+    searchLeafs(node);
+    return leafNodes;
 }

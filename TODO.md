@@ -1,6 +1,4 @@
 RESTORE
-- Performance improvements
-- Draw Pie Charts
 - Command Line Interface
 - Distribution
 - Path feature
@@ -8,6 +6,7 @@ RESTORE
 BUGS
 - First tree click postpones
 - Branches without leafs
+- Bunches on full height (unit test)
 
 NEW FEATURES
 - New data format
@@ -15,8 +14,15 @@ NEW FEATURES
 - document new data format
 
 NICE TO HAVE
+- Performance improvements
 - keyboard navigation
 - remove "space" divs
 - Refactor component structure
 - Improve CSS Layout
 - Reduce unneeded fontawesome/d3 dependencies
+- don't show bunches option
+- refactor utility 
+
+DATA
+- Example data
+- scikit learn export
