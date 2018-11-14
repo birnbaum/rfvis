@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from "../components/Menu";
 import Sidebar from "../components/Sidebar";
-import TreeView from "./Tree";
+import TreeView from "./TreeView";
 import PropTypes from "prop-types";
 
 import {setCurrentTreeId, setForest, setTitle} from "../actions";

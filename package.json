@@ -4,8 +4,10 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.5.0",
     "d3": "^5.7.0",
     "express": "^4.16.3",
+    "font-awesome": "^4.7.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.1",
     "react-bulma-components": "^2.0.0",

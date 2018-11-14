@@ -3,9 +3,11 @@ import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize}
 import {TreeNode} from "../logic/TreeNodes";
 import PropTypes from "prop-types";
 import React from "react";
-import {resetDisplayDepth, setDisplayDepth, setHoverState, unsetHoverState} from "../actions";
+import {setHoverState, unsetHoverState} from "../actions";
+import DownloadButton from "../components/DownloadButton";
 
-class Tree extends React.Component {
+
+class TreeView extends React.Component {
     static propTypes = {
         tree: PropTypes.shape({
             oobError: PropTypes.number.isRequired,
@@ -99,19 +101,25 @@ class Tree extends React.Component {
                         radius={this.leafSize(bunch, "SAMPLES", this.props.totalSamples)} />
         }); */
 
+        // TODO improve DownloadButton filename
         return (
-            <div>
-                <svg className="Tree" style={svgStyle}>
-                    {renderedBranches}
-                    {renderedLeafs}
-                </svg>
+            <div id="content">
+                <div className="TreeView">
+                    <svg id="tree" className="Tree" style={svgStyle}>
+                        {renderedBranches}
+                        {renderedLeafs}
+                    </svg>
 
-                <span className="ResetZoomButton button is-small">
-                    <span className="icon">
-                        <i className="fas fa-undo" />
+                    <span className="ResetZoomButton button is-small">
+                        <span className="icon">
+                            <i className="fas fa-undo" />
+                        </span>
+                        <span onClick={this.renderBaseTree}>Reset Zoom</span>
                     </span>
-                    <span onClick={this.renderBaseTree}>Reset Zoom</span>
-                </span>
+
+                    <DownloadButton filename={`tree.svg`}
+                                    svgId={"tree"} />
+                </div>
             </div>
         );
     }
@@ -158,4 +166,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Tree)
+)(TreeView)

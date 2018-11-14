@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
+import DownloadButton from "../components/DownloadButton";
 
 import computeTreePositions from "../logic/compute_coordinates";
 import {connect} from "react-redux";
 import {setCurrentTreeId, setHoverState, unsetHoverState} from "../actions";
 
-class Forest extends React.Component {
+class ForestView extends React.Component {
     static propTypes = {
         forest: PropTypes.any.isRequired,
         currentTreeId: PropTypes.number.isRequired,
@@ -55,10 +56,14 @@ class Forest extends React.Component {
         );
 
         return (
-            <svg className="Forest" style={svgStyle}>
-                {renderedActiveTree}
-                {renderedTrees}
-            </svg>
+            <div className="ForestView">
+                <svg id="forest" className="Forest" style={svgStyle}>
+                    {renderedActiveTree}
+                    {renderedTrees}
+                </svg>
+                <DownloadButton filename={`forest.svg`}
+                                svgId={"forest"} />
+            </div>
         );
     }
 }
@@ -93,4 +98,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Forest)
+)(ForestView)

@@ -1,13 +1,22 @@
-- Save as SVG
+RESTORE
 - Performance improvements
-- MAX button
-- Improve CSS Layout
 - Draw Pie Charts
 - Command Line Interface
 - Distribution
+- Path feature
+
+BUGS
+- First tree click postpones
+- Branches without leafs
+
+NEW FEATURES
 - New data format
 - New data parser
-- Button Icons
-- Refactor component structure
+- document new data format
+
+NICE TO HAVE
 - keyboard navigation
-- BUG: First tree click postpones
+- remove "space" divs
+- Refactor component structure
+- Improve CSS Layout
+- Reduce unneeded fontawesome/d3 dependencies
