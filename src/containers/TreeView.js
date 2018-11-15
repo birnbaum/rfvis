@@ -1,11 +1,10 @@
 import { connect } from 'react-redux';
-import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize} from "../logic/tree_utils";
 import {TreeNode} from "../logic/TreeNodes";
 import PropTypes from "prop-types";
 import React from "react";
 import {setHoverState, unsetHoverState} from "../actions";
 import DownloadButton from "../components/DownloadButton";
-import PieChart from "../components/pie/PieChart";
+import Tree from "../components/Tree";
 
 
 class TreeView extends React.Component {
@@ -52,62 +51,22 @@ class TreeView extends React.Component {
             return <span>Loading...</span>;
         }
 
-        const {branches, leafs, bunches} = generateTreeElements(
-            this.displayNode,
-            this.props.displayDepth,
-            this.props.width,
-            this.props.height,
-            this.props.trunkLength,
-            0);
-
-        const svgStyle = {
-            width: this.props.width + "px",
-            height: this.props.height + "px",
-        };
-
-        const renderedBranches = branches.map((branch, i) =>
-            <line key={i}
-                  x1={branch.x}
-                  y1={branch.y}
-                  x2={branch.x2}
-                  y2={branch.y2}
-                  style={{
-                      strokeWidth: branchThickness(branch, this.displayNode.samples),
-                      stroke: branchColor(this.props.branchColor, branch),
-                  }}
-                  onClick={() => this.renderSubtree(branch)}
-                  onMouseEnter={() => this.props.hoverBranch(branch)}
-                  onMouseLeave={this.props.unhover} />
-        );
-
-        const renderedLeafs = leafs.map((leaf, i) =>
-            <circle key={i}
-                    cx={leaf.x}
-                    cy={leaf.y}
-                    r={leafSize(leaf, this.displayNode.samples)}
-                    style={{
-                        fill: leafColor(this.props.leafColor, leaf),
-                    }}
-                    onMouseEnter={() => this.props.hoverLeaf(leaf)}
-                    onMouseLeave={this.props.unhover} />
-        );
-
-        const renderedBunches = bunches.map((bunch, i) =>
-            <PieChart key={i}
-                      bunch={bunch}
-                      radius={leafSize(bunch, this.displayNode.samples)}
-                      leafColorType={this.props.leafColor} />
-        );
-
         // TODO improve DownloadButton filename
         return (
             <div id="content">
                 <div className="TreeView">
-                    <svg id="tree" className="Tree" style={svgStyle}>
-                        {renderedBranches}
-                        {renderedLeafs}
-                        {renderedBunches}
-                    </svg>
+                    <Tree displayNode={this.displayNode}
+                          displayDepth={this.props.displayDepth}
+                          trunkLength={this.props.trunkLength}
+                          branchColor={this.props.branchColor}
+                          leafColor={this.props.leafColor}
+                          width={this.props.width}
+                          height={this.props.height}
+                          renderSubtree={this.renderSubtree}
+                          hoverBranch={this.props.hoverBranch}
+                          hoverLeaf={this.props.hoverLeaf}
+                          hoverBunch={this.props.hoverBunch}
+                          unhover={this.props.unhover}/>
 
                     <span className="ResetZoomButton button is-small">
                         <span className="icon">

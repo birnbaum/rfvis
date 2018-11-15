@@ -1,18 +1,20 @@
+import {BRANCH_COLORS, LEAF_COLORS} from "./src/constants";
+
 const yargs = require("yargs");
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const util = require("util");
-// import {createForest} from "./parser.js";
-// import {drawTree} from "./draw_tree";
-// import D3Node from "d3-node";
+import createForest from "./src/logic/parser";
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import Tree from "./src/components/Tree";
 
 /**
  * This function initializes all CLI commands and processes them accordingly when the application is called
  */
 const argv = yargs
     .scriptName("rfvis")
-    /*
     .command(
         "cli <data>",
         "Command line interface to generate SVGs",
@@ -60,7 +62,7 @@ const argv = yargs
                 }
             }),
         runCli
-    )*/
+    )
     .command(
         "gui <data>",
         "Graphical User Interface",
@@ -115,24 +117,17 @@ async function runCli(args) {
     if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
 
     for (const [index, tree] of forest.trees.entries()) {
-        const d3n = new D3Node();
-        const svg = d3n.createSVG(args.width, args.height).append("g");
-        drawTree({
-            svg: svg,
-            tree: tree,
-            totalSamples: forest.totalSamples,
+        const body = renderToString(<Tree returnValidSVG={true}
+                                          displayNode={tree.baseNode}
+                                          displayDepth={args.depth || 10000}
+                                          trunkLength={args.trunkLength}
+                                          branchColor={BRANCH_COLORS[args.branchColor.toUpperCase()]}
+                                          leafColor={LEAF_COLORS[args.leafColor.toUpperCase()]}
+                                          width={args.width}
+                                          height={args.height} />);
 
-            width: args.width,
-            height: args.height,
-            trunkLength: args.trunkLength,
-
-            maxDepth: args.depth,
-
-            branchColor: args.branchColor.toUpperCase(),
-            leafColor: args.leafColor.toUpperCase()
-        });
         const filePath = path.join(outDir, `tree-${index}.svg`);
-        fs.writeFile(filePath, d3n.svgString(), () => {
+        fs.writeFile(filePath, body, () => {
             console.log(`>> Exported "${filePath}"`);
         });
     }
