@@ -1,7 +1,5 @@
 RESTORE
-- CLI
 - Path feature
-- README
 
 BUGS
 - tree switch lags (e.g. when changing colors)
@@ -24,6 +22,7 @@ NICE TO HAVE
 - refactor utility 
 - favicon
 - improve hover table UI
+- Solve TODOs
 
 DATA
 - Example data
