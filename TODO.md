@@ -1,9 +1,10 @@
 RESTORE
-- Distribution
+- CLI
 - Path feature
+- README
 
 BUGS
-- First tree click postpones
+- tree switch lags (e.g. when changing colors)
 - Branches without leafs
 - Bunches on full height (unit test)
 
@@ -21,6 +22,8 @@ NICE TO HAVE
 - Reduce unneeded fontawesome/d3 dependencies
 - don't show bunches option
 - refactor utility 
+- favicon
+- improve hover table UI
 
 DATA
 - Example data

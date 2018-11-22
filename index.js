@@ -1,14 +1,13 @@
-import {BRANCH_COLORS, LEAF_COLORS} from "./src/constants";
-
-const yargs = require("yargs");
-const express = require("express");
-const path = require("path");
-const fs = require("fs");
-const util = require("util");
+import yargs from "yargs";
+import express from "express";
+import path from "path";
+import fs from "fs";
+import util from "util";
 import createForest from "./src/logic/parser";
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Tree from "./src/components/Tree";
+import {BRANCH_COLORS, LEAF_COLORS} from "./src/constants";
 
 /**
  * This function initializes all CLI commands and processes them accordingly when the application is called
@@ -83,7 +82,7 @@ const argv = yargs
     .help("help")
     .argv;
 
-if (!argv._[0]) {
+if (!argv._[0]) { // TODO improve message
     yargs.showHelp();
 }
 
@@ -95,7 +94,7 @@ async function runGui(args) {
 
     console.log("Starting server");
     const app = express();
-    // app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "build", "/index.html")));
+    app.get("/",     (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
     app.get("/info", (req, res) => res.json({name: args.data}));
     app.get("/data", (req, res) => res.json(data));
     /* app.get("/patches/:id", (req, res) => {
@@ -103,7 +102,7 @@ async function runGui(args) {
         res.sendFile(path.join(args.data, "leafData", "tree-0_id-0--f0.png"));
     }); */
 
-    // app.use(express.static(path.join(__dirname, "public")));
+    app.use(express.static(path.join(__dirname)));
     app.listen(args.port, () => console.log("GUI running at http://localhost:" + args.port));
 }
 
