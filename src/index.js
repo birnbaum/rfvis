@@ -7,8 +7,12 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import App from './containers/App';
 import { Provider } from "react-redux";
-import logger from 'redux-logger';
+import {createLogger} from 'redux-logger';
 import rootReducer from "./reducers";
+
+const logger = createLogger({
+    predicate: (getState, action) => action.type.indexOf("HOVER") === -1
+});
 
 const store = createStore(
     rootReducer,

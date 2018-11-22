@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import {TreeNode} from "../logic/TreeNodes";
 import PropTypes from "prop-types";
 import React from "react";
 import {setHoverState, unsetHoverState} from "../actions";
@@ -9,14 +8,7 @@ import Tree from "../components/Tree";
 
 class TreeView extends React.Component {
     static propTypes = {
-        tree: PropTypes.shape({
-            oobError: PropTypes.number.isRequired,
-            baseNode: function(props, propName, componentName) {
-                if (!(props[propName] instanceof TreeNode)) {
-                    return new Error(`Validation failed: ${componentName}.${propName} not of type TreeNode`);
-                }
-            },
-        }).isRequired,
+        baseNode: PropTypes.any.isRequired,
         displayDepth: PropTypes.number.isRequired,
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
@@ -30,32 +22,43 @@ class TreeView extends React.Component {
         unhover: PropTypes.func.isRequired,
     };
 
-    baseNode = null;
-    displayNode = null;
+    state = {
+        baseNode: this.props.baseNode,
+        displayNode: this.props.baseNode,
+    };
 
-    componentDidMount() {
-        // TODO This is a little hacky
-        this.baseNode = this.props.tree.baseNode;
-        this.displayNode = this.props.tree.baseNode;
+    static getDerivedStateFromProps(props, state) {
+        if (props.baseNode !== state.baseNode) {
+            return {
+                baseNode: props.baseNode,
+                displayNode: props.baseNode
+            };
+        }
+        return null;
     }
 
-    shouldComponentUpdate() {
-        // TODO This is a little hacky
-        this.baseNode = this.props.tree.baseNode;
-        this.displayNode = this.props.tree.baseNode;
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextState.displayNode.impurityDrop === this.state.displayNode.impurityDrop &&
+            nextProps.displayDepth === this.props.displayDepth &&
+            nextProps.trunkLength === this.props.trunkLength &&
+            nextProps.branchColor === this.props.branchColor &&
+            nextProps.leafColor === this.props.leafColor) {
+            return false;
+        }
         return true;
     }
 
     render() {
-        if (!this.displayNode) {
+        if (!this.state.displayNode) {
             return <span>Loading...</span>;
         }
+        console.log("RENDER", this.props.baseNode.impurityDrop, this.state.displayNode.impurityDrop)
 
         // TODO improve DownloadButton filename
         return (
             <div id="content">
                 <div className="TreeView">
-                    <Tree displayNode={this.displayNode}
+                    <Tree displayNode={this.state.displayNode}
                           displayDepth={this.props.displayDepth}
                           trunkLength={this.props.trunkLength}
                           branchColor={this.props.branchColor}
@@ -83,25 +86,36 @@ class TreeView extends React.Component {
     }
 
     renderSubtree = node => {
-        this.displayNode = node;
-        this.forceUpdate();
+        this.setState({displayNode: node});
     };
 
     renderBaseTree = () => {
-        this.displayNode = this.baseNode;
-        this.forceUpdate();
+        this.setState({displayNode: this.state.baseNode});
     };
 }
 
-const mapStateToProps = (state, ownProps) => ({
-    tree: state.forest.trees[state.currentTreeId],
+const mapStateToProps = (state, ownProps) => {
+    return {
+        baseNode: state.forest.trees[state.currentTreeId].baseNode,
+        displayDepth: state.displayDepth,
+        trunkLength: state.trunkLength,
+        branchColor: state.branchColor,
+        leafColor: state.leafColor,
+        width: 800,  // TODO make dynamic
+        height: 800,  // TODO make dynamic
+    }
+};
+
+/*({
+    baseNode: state.forest.trees[state.currentTreeId].baseNode,
+    currentTreeId: [state.forest.trees[state.currentTreeId].baseNode.impurityDrop, state.currentTreeId],
     displayDepth: state.displayDepth,
     trunkLength: state.trunkLength,
     branchColor: state.branchColor,
     leafColor: state.leafColor,
     width: 800,  // TODO make dynamic
     height: 800,  // TODO make dynamic
-});
+});*/
 
 
 const mapDispatchToProps = (dispatch, ownProps) => {

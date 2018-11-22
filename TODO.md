@@ -2,7 +2,6 @@ RESTORE
 - Path feature
 
 BUGS
-- tree switch lags (e.g. when changing colors)
 - Branches without leafs
 - Bunches on full height (unit test)
 
