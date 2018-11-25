@@ -1,0 +1,4 @@
+name: rfvis
+dependencies:
+  - scikit-learn
+  - nb_conda
