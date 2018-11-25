@@ -38,9 +38,9 @@ To interactively analyze your forest with the web-based GUI run:
 ```
 $ rfvis gui /path/to/data
 Starting server
-GUI running at http://localhost:3000
+GUI running at http://localhost:8080
 ```
-You can now open up your browser at <http://localhost:3000> to see something like this:
+You can now open up your browser at <http://localhost:8080> to see something like this:
 
 ![Tree](images/screenshot.png)
 
@@ -89,6 +89,9 @@ Options:
 ```
 
 ## Input Data
+
+TODO
+
 The input data is expected to come in text files in the following folder structure:
 - `./forest.txt`: A text file containing the correlation matrix, tree strengths and overall forest strength
 - `./tree_<index>.txt`: One text file per tree in the forest with semicolon-separated values in the following format:
@@ -97,6 +100,9 @@ The input data is expected to come in text files in the following folder structu
 
 
 ## Development
+
+TODO
+
 To build and use the project locally just run `npm run build` and `npm link`.
 
 In order to make development more convenient (which means not having to run `npm run build` after every change) you can run watchers on the source files. The recommended setup for development is to open two terminal processes and run:
@@ -108,6 +114,8 @@ Note that many files are used by the frontend _and_ backend, e.g. the logic for 
 
 ## Built With
 
+TODO
+
 * [D3.js](https://d3js.org/) - Data Visualization Library
 * [Yargs](https://github.com/yargs/yargs) - Command Line Parsing Library
 * [Bulma](https://bulma.io/) - Lightweight CSS Framework
@@ -116,6 +124,8 @@ Note that many files are used by the frontend _and_ backend, e.g. the logic for 
 
 
 ## TODOs
+
+TODO
 
 * Simplify and document input data format
 * Provide scripts to export RFVis-readable data for the most common Random Forest implementations, e.g. [sklearn.ensemble.RandomForestClassifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
