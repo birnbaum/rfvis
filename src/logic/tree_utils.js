@@ -34,7 +34,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
 
         branches.push(node);
 
-        if (node.depth === displayDepth - 1) {
+        if (node.depth === displayDepth) {
             bunches.push({
                 x: node.x2,
                 y: node.y2,

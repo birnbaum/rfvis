@@ -1,28 +1,25 @@
 RESTORE
 - Path feature
 
-BUGS
-- Branches without leafs
-- Bunches on full height (unit test)
-
-NEW FEATURES
+NECESSARY FEATURES
 - New data format
 - New data parser
 - document new data format
+
+DATA
+- Example data
+- scikit learn export
 
 NICE TO HAVE
 - Performance improvements
 - keyboard navigation
 - remove "space" divs
-- Refactor component structure
-- Improve CSS Layout
+- Refactor component structure (Forest, ForestView, compute_coordinates)
 - Reduce unneeded fontawesome/d3 dependencies
-- don't show bunches option
 - refactor utility 
-- favicon
 - improve hover table UI
 - Solve TODOs
 
-DATA
-- Example data
-- scikit learn export
+OTHER IDEAS
+- Do not draw bunches/leafs
+- Color select

@@ -43,7 +43,7 @@ class TreeDepthInput extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
     label: "Tree Depth",
     value: state.displayDepth,
-    minValue: 1,
+    minValue: 0,
     maxValue: getMaxDepth(state),
 });
 

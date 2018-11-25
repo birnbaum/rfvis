@@ -13,8 +13,6 @@ class TreeView extends React.Component {
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,
-        width: PropTypes.number.isRequired,
-        height: PropTypes.number.isRequired,
 
         hoverBranch: PropTypes.func.isRequired,
         hoverLeaf: PropTypes.func.isRequired,
@@ -52,7 +50,6 @@ class TreeView extends React.Component {
         if (!this.state.displayNode) {
             return <span>Loading...</span>;
         }
-        console.log("RENDER", this.props.baseNode.impurityDrop, this.state.displayNode.impurityDrop)
 
         // TODO improve DownloadButton filename
         return (
@@ -63,8 +60,6 @@ class TreeView extends React.Component {
                           trunkLength={this.props.trunkLength}
                           branchColor={this.props.branchColor}
                           leafColor={this.props.leafColor}
-                          width={this.props.width}
-                          height={this.props.height}
                           renderSubtree={this.renderSubtree}
                           hoverBranch={this.props.hoverBranch}
                           hoverLeaf={this.props.hoverLeaf}
@@ -101,22 +96,8 @@ const mapStateToProps = (state, ownProps) => {
         trunkLength: state.trunkLength,
         branchColor: state.branchColor,
         leafColor: state.leafColor,
-        width: 800,  // TODO make dynamic
-        height: 800,  // TODO make dynamic
     }
 };
-
-/*({
-    baseNode: state.forest.trees[state.currentTreeId].baseNode,
-    currentTreeId: [state.forest.trees[state.currentTreeId].baseNode.impurityDrop, state.currentTreeId],
-    displayDepth: state.displayDepth,
-    trunkLength: state.trunkLength,
-    branchColor: state.branchColor,
-    leafColor: state.leafColor,
-    width: 800,  // TODO make dynamic
-    height: 800,  // TODO make dynamic
-});*/
-
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     let hoverTimer = null;
