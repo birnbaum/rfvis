@@ -51,6 +51,9 @@ class TreeView extends React.Component {
             return <span>Loading...</span>;
         }
 
+        const treeSvgWidth = Math.max(500, window.innerWidth - 632);
+        const treeSvgHeight = Math.max(500, window.innerHeight - 45);
+
         // TODO improve DownloadButton filename
         return (
             <div id="content">
@@ -60,6 +63,8 @@ class TreeView extends React.Component {
                           trunkLength={this.props.trunkLength}
                           branchColor={this.props.branchColor}
                           leafColor={this.props.leafColor}
+                          width={treeSvgWidth}
+                          height={treeSvgHeight}
                           renderSubtree={this.renderSubtree}
                           hoverBranch={this.props.hoverBranch}
                           hoverLeaf={this.props.hoverLeaf}

@@ -11,6 +11,8 @@ export default class Tree extends React.Component {
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
 
         returnValidSVG: PropTypes.bool,
 
@@ -26,14 +28,11 @@ export default class Tree extends React.Component {
     };
 
     render() {
-        const width = Math.max(500, window.innerWidth - 632);
-        const height = Math.max(500, window.innerHeight - 45);
-
         const {branches, leafs, bunches} = generateTreeElements(
             this.props.displayNode,
             this.props.displayDepth,
-            width,
-            height,
+            this.props.width,
+            this.props.height,
             this.props.trunkLength,
             0);
 
@@ -75,8 +74,8 @@ export default class Tree extends React.Component {
             return (
                 <svg xmlns="http://www.w3.org/2000/svg"
                      version="1.1"
-                     width={width}
-                     height={height}>
+                     width={this.props.width}
+                     height={this.props.height}>
                     {renderedBranches}
                     {renderedLeafs}
                     {renderedBunches}
@@ -86,8 +85,8 @@ export default class Tree extends React.Component {
             return (
                 <svg className="Tree"
                      style={{
-                         width: width + "px",
-                         height: height + "px",
+                         width: this.props.width + "px",
+                         height: this.props.height + "px",
                      }}>
                     {renderedBranches}
                     {renderedLeafs}

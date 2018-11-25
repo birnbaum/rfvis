@@ -8,6 +8,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Tree from "./src/components/Tree";
 import {BRANCH_COLORS, LEAF_COLORS} from "./src/constants";
+import {InternalNode, LeafNode} from "./src/logic/TreeNodes";
 
 /**
  * This function initializes all CLI commands and processes them accordingly when the application is called
@@ -79,6 +80,21 @@ const argv = yargs
             }),
         runGui
     )
+    .command(
+        "export <data>",
+        "Export to new data format",
+        yargs => yargs
+            .positional("data", {
+                describe: "Folder containing the forest data"
+            })
+            .options({
+                "out": {
+                    alias: "o",
+                    describe: "Output folder for the SVG files. If omitted the current working directory is used.",
+                },
+            }),
+        exportData
+    )
     .help("help")
     .argv;
 
@@ -132,6 +148,99 @@ async function runCli(args) {
     }
 }
 
+/**
+ * Produces a SVG file for each tree in the forest and stores them at the provided "out" folder
+ */
+async function exportData(args) {
+    const rawData = await readDataFolder(args.data);
+    const forest = createForest(rawData);
+    const outDir = args.out ? path.resolve(args.out) : __dirname;
+    if (!fs.existsSync(outDir)) throw `Output directory ${outDir} does not exist.`;
+
+    const splitPath = args.data.split("\\");
+    const outJson = {
+        name: splitPath[splitPath.length-1],
+        error: forest.error,
+        n_samples: forest.totalSamples,
+        criterion: "gini",
+        correlationMatrix: forest.correlationMatrix,
+        classes: [
+            {
+                name: "city",
+                color: [0,0,255]
+            },
+            {
+                name: "streets",
+                color: [255,0,0]
+            },
+            {
+                name: "forest",
+                color: [0,128,0]
+            },
+            {
+                name: "field",
+                color: [0,255,255]
+            },
+            {
+                name: "shrubland",
+                color: [0,255,0]
+            },
+        ],
+        trees: forest.trees.map((tree, i) => {
+            const filename = `./tree-${i}.csv`;
+            treeToCsv(tree, path.join(outDir, filename));
+            return {
+                error: tree.oobError,
+                data: filename
+            }
+        })
+    };
+
+    const forestOutpath = path.join(outDir, "forest.json");
+    fs.writeFile(forestOutpath, JSON.stringify(outJson, null, 2), 'utf8', (err) => {
+        if (err) throw err;
+        console.log(`Saved ${forestOutpath}`);
+    });
+}
+
+function treeToCsv(tree, outpath) {
+    propagateValue(tree.baseNode);
+
+    let csv = "id,depth,n_node_samples,impurity,value\n";
+    let id = 0;
+    function walkTree(node) {
+        csv += [
+            id,
+            node.depth,
+            node.samples,
+            node.impurity,
+            `"[${node.value.join(",")}]"`,
+            // node.impurityDrop
+        ].join(",") + "\n";
+        id++;
+        if (node instanceof InternalNode) {
+            walkTree(node.children[0]);
+            walkTree(node.children[1]);
+        }
+    }
+
+    walkTree(tree.baseNode);
+    fs.writeFile(outpath, csv, 'utf8', (err) => {
+        if (err) throw err;
+        console.log(`Saved ${outpath}`);
+    });
+}
+
+function propagateValue(node) {
+    if (node.classes) {
+        node.value = node.classes.map(cls => cls.count);
+    } else {
+        const leftValue = propagateValue(node.children[0]);
+        const rightValue = propagateValue(node.children[1]);
+        node.value = leftValue.map((left, i) => left + rightValue[i]);
+    }
+    return node.value;
+}
 
 /**
  * Reads the text files from the provided data folder
