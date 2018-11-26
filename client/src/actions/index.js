@@ -1,8 +1,3 @@
-export const setTitle = title => ({
-    type: 'SET_TITLE',
-    title
-});
-
 export const setForest = forest => ({
     type: 'SET_FOREST',
     forest

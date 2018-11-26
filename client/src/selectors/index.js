@@ -8,13 +8,14 @@ const getCurrentTreeId = state => state.currentTreeId;
  * @param {Tree} tree
  * @returns {number}
  */
+// TODO This can be implemented more efficiently on the list data structure
 export const getMaxDepth = createSelector(
     [getForest, getCurrentTreeId],
     (forest, currentTreeId) => {
         const tree = forest.trees[currentTreeId];
         let maxDepth = 0;
         function findMaxDepth(node) {
-            if (node.children) {
+            if (!node.isLeaf()) {
                 findMaxDepth(node.children[0]);
                 findMaxDepth(node.children[1]);
             } else if (node.depth > maxDepth) {

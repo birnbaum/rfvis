@@ -2,15 +2,6 @@ import {combineReducers} from "redux";
 import {BRANCH_COLORS, LEAF_COLORS, DEFAULT_TRUNK_LENGTH} from "../constants"
 import {getMaxDepth} from "../selectors";
 
-const title = (state = "", action) => {
-    switch (action.type) {
-        case 'SET_TITLE':
-            return action.title;
-        default:
-            return state
-    }
-};
-
 const forest = (state = null, action) => {
     switch (action.type) {
         case 'SET_FOREST':
@@ -88,8 +79,7 @@ const hoverData = (state = null, action) => {
 };
 
 const rootReducer = (state = {}, action) => {
-    let sss = combineReducers({
-        title,
+    let reduceResult = combineReducers({
         forest,
         currentTreeId,
         trunkLength,
@@ -101,13 +91,14 @@ const rootReducer = (state = {}, action) => {
     })(state, action);
 
     const displayDepthRequiresUpdate = [
+        'SET_FOREST',
         'SET_CURRENT_TREE_ID',
         'INCREMENT_CURRENT_TREE_ID',
         'DECREMENT_CURRENT_TREE_ID',
         'RESET_DISPLAY_DEPTH'
     ].indexOf(action.type) > -1;
 
-    const newState = Object.assign({}, sss);
+    const newState = Object.assign({}, reduceResult);
 
     if (displayDepthRequiresUpdate) {
 

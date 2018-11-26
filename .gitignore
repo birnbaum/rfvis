@@ -1,13 +1,21 @@
 # editor
 .idea
 
-# dependencies
-/node_modules
+# Python
+__pycache__
+Pipfile.lock
+
+# Javascript
+client/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # testing
 /coverage
 
 # build
+rfvis.egg-info
 /client/build
 /client/**/*.css
 
@@ -17,7 +25,3 @@
 .env.development.local
 .env.test.local
 .env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

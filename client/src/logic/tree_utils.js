@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import {LeafNode, InternalNode} from "./TreeNodes";
 import {LEAF_COLORS, BRANCH_COLORS} from "../constants";
 
 export {
@@ -44,7 +43,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
             return;  // End of recursion
         }
 
-        if (node instanceof LeafNode) {
+        if (node.isLeaf()) {
             leafs.push({
                 x: node.x2,
                 y: node.y2,
@@ -98,12 +97,12 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
 
 /**
  * Walks down a tree (depth first) and applies a function to each node
- * @param {InternalNode | LeafNode} node - Base node
+ * @param {TreeNode} node - Base node
  * @param {function} fn - function which shall be executed on each node
  */
 function walkAndApply(node, fn) {
     fn(node);
-    if (node instanceof InternalNode) {
+    if (!node.isLeaf()) {
         walkAndApply(node.children[0], fn);
         walkAndApply(node.children[1], fn);
     }
@@ -114,7 +113,7 @@ function walkAndApply(node, fn) {
  * This function works in-place.
  *
  * @param {number[]} leafIds - List of leaf IDs
- * @param {InternalNode} tree - Tree on which the marking shall be performed
+ * @param {TreeNode} tree - Tree on which the marking shall be performed
  */
 function markPathElements(leafIds, tree) {
     // Reset current tree
@@ -171,10 +170,10 @@ function branchColor(type, branch) {
     throw new Error(`Unsupported branch color type "${type}"`);
 }
 
-function branchThickness(branch, totalSamples) {
+function branchThickness(branch, n_samples) {
     // Linear scale that maps the number of samples in a branch to a certain number of pixels
     return d3.scaleLinear()
-        .domain([1, totalSamples])
+        .domain([1, n_samples])
         .range([1, 15])
         (branch.samples) + 'px';
 }
@@ -204,8 +203,8 @@ function leafColor(type, leaf) {
     throw new Error(`Unsupported leaf color type "${type}"`);
 }
 
-function leafSize(leaf, totalSamples) {
-    const maxRadius = Math.sqrt(totalSamples / Math.PI);
+function leafSize(leaf, n_samples) {
+    const maxRadius = Math.sqrt(n_samples / Math.PI);
     const radius = Math.sqrt(leaf.samples / Math.PI);
     return d3.scaleLinear()
         .domain([1, maxRadius])
@@ -228,13 +227,14 @@ function addBranchInformation(treeNode, x, y, angle, length, depth) {
 
 /**
  * Walks the entire tree and returns all leaf nodes
- * @param node {InternalNode} - Base node of the tree
- * @returns {LeafNode[]} - List of all lead nodes of the tree
+ * @param node {TreeNode} - Base node of the tree
+ * @returns {TreeNode[]} - List of all lead nodes of the tree
  */
+// TODO This can be implemented easier on the list data structure
 export function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {
-        if (node instanceof LeafNode) {
+        if (node.isLeaf()) {
             leafNodes.push(node);
         } else {
             searchLeafs(node.children[0]);

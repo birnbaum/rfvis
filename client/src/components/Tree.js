@@ -1,7 +1,7 @@
 import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize} from "../logic/tree_utils";
 import PropTypes from "prop-types";
 import React from "react";
-import PieChart from "../components/pie/PieChart";
+import PieChart from "./pie/PieChart";
 
 
 export default class Tree extends React.Component {

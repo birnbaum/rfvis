@@ -190,7 +190,7 @@ async function exportData(args) {
             const filename = `./tree-${i}.csv`;
             treeToCsv(tree, path.join(outDir, filename));
             return {
-                error: tree.oobError,
+                error: tree.error,
                 data: filename
             }
         })

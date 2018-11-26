@@ -57,7 +57,7 @@ const makeSegments = (data, props) => {
 
 /**
  * Computes a histogram over the samples contained the leaf nodes of a sub branch
- * @param node {InternalNode} - Base node of the sub branch
+ * @param node {TreeNode} - Base node of the sub branch
  * @param type {string} - Type of property over which the histogram shall be computed.
  *      Can be either IMPURITY or BEST_CLASS.
  * @param weighted {boolean} - If false al leafs have the same cardinality. If true the leafs are weighted by the number

@@ -72,7 +72,7 @@ function treeColor(tree) {  // TODO move to utils
     const scale = d3.scaleLinear()
         .domain([1, 0.5, 0.05, 0])
         .range(["red", "red", "green", "green"]);
-    return scale(tree.oobError);
+    return scale(tree.error);
 }
 
 function treeSize(tree, maxRadius) {  // TODO move to utils
@@ -80,7 +80,7 @@ function treeSize(tree, maxRadius) {  // TODO move to utils
     const scale =  d3.scaleLinear()
         .domain([0, radius(0.6), radius(1)])
         .range([maxRadius / 2, maxRadius / 2, maxRadius]);
-    return scale(radius(1 - tree.oobError));
+    return scale(radius(1 - tree.error));
 }
 
 const mapStateToProps = (state, ownProps) => ({

@@ -25,7 +25,7 @@ export class DefaultTable extends React.Component {
                     </tr>
                     <tr>
                         <td>Number of Samples</td>
-                        <td>{this.props.forest.totalSamples}</td>
+                        <td>{this.props.forest.n_samples}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -38,7 +38,7 @@ export class DefaultTable extends React.Component {
                     </tr>
                     <tr>
                         <td>Out-of-bag Error</td>
-                        <td>{this.props.forest.trees[this.props.currentTreeId].oobError}</td>
+                        <td>{this.props.forest.trees[this.props.currentTreeId].error}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -66,7 +66,7 @@ export class TreeTable extends React.Component {
                 </tr>
                 <tr>
                     <td>Out-of-bag Error</td>
-                    <td>{this.props.tree.oobError}</td>
+                    <td>{this.props.tree.error}</td>
                 </tr>
                 </tbody>
             </table>
