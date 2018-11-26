@@ -38,7 +38,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 x: node.x2,
                 y: node.y2,
                 baseNode: node,
-                samples: node.samples,
+                n_node_samples: node.n_node_samples,
             });
             return;  // End of recursion
         }
@@ -48,11 +48,10 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 x: node.x2,
                 y: node.y2,
                 impurity: node.impurity,
-                samples: node.samples,
-                leafId: node.leafId,
+                n_node_samples: node.n_node_samples,
+                id: node.id,
                 depth: node.depth,
-                noClasses: node.noClasses,
-                classes: node.classes,
+                classes: node.classDistribution,
                 bestClass: node.bestClass,
                 selectedPathElement: node.selectedPathElement,
             });
@@ -62,11 +61,11 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
         const leftChild = node.children[0];
         const rightChild = node.children[1];
 
-        const length1 = Math.max(Math.min(leftChild.samples / node.samples, maxShorteningFactor) * node.length, minBranchLength);
-        const length2 = Math.max(Math.min(rightChild.samples / node.samples, maxShorteningFactor) * node.length, minBranchLength);
+        const length1 = Math.max(Math.min(leftChild.n_node_samples / node.n_node_samples, maxShorteningFactor) * node.length, minBranchLength);
+        const length2 = Math.max(Math.min(rightChild.n_node_samples / node.n_node_samples, maxShorteningFactor) * node.length, minBranchLength);
 
-        const angle1 = node.angle - Math.abs(leftChild.samples / node.samples - 1);
-        const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
+        const angle1 = node.angle - Math.abs(leftChild.n_node_samples / node.n_node_samples - 1);
+        const angle2 = node.angle + Math.abs(rightChild.n_node_samples / node.n_node_samples - 1);
 
         if (leftChild !== undefined) {
             branch(addBranchInformation(leftChild, node.x2, node.y2, angle1, length1, node.depth + 1));
@@ -85,8 +84,8 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
     branch(extendedBaseNode);
 
     const sortBySamples = (a,b) => {
-        if (a.samples > b.samples) return -1;
-        if (a.samples < b.samples) return 1;
+        if (a.n_node_samples > b.n_node_samples) return -1;
+        if (a.n_node_samples < b.n_node_samples) return 1;
         return 0;
     };
     leafs.sort(sortBySamples);
@@ -175,7 +174,7 @@ function branchThickness(branch, n_samples) {
     return d3.scaleLinear()
         .domain([1, n_samples])
         .range([1, 15])
-        (branch.samples) + 'px';
+        (branch.n_node_samples) + 'px';
 }
 
 function leafColor(type, leaf) {
@@ -205,7 +204,7 @@ function leafColor(type, leaf) {
 
 function leafSize(leaf, n_samples) {
     const maxRadius = Math.sqrt(n_samples / Math.PI);
-    const radius = Math.sqrt(leaf.samples / Math.PI);
+    const radius = Math.sqrt(leaf.n_node_samples / Math.PI);
     return d3.scaleLinear()
         .domain([1, maxRadius])
         .range([1, 100])

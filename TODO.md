@@ -1,9 +1,14 @@
+TODOS
+- Publish on pip
+- Update README
+- Write documentation for new data format
+- Implement Python CLI interface
+
 RESTORE
 - Path feature
 
-NECESSARY FEATURES
-- New data parser
-- Write documentation for new data format
+BUGS
+- ForestView Tree hover info misses tree id
 
 DATA
 - scikit learn export
@@ -16,6 +21,8 @@ NICE TO HAVE
 - Refactor component structure (Forest, ForestView, compute_coordinates)
 - Reduce unneeded fontawesome/d3 dependencies
 - refactor utility
+- Dynamic Trunk length
+- Python interface for e.g. Jupyter notebooks
 
 OTHER IDEAS
 - Do not draw bunches/leafs

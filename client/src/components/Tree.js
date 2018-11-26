@@ -43,7 +43,7 @@ export default class Tree extends React.Component {
                   x2={branch.x2}
                   y2={branch.y2}
                   style={{
-                      strokeWidth: branchThickness(branch, this.props.displayNode.samples),
+                      strokeWidth: branchThickness(branch, this.props.displayNode.n_node_samples),
                       stroke: branchColor(this.props.branchColor, branch),
                   }}
                   onClick={() => this.props.renderSubtree(branch)}
@@ -55,7 +55,7 @@ export default class Tree extends React.Component {
             <circle key={i}
                     cx={leaf.x}
                     cy={leaf.y}
-                    r={leafSize(leaf, this.props.displayNode.samples)}
+                    r={leafSize(leaf, this.props.displayNode.n_node_samples)}
                     style={{
                         fill: leafColor(this.props.leafColor, leaf),
                     }}
@@ -66,7 +66,7 @@ export default class Tree extends React.Component {
         const renderedBunches = bunches.map((bunch, i) =>
             <PieChart key={i}
                       bunch={bunch}
-                      radius={leafSize(bunch, this.props.displayNode.samples)}
+                      radius={leafSize(bunch, this.props.displayNode.n_node_samples)}
                       leafColorType={this.props.leafColor} />
         );
 

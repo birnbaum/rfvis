@@ -37,7 +37,7 @@ export class DefaultTable extends React.Component {
                         <td>#{this.props.currentTreeId + 1}</td>
                     </tr>
                     <tr>
-                        <td>Out-of-bag Error</td>
+                        <td>Error</td>
                         <td>{this.props.forest.trees[this.props.currentTreeId].error}</td>
                     </tr>
                     </tbody>
@@ -65,7 +65,7 @@ export class TreeTable extends React.Component {
                     <td>#{this.props.tree.id}</td>
                 </tr>
                 <tr>
-                    <td>Out-of-bag Error</td>
+                    <td>Error</td>
                     <td>{this.props.tree.error}</td>
                 </tr>
                 </tbody>
@@ -228,16 +228,16 @@ class HoverArea extends React.Component {
     render() {
         switch (this.props.hoverType) {
             case "TREE":
-                return <TreeTable tree={this.props.hoverData}/>;
+                return <TreeTable tree={this.props.hoverData} />;
             case "BRANCH":
-                return <BranchTable branch={this.props.hoverData}/>;
+                return <BranchTable branch={this.props.hoverData} />;
             case "LEAF":
-                return <LeafTable leaf={this.props.hoverData}/>;
+                return <LeafTable leaf={this.props.hoverData} />;
             // case "BUNCH":
             //     return <BunchTable bunch={} classHistogram={}/>;
             default:
                 return <DefaultTable forest={this.props.forest}
-                                     currentTreeId={this.props.currentTreeId}/>;
+                                     currentTreeId={this.props.currentTreeId} />;
         }
     }
 }
