@@ -12,10 +12,16 @@ if __name__ == "__main__":
         version="0.2.0",
         author="Philipp Wiesner",
         author_email="wiesnerph@gmail.com",
-        description="TODO",
+        description="A tool for visualizing the structure and performance of Random Forests",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        keywords=["TODO"],
+        keywords=[
+            "random-forest",
+            "visualization",
+            "decision-trees",
+            "d3js",
+            "react",
+        ],
         url="https://github.com/birnbaum/rfvis",
         project_urls={
             "Bug Tracker": "https://github.com/birnbaum/rfvis/issues",

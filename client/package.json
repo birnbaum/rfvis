@@ -1,24 +1,11 @@
 {
-  "name": "rfvis",
-  "version": "0.2.0",
-  "description": "A tool for visualizing the structure and performance of Random Forests",
+  "name": "rfvis-client",
   "author": "Philipp Wiesner <wiesnerph@gmail.com>",
-  "keywords": [
-    "random-forest",
-    "visualization",
-    "d3js",
-    "decision-trees"
-  ],
   "proxy": "http://localhost:8080",
-  "bin": {
-    "rfvis": "./build/index.js"
-  },
-  "license": "ISC",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
     "csv-parse": "^4.0.1",
     "d3": "^5.7.0",
-    "papaparse": "^4.6.2",
     "prop-types": "^15.6.2",
     "react": "^16.6.1",
     "react-dom": "^16.5.2",

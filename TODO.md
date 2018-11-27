@@ -9,6 +9,8 @@ RESTORE
 
 BUGS
 - ForestView Tree hover info misses tree id
+- Hover information tables partially broken
+- Drop-of-impurity missing
 
 DATA
 - scikit learn export

@@ -6,7 +6,7 @@ __pycache__
 Pipfile.lock
 
 # Javascript
-client/node_modules
+node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -16,8 +16,9 @@ yarn-error.log*
 
 # build
 rfvis.egg-info
-/client/build
-/client/**/*.css
+dist
+build
+client/**/*.css
 
 # misc
 .DS_Store
