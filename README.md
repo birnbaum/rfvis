@@ -4,23 +4,32 @@
 [![Dependency Status](https://david-dm.org/birnbaum/rfvis.svg)](https://david-dm.org/birnbaum/rfvis)
 [![devDependency Status](https://david-dm.org/birnbaum/rfvis/dev-status.svg)](https://david-dm.org/birnbaum/rfvis#info=devDependencies)
 
-A tool for visualizing the structure and performance of Random Forests.
+A tool for visualizing the structure and performance of Random Forests (and other ensemble methods based on decision trees).
 
 ![Tree](images/tree.png)
 
 ## Getting Started 
 
-As a prerequisite you need [Node.js](https://nodejs.org/en/download/) v8 or higher. To install RFVis run:
+Install and update RFVis via [pip](https://pip.pypa.io/en/stable/quickstart/):
+
 ```
-$ npm install -g rfvis
+$ pip install rfvis
 ```
 
+This will allow you interactively visualize a fitted Random Forest (RF) in your
+browser. To directly generate SVG files from your model you also need to install
+[NodeJS](https://nodejs.org/en/download/), see TODO for more information.
 
-The tool offers a command line interface to either generate SVG files directly from your input data (`rfvis cli <data>`) or to spin up a web-based GUI for a more interactive analysis (`rfvis gui <data>`).
+
+## How To Use
+
+RFVis offers a command line tool to either generate SVG files directly from
+your input data (`rfvis cli <data>`) or to spin up a web-based GUI for a more
+interactive analysis (`rfvis gui <data>`).
 
 To see all available commands run:
 ```
-$ node rfvis
+$ rfvis --help
 
 rfvis [command]
 
@@ -33,7 +42,8 @@ Options:
   --version  Show version number                                       [boolean]
 ```
 
-## The Graphical User Interface
+### Graphical User Interface
+
 To interactively analyze your forest with the web-based GUI run:
 ```
 $ rfvis gui /path/to/data
@@ -44,24 +54,30 @@ You can now open up your browser at <http://localhost:8080> to see something lik
 
 ![Tree](images/screenshot.png)
 
-Note: The web-based GUI is currently only tested on Google Chrome.
 
+### Command Line Interface
 
+To use the Command Line Interface (CLI) you need to have
+[NodeJS](https://nodejs.org/en/download/) v8+ installed on your system. This
+is a technical limitation due to the fact that the rendering is written in
+Javascript but I wanted to distribute the application via
+[pip](https://pip.pypa.io/en/stable/quickstart/) which is more common in
+machine learning than NodeJS.
 
-## The Command Line Interface
-To use the command line interface and generate SVG files for each tree in the input data, run:
+You do not need to install any other package though, the CLI integrates into
+the command line tool you already installed via pip:
 ```
-$ rfvis cli /path/to/data --out result
->> Exported "/dev/random-forest-visualization/result/tree-0.svg"
->> Exported "/dev/random-forest-visualization/result/tree-1.svg"
->> Exported "/dev/random-forest-visualization/result/tree-2.svg"
->> Exported "/dev/random-forest-visualization/result/tree-3.svg"
+$ rfvis cli /path/to/data
+>> Exported "/dev/random-forest-visualization/tree-0.svg"
+>> Exported "/dev/random-forest-visualization/tree-1.svg"
+>> Exported "/dev/random-forest-visualization/tree-2.svg"
+>> Exported "/dev/random-forest-visualization/tree-3.svg"
 ...
 ```
 
 Get a full list of available options with `--help`:
 ```
-$ rfvis --help
+$ rfvis cli --help
 rfvis cli <data>
 
 Command line interface to generate SVGs
@@ -88,15 +104,57 @@ Options:
                     [choices: "impurity", "impurity-drop"] [default: "impurity"]
 ```
 
+
+## Visualization
+???
+
+
 ## Input Data
 
-TODO
+Note: I am currently working a Python interface to RFVis which will allow
+you to start the application programmatically via a fitted scikit-learn
+[RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html).
 
-The input data is expected to come in text files in the following folder structure:
-- `./forest.txt`: A text file containing the correlation matrix, tree strengths and overall forest strength
-- `./tree_<index>.txt`: One text file per tree in the forest with semicolon-separated values in the following format:
-    - `Internal nodes`: height;  -; 0; size; impurity; drop of impurity; splitting grade; list of used feature IDs; fusion ID; path prediction, split point def; list of score IDs
-    - `Leaf nodes`: height; ID; 1; size; impurity; class frequency
+Currently all input data must be available on your filesystem as a JSON file
+for the forest and additionally one CSV file per tree. Both data formats will
+be extended with properties in the future, this is just the minimal set.
+
+You can find a working example under `examples/PolSAR`!
+
+
+#### Forest JSON
+
+The main `forest.json` holds all information about the ensemble model:
+
+- **name** (string): Name of your forest, will be displayed in the GUI
+- **error** (float): The error (e.g. the out-of-bag or validation error) of the 
+    entire ensemble model, will be displayed in the GUI
+- **n_samples** (int): Number of samples the model was trained on
+- **correlationMatrix** (float[][]): Correlation between the single trees within
+    the model. Has dimensions `NxN` where `N` is the number of trees.
+    This will be used to compute the forest map. 
+- **classes**: The output classes
+    - **name** (string): Name of the class
+    - **color** (int, int, int): RGB values in the range of 0-255 which
+        determine the color of the class in the visualization
+- **trees**: The trees in the forest
+    - **error** (float): The error (again could be either the out-of-bag or
+        validation error) of the single tree
+    - **data** (string): Relative path to the CSV file containing the tree data
+
+
+#### Tree CSV
+
+For each tree specified in the `forest.json` RFVis expects a CSV file where one
+entry represents one node in the tree. An entry has the following format:
+
+- **id** (int): ID of the node
+- **depth** (int) Depth of the node in the tree (starting at `0`)
+- **n_node_samples** (int): Number of training samples reaching the node
+- **impurity** (float): Impurity of the node (`0`-`1`)
+- **value** (int[]): Class distribution within the node, i.e. every entry 
+    represents the amount of samples within the node that respond to a specific 
+    class. The index corresponds to the indices in `forest.classes`.
 
 
 ## Development

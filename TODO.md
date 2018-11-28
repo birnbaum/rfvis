@@ -1,8 +1,8 @@
 TODOS
 - Publish on pip
 - Update README
-- Write documentation for new data format
 - Implement Python CLI interface
+- Update actual console output in README
 
 RESTORE
 - Path feature
