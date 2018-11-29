@@ -1,10 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
-import LeafColorSelect from '../containers/LeafColorSelect';
-import BranchColorSelect from '../containers/BranchColorSelect';
 import TreeDepthInput from '../containers/TreeDepthInput';
 import TrunkLengthInput from '../containers/TrunkLengthInput';
+import MenuTabs from "../containers/MenuTabs";
 
 export default class Menu extends React.Component {
     static propTypes = {
@@ -29,27 +27,7 @@ export default class Menu extends React.Component {
 
                     <div className="space" />
 
-                    <Tabs selectedTabClassName="is-active">
-                        <div className="tabs">
-                            <TabList>
-                                <Tab><a>Color</a></Tab>
-                                <Tab><a>Path</a></Tab>
-                            </TabList>
-                        </div>
-
-                        <TabPanel>
-                            <LeafColorSelect />
-                            <BranchColorSelect />
-                        </TabPanel>
-                        <TabPanel>
-                            <div className="field">
-                                <label className="label is-small">Color Path to LeafID</label>
-                                <div className="control">
-                                    <input id="path-leaf-input" className="input is-small" type="number" min="0" step="1" />
-                                </div>
-                            </div>
-                        </TabPanel>
-                    </Tabs>
+                    <MenuTabs />
 
                 </div>
             </div>

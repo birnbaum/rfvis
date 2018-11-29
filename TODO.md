@@ -1,16 +1,14 @@
 TODOS
-- Publish on pip
 - Update README
 - Implement Python CLI interface
 - Update actual console output in README
-
-RESTORE
-- Path feature
+- Publish on pip
 
 BUGS
 - ForestView Tree hover info misses tree id
 - Hover information tables partially broken
 - Drop-of-impurity missing
+- Tree Zooming is broken
 
 DATA
 - scikit learn export
@@ -26,6 +24,7 @@ NICE TO HAVE
 - Dynamic Trunk length
 - Python interface for e.g. Jupyter notebooks
 . More images in README
+- Refactor "PATH" functionality
 
 OTHER IDEAS
 - Do not draw bunches/leafs

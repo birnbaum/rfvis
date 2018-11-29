@@ -21,7 +21,7 @@ export {
  * @param minBranchLength {number} - Minimum branch length
  * @returns {{branches: Array, leafs: Array, bunches: Array}}
  */
-function generateTreeElements(baseNode, displayDepth, width, height, trunkLength, pathLeafID,
+function generateTreeElements(baseNode, displayDepth, width, height, trunkLength, selectedLeaf = null,
     maxShorteningFactor = 0.9, minBranchLength = 4) {
     // TODO Improvement: These lists shouldn't contain new objects but pointers to the tree data structure nodes
     const branches = [];
@@ -32,16 +32,6 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
     const branch = (node) => {
 
         branches.push(node);
-
-        if (node.depth === displayDepth) {
-            bunches.push({
-                x: node.x2,
-                y: node.y2,
-                baseNode: node,
-                n_node_samples: node.n_node_samples,
-            });
-            return;  // End of recursion
-        }
 
         if (node.isLeaf()) {
             leafs.push({
@@ -54,6 +44,14 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 classes: node.classDistribution,
                 bestClass: node.bestClass,
                 selectedPathElement: node.selectedPathElement,
+            });
+            return;  // End of recursion
+        } else if (node.depth === displayDepth) {
+            bunches.push({
+                x: node.x2,
+                y: node.y2,
+                baseNode: node,
+                n_node_samples: node.n_node_samples,
             });
             return;  // End of recursion
         }
@@ -77,8 +75,8 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
 
     const extendedBaseNode = addBranchInformation(baseNode, width/ 2, height, 0, trunkLength, 0);
 
-    if (pathLeafID !== null) {
-        // this.markPathElements([pathLeafID], displayNode);
+    if (selectedLeaf !== null) {
+        markPathElements([selectedLeaf], baseNode);
     }
 
     branch(extendedBaseNode);
@@ -112,16 +110,16 @@ function walkAndApply(node, fn) {
  * This function works in-place.
  *
  * @param {number[]} leafIds - List of leaf IDs
- * @param {TreeNode} tree - Tree on which the marking shall be performed
+ * @param {TreeNode} baseNode - Tree on which the marking shall be performed
  */
-function markPathElements(leafIds, tree) {
-    // Reset current tree
-    walkAndApply(tree, (node => {
+function markPathElements(leafIds, baseNode) {
+    // Reset current baseNode
+    walkAndApply(baseNode, (node => {
         node.selectedPathElement = false;
     }));
 
-    const leafs = this.getLeafNodes(tree)
-        .filter(leaf => leafIds.includes(leaf.leafId));
+    const leafs = getLeafNodes(baseNode)
+        .filter(leaf => leafIds.includes(leaf.id));
 
     function walkUpAndApply(node, fn) {
         fn(node);

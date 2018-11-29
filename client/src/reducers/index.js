@@ -42,6 +42,12 @@ const leafColor = (state = LEAF_COLORS.IMPURITY, action) => {
     switch (action.type) {
         case 'SET_LEAF_COLOR':
             return action.leafColor;
+        case 'SET_COLOR_TAB_INDEX':
+            if (action.colorTabIndex === 1) {
+                return "PATH";
+            } else {
+                return LEAF_COLORS.IMPURITY;
+            }
         default:
             return state
     }
@@ -51,6 +57,30 @@ const branchColor = (state = BRANCH_COLORS.IMPURITY, action) => {
     switch (action.type) {
         case 'SET_BRANCH_COLOR':
             return action.branchColor;
+        case 'SET_COLOR_TAB_INDEX':
+            if (action.colorTabIndex === 1) {
+                return "PATH";
+            } else {
+                return BRANCH_COLORS.IMPURITY;
+            }
+        default:
+            return state
+    }
+};
+
+const selectedLeaf = (state = null, action) => {
+    switch (action.type) {
+        case 'SET_SELECTED_LEAF':
+            return action.selectedLeaf;
+        default:
+            return state
+    }
+};
+
+const colorTabIndex = (state = 0, action) => {
+    switch (action.type) {
+        case 'SET_COLOR_TAB_INDEX':
+            return action.colorTabIndex;
         default:
             return state
     }
@@ -86,6 +116,8 @@ const rootReducer = (state = {}, action) => {
         displayDepth,
         leafColor,
         branchColor,
+        selectedLeaf,
+        colorTabIndex,
         hoverType,
         hoverData
     })(state, action);
@@ -118,6 +150,13 @@ const rootReducer = (state = {}, action) => {
                 }
         }
         newState.displayDepth = getMaxDepth(newState);
+    }
+
+    if (action.type ==='SET_COLOR_TAB_INDEX' && state.selectedLeaf === null) {
+        const tree = state.forest.trees[state.currentTreeId];
+        newState.selectedLeaf = tree.nodes.reduce((acc, node) => {
+            return node.isLeaf() ? Math.min(acc, node.id) : acc;
+        }, Number.MAX_SAFE_INTEGER);
     }
 
     return newState;

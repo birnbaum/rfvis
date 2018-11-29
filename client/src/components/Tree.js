@@ -11,6 +11,7 @@ export default class Tree extends React.Component {
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,
+        selectedLeaf: PropTypes.number,
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
 
@@ -34,7 +35,7 @@ export default class Tree extends React.Component {
             this.props.width,
             this.props.height,
             this.props.trunkLength,
-            0);
+            this.props.selectedLeaf);
 
         const renderedBranches = branches.map((branch, i) =>
             <line key={i}

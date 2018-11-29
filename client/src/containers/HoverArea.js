@@ -209,7 +209,9 @@ export class ClassDistributionTable extends React.Component {
             <div>
                 <label className="label is-small">Class Distribution</label>
                 <table className="class-distribution-table table is-fullwidth is-narrow">
-                    {tableRows}
+                    <tbody>
+                        {tableRows}
+                    </tbody>
                 </table>
             </div>
         )

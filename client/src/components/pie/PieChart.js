@@ -70,7 +70,7 @@ const getHistogram = (node, type, weighted = true) => {
     if (type === LEAF_COLORS.IMPURITY) {
         for (const leafNode of leafNodes) {
             const impurity = leafNode.impurity.toFixed(1); // Converting all impurities to strings with two decimal places
-            const n = weighted ? leafNode.samples : 1;
+            const n = weighted ? leafNode.n_node_samples : 1;
             if (impurity in histObj) {
                 histObj[impurity] += n;
             } else {
@@ -131,10 +131,7 @@ export default class PieChart extends PureComponent {
 
     render() {
         const data = getHistogram(this.props.bunch.baseNode, this.props.leafColorType);
-        const normalizedData = evaluateDegreesFromValues(
-            data,
-            this.props.totalValue,
-        );
-        return makeSegments(normalizedData, this.props, this.hideSegments);
+        const normalizedData = evaluateDegreesFromValues(data, this.props.totalValue);
+        return makeSegments(normalizedData, this.props);
     }
 }

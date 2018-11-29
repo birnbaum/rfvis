@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 export default class Select extends React.Component {
     static propTypes = {
         label: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired,
+        value: PropTypes.any.isRequired,
+        options: PropTypes.any.isRequired,
         onChange: PropTypes.func.isRequired,
-        options: PropTypes.objectOf(PropTypes.string).isRequired,
     };
 
     render() {
@@ -21,7 +21,7 @@ export default class Select extends React.Component {
                     <div className="select is-fullwidth is-small">
                         <select value={this.props.options[this.props.value]}
                                 onChange={this.props.onChange}>
-                            {options}
+                                {options}
                         </select>
                     </div>
                 </div>

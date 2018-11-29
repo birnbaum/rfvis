@@ -2,12 +2,13 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 
-export default class Input extends React.Component {
+export default class NumberInput extends React.Component {
     static propTypes = {
         label: PropTypes.string.isRequired,
         value: PropTypes.number.isRequired,
-        minValue: PropTypes.number,
-        maxValue: PropTypes.number,
+        min: PropTypes.number,
+        max: PropTypes.number,
+        step: PropTypes.number,
         onChange: PropTypes.func.isRequired,
     };
 
@@ -16,14 +17,13 @@ export default class Input extends React.Component {
             <div className="field">
                 <label className="label is-small">{this.props.label}</label>
                 <div className="control">
-                    <input id="trunk-length"
-                           className="input is-small"
+                    <input className="input is-small"
                            value={this.props.value}
                            onChange={this.props.onChange}
                            type="number"
-                           min={this.props.minValue}
-                           max={this.props.maxValue}
-                           step="10" />
+                           min={this.props.min}
+                           max={this.props.max}
+                           step={this.props.step} />
                 </div>
             </div>
         );
