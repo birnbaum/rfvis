@@ -18,7 +18,7 @@ $ pip install rfvis
 
 This will allow you interactively visualize a fitted Random Forest (RF) in your
 browser. To directly generate SVG files from your model you also need to install
-[NodeJS](https://nodejs.org/en/download/), see TODO for more information.
+[NodeJS](https://nodejs.org/en/download/), see [Command Line Interface](#command-line-interface) for more information.
 
 
 ## How To Use
@@ -168,23 +168,3 @@ In order to make development more convenient (which means not having to run `npm
 2. `npm run watch:backend` to automatically build any changes in the command line interface or the server related JS files
 
 Note that many files are used by the frontend _and_ backend, e.g. the logic for constructing and drawing the trees. A change to `./src/draw_tree.js` will therefore trigger both watchers.
-
-
-## Built With
-
-TODO
-
-* [D3.js](https://d3js.org/) - Data Visualization Library
-* [Yargs](https://github.com/yargs/yargs) - Command Line Parsing Library
-* [Bulma](https://bulma.io/) - Lightweight CSS Framework
-* [Express](https://expressjs.com/) - Web Application Framework
-* [rollup.js](https://rollupjs.org/) - Module Bundler / Build Tool
-
-
-## TODOs
-
-TODO
-
-* Simplify and document input data format
-* Provide scripts to export RFVis-readable data for the most common Random Forest implementations, e.g. [sklearn.ensemble.RandomForestClassifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
-* Refactor the project to use a proper frontend lib instead of jQuery to be able to add more features in the future

@@ -25,6 +25,7 @@ NICE TO HAVE
 - refactor utility
 - Dynamic Trunk length
 - Python interface for e.g. Jupyter notebooks
+. More images in README
 
 OTHER IDEAS
 - Do not draw bunches/leafs

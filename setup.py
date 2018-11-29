@@ -1,5 +1,6 @@
 import os
 from setuptools import setup
+from rfvis import __version__
 
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
@@ -9,7 +10,7 @@ with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
 if __name__ == "__main__":
     setup(
         name="rfvis",
-        version="0.2.0",
+        version=__version__,
         author="Philipp Wiesner",
         author_email="wiesnerph@gmail.com",
         description="A tool for visualizing the structure and performance of Random Forests",
@@ -35,7 +36,7 @@ if __name__ == "__main__":
         ],
         entry_points={
             "console_scripts": [
-                "rfvis = rfvis:main",
+                "rfvis = rfvis.__main__:main",
             ]
         },
         classifiers=[

@@ -1,7 +1,6 @@
-import json
 import os
 
-from flask import Flask, send_from_directory, jsonify, abort, Response
+from flask import Flask, send_from_directory, jsonify
 
 
 def start_server(data, **kwargs):
@@ -17,22 +16,6 @@ def start_server(data, **kwargs):
 
     @app.route('/data')
     def serve_data():
-        path = os.path.join(os.getcwd(), data)
-
-        forest_json_path = os.path.join(path, "forest.json")
-        try:
-            with open(forest_json_path, "r") as f:
-                forest = json.load(f)
-        except FileNotFoundError:
-            return abort(Response("The file \"{}\" does not seem to exist.".format(forest_json_path), status=400))
-
-        for tree in forest["trees"]:
-            try:
-                with open(os.path.join(path, tree["data"]), "r") as f:
-                    tree["data"] = f.read()
-            except FileNotFoundError:
-                return abort(Response("The file \"{}\" does not seem to exist.".format(forest_json_path), status=400))
-
-        return jsonify(forest)
+        return jsonify(data)
 
     app.run(**kwargs)
