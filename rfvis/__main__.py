@@ -23,10 +23,29 @@ def gui(forest_json, port):
 
 
 @main.command()
-@click.argument("data", type=click.Path(exists=True))
-def cli(data):
+@click.argument("forest_json", type=click.Path(exists=True))
+def cli(forest_json):
     """Web-based graphical user interface"""
-    # TODO
+    import subprocess
+    data = _read_data(forest_json)
+    config = {
+        "displayDepth": None,
+        "trunkLength": 100,
+        "branchColor": "Impurity",
+        "leafColor": "Impurity",
+        "width": 800,
+        "height": 800,
+    }
+    outpath = "."
+
+    process = subprocess.Popen(["node",
+                                "/dev/random-forest-visualization/build/render_tree_script.js",
+                                json.dumps(config),
+                                outpath],
+                               stdin=subprocess.PIPE,
+                               stdout=subprocess.PIPE)
+    output = process.communicate(json.dumps(data))
+    print(output.encode("utf8")[0])
 
 
 def _read_data(forest_json):

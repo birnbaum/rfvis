@@ -46,7 +46,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 selectedPathElement: node.selectedPathElement,
             });
             return;  // End of recursion
-        } else if (node.depth === displayDepth) {
+        } else if (displayDepth && node.depth === displayDepth) {
             bunches.push({
                 x: node.x2,
                 y: node.y2,

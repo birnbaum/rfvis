@@ -9,6 +9,7 @@ BUGS
 - Hover information tables partially broken
 - Drop-of-impurity missing
 - Tree Zooming is broken
+- Bunches and Path Coloring is broken
 
 DATA
 - scikit learn export
@@ -24,10 +25,10 @@ NICE TO HAVE
 - Dynamic Trunk length
 - Python interface for e.g. Jupyter notebooks
 . More images in README
-- Refactor "PATH" functionality
+- Refactor/Cleanup "PATH" functionality
+- Travis build pipeline
+- Minify & Tree shake renderer dependencies
 
 OTHER IDEAS
 - Do not draw bunches/leafs
 - Color select
-- Port backend to Python
-- Distribute via pip instead of npm (more common in ML)

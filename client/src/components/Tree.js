@@ -7,7 +7,7 @@ import PieChart from "./pie/PieChart";
 export default class Tree extends React.Component {
     static propTypes = {
         displayNode: PropTypes.any.isRequired,
-        displayDepth: PropTypes.number.isRequired,
+        displayDepth: PropTypes.number,
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,

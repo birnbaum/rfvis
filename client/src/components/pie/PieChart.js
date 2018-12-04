@@ -2,7 +2,7 @@
  * Original source: https://github.com/toomuchdesign/react-minimal-pie-chart
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Path from './PieChartPath';
 import {getLeafNodes, leafColor} from "../../logic/tree_utils";
@@ -115,7 +115,7 @@ const getHistogram = (node, type, weighted = true) => {
     } */
 };
 
-export default class PieChart extends PureComponent {
+export default class PieChart extends React.PureComponent {
     static propTypes = {
         bunch: PropTypes.any.isRequired,
         radius: PropTypes.number.isRequired,
