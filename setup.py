@@ -12,7 +12,7 @@ if __name__ == "__main__":
         name="rfvis",
         version=__version__,
         author="Philipp Wiesner",
-        author_email="wiesnerph@gmail.com",
+        author_email="mail@philippwiesner.com",
         description="A tool for visualizing the structure and performance of Random Forests",
         long_description=long_description,
         long_description_content_type="text/markdown",

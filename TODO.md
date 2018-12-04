@@ -1,8 +1,7 @@
 TODOS
-- Update README
 - Update actual console output in README
-- Publish on pip
 - Rename and fix color constants (uppercase)
+- Publish on pip
 
 BUGS
 - ForestView Tree hover info misses tree id

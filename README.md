@@ -105,10 +105,6 @@ Options:
 ```
 
 
-## Visualization
-???
-
-
 ## Input Data
 
 Note: I am currently working a Python interface to RFVis which will allow
@@ -159,12 +155,44 @@ entry represents one node in the tree. An entry has the following format:
 
 ## Development
 
-TODO
+The repository contains a `Pipfile` for conveniently creating a virtualenv
+for development. Just install [pipenv](https://pipenv.readthedocs.io/en/latest/)
+and run:
 
-To build and use the project locally just run `npm run build` and `npm link`.
+```
+$ pipenv install
+```
 
-In order to make development more convenient (which means not having to run `npm run build` after every change) you can run watchers on the source files. The recommended setup for development is to open two terminal processes and run:
-1. `npm run watch:frontend` to automatically build any changes in the frontend related JS or SCSS files
-2. `npm run watch:backend` to automatically build any changes in the command line interface or the server related JS files
+You can now e.g. start the server on the default port 8080 via:
 
-Note that many files are used by the frontend _and_ backend, e.g. the logic for constructing and drawing the trees. A change to `./src/draw_tree.js` will therefore trigger both watchers.
+```
+$ pipenv run rfvis gui <path_to_forest_json>
+```
+
+Note that you need to build the frontend bundle first before you can
+actually see the application working on `http://localhost:8080`.
+
+To build the frontend you need Node.js installed. First install all 
+dev-dependencies by running the following 
+from within the `./client` directory:
+
+```
+$ npm install
+```
+
+Now you can build a production-ready bundle via:
+
+```
+$ npm run build
+```
+
+If you have the Python server running you should now be able to see the
+application at `http://localhost:8080`.
+
+For developing on the frontend more conveniently run:
+
+```
+$ npm start
+```
+
+To start a development server with hot reloading at `http://localhost:3000`.

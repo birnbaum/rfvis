@@ -1,10 +1,10 @@
 {
   "name": "rfvis-client",
-  "author": "Philipp Wiesner <wiesnerph@gmail.com>",
+  "author": "Philipp Wiesner <mail@philippwiesner.com>",
   "proxy": "http://localhost:8080",
-  "dependencies": {
+  "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
-    "csv-parse": "^4.0.1",
+    "papaparse": "^4.6.2",
     "d3": "^5.7.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.1",
@@ -14,9 +14,7 @@
     "react-tabs": "^2.3.0",
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
-    "reselect": "^4.0.0"
-  },
-  "devDependencies": {
+    "reselect": "^4.0.0",
     "@babel/core": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.2.0",
     "@babel/preset-react": "^7.0.0",

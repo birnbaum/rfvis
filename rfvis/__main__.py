@@ -65,7 +65,8 @@ def cli(forest_json, out, width, height, trunk_length, display_depth, branch_col
 
     try:
         # TODO make path relative
-        process = subprocess.Popen(["node", "/dev/random-forest-visualization/build/render_tree_script.js", config, out],
+
+        process = subprocess.Popen(["node", "../client/build/render_tree_script.js", config, out],
                                    stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE)
         output = process.communicate(json.dumps(data).encode("utf8"))

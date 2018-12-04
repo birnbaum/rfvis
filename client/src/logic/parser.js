@@ -1,5 +1,5 @@
-import parse from "csv-parse/lib/sync";
 import TreeNode from "./TreeNode";
+import Papa from "papaparse";
 
 // TODO This is obsolete
 /**
@@ -26,10 +26,11 @@ import TreeNode from "./TreeNode";
  */
 export default function createForest(forest) {
     forest.trees.forEach(tree => {
-        const nodes = parse(tree.data, {
-            cast: true,
-            columns: true,
-        }).map(node => {
+        const nodes = Papa.parse(tree.data, {
+            dynamicTyping: true,
+            header: true,
+            skipEmptyLines: true,
+        }).data.map(node => {
             const class_distribution = node.value
                 .slice(1, -1)
                 .split(",")
