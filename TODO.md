@@ -1,8 +1,8 @@
 TODOS
 - Update README
-- Implement Python CLI interface
 - Update actual console output in README
 - Publish on pip
+- Rename and fix color constants (uppercase)
 
 BUGS
 - ForestView Tree hover info misses tree id
@@ -10,6 +10,7 @@ BUGS
 - Drop-of-impurity missing
 - Tree Zooming is broken
 - Bunches and Path Coloring is broken
+- Best class is broken
 
 DATA
 - scikit learn export
