@@ -7,9 +7,8 @@ BUGS
 - ForestView Tree hover info misses tree id
 - Hover information tables partially broken
 - Drop-of-impurity missing
-- Tree Zooming is broken
 - Bunches and Path Coloring is broken
-- Best class is broken
+- Bunches and Best Class is broken
 
 DATA
 - scikit learn export

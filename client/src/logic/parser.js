@@ -36,7 +36,7 @@ export default function createForest(forest) {
                 .split(",")
                 .map(el => Number.parseInt(el));
             node.classDistribution = forest.classes.map((c, i) => {
-                return Object.assign(c, {value: class_distribution[i]})
+                return Object.assign({}, c, {value: class_distribution[i]})
             });
             delete node.value;
             return new TreeNode(node);

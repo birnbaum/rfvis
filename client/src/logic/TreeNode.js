@@ -26,7 +26,7 @@ export default class TreeNode {
         let best;
         let indexOfBest;
         for (let i = 0; i < this.classDistribution.length; i++) {
-            if (!best || this.classDistribution[i].count > best.count) {
+            if (!best || this.classDistribution[i].value > best.value) {
                 best = this.classDistribution[i];
                 indexOfBest = i;
             }

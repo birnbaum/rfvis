@@ -36,18 +36,6 @@ class TreeView extends React.Component {
         return null;
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (nextState.displayNode.impurityDrop === this.state.displayNode.impurityDrop &&
-            nextProps.displayDepth === this.props.displayDepth &&
-            nextProps.trunkLength === this.props.trunkLength &&
-            nextProps.branchColor === this.props.branchColor &&
-            nextProps.leafColor === this.props.leafColor &&
-            nextProps.selectedLeaf === this.props.selectedLeaf) {
-            return false;
-        }
-        return true;
-    }
-
     render() {
         if (!this.state.displayNode) {
             return <span>Loading...</span>;
