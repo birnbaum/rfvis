@@ -107,14 +107,19 @@ export default class PieChart extends React.PureComponent {
         segmentsStyle: PropTypes.objectOf(
             PropTypes.oneOfType([PropTypes.number, PropTypes.string])
         ),
-        onMouseOver: PropTypes.func,
-        onMouseOut: PropTypes.func,
         onClick: PropTypes.func,
+        onMouseEnter: PropTypes.func,
+        onMouseLeave: PropTypes.func,
     };
 
     render() {
-        const data = getHistogram(this.props.bunch.baseNode, this.props.leafColorType);
-        const normalizedData = evaluateDegreesFromValues(data, this.props.totalValue);
-        return makeSegments(normalizedData, this.props);
+        const histogram = getHistogram(this.props.bunch.baseNode, this.props.leafColorType);
+        const normalizedData = evaluateDegreesFromValues(histogram, this.props.totalValue);
+        return (
+            <g onMouseEnter={() => this.props.onMouseEnter(this.props.bunch)}
+               onMouseLeave={this.props.onMouseLeave}>
+                {makeSegments(normalizedData, this.props)}
+            </g>
+        );
     }
 }

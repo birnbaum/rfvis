@@ -51,7 +51,7 @@ class ForestView extends React.Component {
                     r={treeSize(treePosition, this.props.size / 25)}
                     style={{fill: treeColor(treePosition)}}
                     onClick={() => this.props.selectTree(i)}
-                    onMouseEnter={() => this.props.hoverTree(this.props.forest.trees[this.props.currentTreeId])}
+                    onMouseEnter={() => this.props.hoverTree(Object.assign(this.props.forest.trees[i], {treeId: i+1}))}
                     onMouseLeave={this.props.unhover} />
         );
 
@@ -68,14 +68,14 @@ class ForestView extends React.Component {
     }
 }
 
-function treeColor(tree) {  // TODO move to utils
+function treeColor(tree) {
     const scale = d3.scaleLinear()
         .domain([1, 0.5, 0.05, 0])
         .range(["red", "red", "green", "green"]);
     return scale(tree.error);
 }
 
-function treeSize(tree, maxRadius) {  // TODO move to utils
+function treeSize(tree, maxRadius) {
     const radius = area => Math.sqrt(area / Math.PI);
     const scale =  d3.scaleLinear()
         .domain([0, radius(0.6), radius(1)])
@@ -86,7 +86,7 @@ function treeSize(tree, maxRadius) {  // TODO move to utils
 const mapStateToProps = (state, ownProps) => ({
     forest: state.forest,
     currentTreeId: state.currentTreeId,
-    size: 300,  // TODO make dynamic
+    size: 300,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

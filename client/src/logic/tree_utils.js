@@ -41,7 +41,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 n_node_samples: node.n_node_samples,
                 id: node.id,
                 depth: node.depth,
-                classes: node.classDistribution,
+                classDistribution: node.classDistribution,
                 bestClass: node.bestClass,
                 selectedPathElement: node.selectedPathElement,
             });
@@ -51,6 +51,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 x: node.x2,
                 y: node.y2,
                 baseNode: node,
+                classDistribution: node.classDistribution,
                 n_node_samples: node.n_node_samples,
             });
             return;  // End of recursion

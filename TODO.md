@@ -3,18 +3,13 @@ TODOS
 - Publish on pip
 - Adapt all docstrings
 
-BUGS
-- ForestView Tree hover info misses tree id
-- Hover information tables partially broken
-- Drop-of-impurity missing
-
 DATA
 - scikit learn export
 - PolSAR 2.0
 - "additionalInfo"
+    - Drop-of-impurity
 
 NICE TO HAVE
-- improve hover table UI
 - Solve TODOs
 - keyboard navigation
 - remove "space" divs

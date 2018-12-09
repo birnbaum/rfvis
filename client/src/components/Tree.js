@@ -68,7 +68,9 @@ export default class Tree extends React.Component {
             <PieChart key={i}
                       bunch={bunch}
                       radius={leafSize(bunch, this.props.displayNode.n_node_samples)}
-                      leafColorType={this.props.leafColor} />
+                      leafColorType={this.props.leafColor}
+                      onMouseEnter={this.props.hoverBunch}
+                      onMouseLeave={this.props.unhover} />
         );
 
         if (this.props.returnValidSVG) {
