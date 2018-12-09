@@ -38,7 +38,7 @@ process.stdin.on('end', () => {
             if (err) {
                 console.error(err);
             } else {
-                console.log("Stored " + svg_path)
+                console.log(`>> Exported "${svg_path}"`)
             }
         });
     });

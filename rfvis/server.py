@@ -3,7 +3,7 @@ import os
 from flask import Flask, send_from_directory, jsonify
 
 
-def start_server(data, **kwargs):
+def start_server(data, port=8080, debug=False, use_reloader=False, **kwargs):
     app = Flask(__name__, static_folder='client/build')
 
     @app.route('/', defaults={'path': ''})
@@ -18,4 +18,5 @@ def start_server(data, **kwargs):
     def serve_data():
         return jsonify(data)
 
-    app.run(**kwargs)
+    os.environ['WERKZEUG_RUN_MAIN'] = 'true'
+    app.run(port=port, debug=debug, use_reloader=use_reloader, **kwargs)

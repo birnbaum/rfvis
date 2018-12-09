@@ -30,16 +30,17 @@ interactive analysis (`rfvis gui <data>`).
 To see all available commands run:
 ```
 $ rfvis --help
+Usage: rfvis [OPTIONS] COMMAND [ARGS]...
 
-rfvis [command]
-
-Commands:
-  rfvis cli <data>  Command line interface to generate SVGs
-  rfvis gui <data>  Graphical User Interface
+  A tool for visualizing the structure and performance of Random Forests
 
 Options:
-  --help     Show help                                                 [boolean]
-  --version  Show version number                                       [boolean]
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  cli  Command line interface to generate SVGs.
+  gui  Web-based graphical user interface.
 ```
 
 ### Graphical User Interface
@@ -47,8 +48,7 @@ Options:
 To interactively analyze your forest with the web-based GUI run:
 ```
 $ rfvis gui /path/to/data
-Starting server
-GUI running at http://localhost:8080
+ * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
 ```
 You can now open up your browser at <http://localhost:8080> to see something like this:
 
@@ -60,12 +60,8 @@ You can now open up your browser at <http://localhost:8080> to see something lik
 To use the Command Line Interface (CLI) you need to have
 [NodeJS](https://nodejs.org/en/download/) v8+ installed on your system. This
 is a technical limitation due to the fact that the rendering is written in
-Javascript but I wanted to distribute the application via
-[pip](https://pip.pypa.io/en/stable/quickstart/) which is more common in
-machine learning than NodeJS.
-
-You do not need to install any other package though, the CLI integrates into
-the command line tool you already installed via pip:
+Javascript. You do not need to install any other package though, the CLI
+integrates into the command line tool you already installed via pip:
 ```
 $ rfvis cli /path/to/data
 >> Exported "/dev/random-forest-visualization/tree-0.svg"
@@ -78,30 +74,29 @@ $ rfvis cli /path/to/data
 Get a full list of available options with `--help`:
 ```
 $ rfvis cli --help
-rfvis cli <data>
+Usage: rfvis cli [OPTIONS] FOREST_JSON
 
-Command line interface to generate SVGs
+  Web-based graphical user interface.
 
-Positionals:
-  data  Folder containing the forest data                             [required]
+  As Python is unable to render React components, we make a subprocess call to a small
+  Node.js application which will do the rendering and also store the created SVG
+  files. This command requires that NodeJS is installed on your system!
+
+  FOREST_JSON: Path to the JSON file that contains the forest's data.
 
 Options:
-  --help               Show help                                       [boolean]
-  --version            Show version number                             [boolean]
-  --out, -o            Output folder for the SVG files. If omitted the current
-                       working directory is used.
-  --width, -w          Width of the SVG                  [number] [default: 800]
-  --height, -h         Height of the SVG                 [number] [default: 800]
-  --trunk-length, -t   Length of the trunk which influences the entire tree size
-                                                         [number] [default: 100]
-  --depth, -d          Depth of the tree rendering. Cut of leaves are visualized
-                       as pie chart consolidation nodes.                [number]
-  --leaf-color         Color of the leaves. Either the leaf impurity or the
-                       class assigned to the leaf.
-                            [choices: "impurity", "class"] [default: "impurity"]
-  --branch-color       Color of the branches. Either the node impurity or the
-                       node drop-of-impurity.
-                    [choices: "impurity", "impurity-drop"] [default: "impurity"]
+  -o, --out PATH                  Output path of the SVG files.  [default: (current
+                                  working directory)]
+  -w, --width INTEGER             Width of the SVG.  [default: 800]
+  -h, --height INTEGER            Height of the SVG.  [default: 800]
+  --trunk-length INTEGER          Length of the trunk which influences the overall tree
+                                  size.  [default: 100]
+  --display-depth INTEGER         Maximum depth of the tree rendering. Cut of leaves are
+                                  visualized as pie chart consolidation nodes.
+  --branch-color [Impurity]       Coloring of the branches.  [default: Impurity]
+  --leaf-color [Impurity|Best Class]
+                                  Coloring of the leaves.  [default: Impurity]
+  --help                          Show this message and exit.
 ```
 
 

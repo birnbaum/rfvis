@@ -1,5 +1,4 @@
 TODOS
-- Update actual console output in README
 - Rename and fix color constants (uppercase)
 - Publish on pip
 
@@ -12,6 +11,8 @@ BUGS
 
 DATA
 - scikit learn export
+- PolSAR 2.0
+- "additionalInfo"
 
 NICE TO HAVE
 - improve hover table UI
@@ -22,8 +23,9 @@ NICE TO HAVE
 - Reduce unneeded fontawesome/d3 dependencies
 - refactor utility
 - Dynamic Trunk length
-- Python interface for e.g. Jupyter notebooks
-. More images in README
+- Python API for starting a interactive view from sklearn.ensemble.RandomForestClassifier
+- Python API for plotting in Jupyter notebooks
+- More images in README
 - Refactor/Cleanup "PATH" functionality
 - Travis build pipeline
 - Minify & Tree shake renderer dependencies

@@ -20,11 +20,11 @@ def main():
 @click.argument("forest_json", type=click.Path(exists=True), nargs=1)
 @click.option("--port", "-p", default=8080, show_default=True, help="Port on which the GUI will run on.")
 def gui(forest_json, port):
-    """Command line interface to generate SVGs.
+    """Web-based graphical user interface.
 
-    FOREST_JSON: Path to the 'forest.json' file that contains the data for the fitted forest.
+    FOREST_JSON: Path to the JSON file that contains the forest's data.
     """
-    start_server(_read_data(forest_json), use_reloader=True, port=port, debug=True)
+    start_server(_read_data(forest_json), port=port, debug=False, use_reloader=False)
 
 
 @main.command()
@@ -36,20 +36,19 @@ def gui(forest_json, port):
 @click.option("--trunk-length", default=100, show_default=True,
               help="Length of the trunk which influences the overall tree size.")
 @click.option("--display-depth", type=int, help="Maximum depth of the tree rendering. Cut of leaves are "
-                                                      "visualized as pie chart consolidation nodes.")
+                                                "visualized as pie chart consolidation nodes.")
 @click.option("--branch-color", default="Impurity", show_default=True, type=click.Choice(["Impurity"]),
               help="Coloring of the branches.")
 @click.option("--leaf-color", default="Impurity", show_default=True, type=click.Choice(["Impurity", "Best Class"]),
               help="Coloring of the leaves.")
 def cli(forest_json, out, width, height, trunk_length, display_depth, branch_color, leaf_color):
-    """Web-based graphical user interface.
-
-    FOREST_JSON: Path to the 'forest.json' file that contains the data for the fitted forest.
+    """Command line interface to generate SVGs.
 
     As Python is unable to render React components, we make a subprocess call to a small Node.js application which
-    will do the rendering and also store the created SVG files.
+    will do the rendering and also store the created SVG files. This command requires that NodeJS is installed on your
+    system!
 
-    THIS COMMAND REQUIRES THAT NODE.JS IS INSTALLED ON YOU SYSTEM!
+    FOREST_JSON: Path to the JSON file that contains the forest's data.
     """
     import subprocess
     data = _read_data(forest_json)
@@ -65,8 +64,8 @@ def cli(forest_json, out, width, height, trunk_length, display_depth, branch_col
 
     try:
         # TODO make path relative
-
-        process = subprocess.Popen(["node", "../client/build/render_tree_script.js", config, out],
+        abs_path = os.path.normpath(os.path.join(__file__, "../../client/build/render_tree_script.js"))
+        process = subprocess.Popen(["node", abs_path, config, out],
                                    stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE)
         output = process.communicate(json.dumps(data).encode("utf8"))
