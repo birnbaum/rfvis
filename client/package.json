@@ -1,28 +1,11 @@
 {
-  "name": "rfvis",
-  "version": "0.2.0",
-  "description": "A tool for visualizing the structure and performance of Random Forests",
-  "author": "Philipp Wiesner <wiesnerph@gmail.com>",
-  "keywords": [
-    "random-forest",
-    "visualization",
-    "d3js",
-    "decision-trees"
-  ],
-  "homepage": "https://github.com/birnbaum/rfvis",
+  "name": "rfvis-client",
+  "author": "Philipp Wiesner <mail@philippwiesner.com>",
   "proxy": "http://localhost:8080",
-  "bin": {
-    "rfvis": "./build/index.js"
-  },
-  "license": "ISC",
-  "files": [
-    "dist/**/*",
-    "images/*"
-  ],
-  "dependencies": {
+  "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "papaparse": "^4.6.2",
     "d3": "^5.7.0",
-    "express": "^4.16.3",
     "prop-types": "^15.6.2",
     "react": "^16.6.1",
     "react-dom": "^16.5.2",
@@ -32,32 +15,27 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "reselect": "^4.0.0",
-    "yargs": "^12.0.2"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.1.5",
-    "@babel/core": "^7.1.6",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-proposal-class-properties": "^7.2.0",
     "@babel/preset-react": "^7.0.0",
-    "babel-preset-es2015-rollup": "^3.0.0",
     "bulma": "^0.7.1",
     "bulmaswatch": "^0.7.1",
     "node-sass-chokidar": "^1.3.3",
     "npm-run-all": "^4.1.3",
     "rollup": "^0.66.2",
     "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^5.0.5"
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^3.4.0"
   },
   "scripts": {
     "test": "react-scripts test --env=jsdom",
     "start": "npm-run-all -p watch-css start-js",
-    "build": "npm-run-all build-css build-js build-backend",
+    "build": "npm-run-all build-css build-js build-render-script",
     "eject": "react-scripts eject",
     "start-js": "react-scripts start",
     "build-js": "react-scripts build",
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
-    "build-backend": "rollup -c",
-    "watch-backend": "rollup -c --watch"
+    "build-render-script": "rollup -c"
   }
 }

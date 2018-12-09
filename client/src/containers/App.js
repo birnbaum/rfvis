@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import TreeView from "./TreeView";
 import PropTypes from "prop-types";
 
-import {setCurrentTreeId, setForest, setTitle} from "../actions";
+import {setCurrentTreeId, setForest} from "../actions";
 import {connect} from "react-redux";
 
 import createForest from "../logic/parser"
@@ -14,20 +14,43 @@ class App extends React.Component {
         title: PropTypes.string.isRequired,
         loading: PropTypes.bool.isRequired,
         setForest: PropTypes.func.isRequired,
-        setTitle: PropTypes.func.isRequired,
+    };
+
+    state = {
+        loadError: null,
     };
 
     async componentDidMount() {
-        const rawData = await (await fetch(window.location.origin + "/data")).json();  // TODO Error handling
-        const forest = createForest(rawData);
-        this.props.setForest(forest);
-        fetch(window.location.origin + "/info")
-            .then(res => res.json())
-            .then(json => this.props.setTitle(json.name));
+        // TODO Improve error messages
+        try {
+            const response = await fetch(window.location.origin + "/data")
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            const rawData = await response.json();
+            const forest = createForest(rawData);
+            this.props.setForest(forest);
+        } catch (e) {
+            console.error(e);
+            return this.setState({loadError: e});
+        }
     }
 
     render() {
-        if (this.props.loading) {
+        if (this.state.loadError) {
+            return (
+                <div className="spinner">
+                    <span className="spinner-text">
+                        An error occurred:
+                        <br />
+                        "{this.state.loadError.message}"
+                        <br />
+                        <br />
+                        Please check the logs for details.
+                    </span>
+                </div>
+            );
+        } else if (this.props.loading) {
             return (
                 <div className="spinner">
                     <div className="double-bounce1" />
@@ -48,7 +71,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    title: state.title ? state.title : "...",
+    title: state.forest ? state.forest.name : "...",
     loading: state.forest === null,
 });
 
@@ -56,8 +79,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     setForest: forest => {
         dispatch(setForest(forest));
         dispatch(setCurrentTreeId(0));
-    },
-    setTitle: title => dispatch(setTitle(title))
+    }
 });
 
 export default connect(

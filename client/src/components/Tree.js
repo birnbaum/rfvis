@@ -1,16 +1,17 @@
 import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize} from "../logic/tree_utils";
 import PropTypes from "prop-types";
 import React from "react";
-import PieChart from "../components/pie/PieChart";
+import PieChart from "./pie/PieChart";
 
 
 export default class Tree extends React.Component {
     static propTypes = {
         displayNode: PropTypes.any.isRequired,
-        displayDepth: PropTypes.number.isRequired,
+        displayDepth: PropTypes.number,
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,
+        selectedLeaf: PropTypes.number,
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
 
@@ -34,7 +35,7 @@ export default class Tree extends React.Component {
             this.props.width,
             this.props.height,
             this.props.trunkLength,
-            0);
+            this.props.selectedLeaf);
 
         const renderedBranches = branches.map((branch, i) =>
             <line key={i}
@@ -43,7 +44,7 @@ export default class Tree extends React.Component {
                   x2={branch.x2}
                   y2={branch.y2}
                   style={{
-                      strokeWidth: branchThickness(branch, this.props.displayNode.samples),
+                      strokeWidth: branchThickness(branch, this.props.displayNode.n_node_samples),
                       stroke: branchColor(this.props.branchColor, branch),
                   }}
                   onClick={() => this.props.renderSubtree(branch)}
@@ -55,7 +56,7 @@ export default class Tree extends React.Component {
             <circle key={i}
                     cx={leaf.x}
                     cy={leaf.y}
-                    r={leafSize(leaf, this.props.displayNode.samples)}
+                    r={leafSize(leaf, this.props.displayNode.n_node_samples)}
                     style={{
                         fill: leafColor(this.props.leafColor, leaf),
                     }}
@@ -66,8 +67,10 @@ export default class Tree extends React.Component {
         const renderedBunches = bunches.map((bunch, i) =>
             <PieChart key={i}
                       bunch={bunch}
-                      radius={leafSize(bunch, this.props.displayNode.samples)}
-                      leafColorType={this.props.leafColor} />
+                      radius={leafSize(bunch, this.props.displayNode.n_node_samples)}
+                      leafColorType={this.props.leafColor}
+                      onMouseEnter={this.props.hoverBunch}
+                      onMouseLeave={this.props.unhover} />
         );
 
         if (this.props.returnValidSVG) {

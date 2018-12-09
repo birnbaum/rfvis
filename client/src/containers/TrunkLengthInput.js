@@ -1,12 +1,13 @@
 import { connect } from 'react-redux'
 import {setTrunkLength} from '../actions'
-import Input from "../components/Input";
+import NumberInput from "../components/NumberInput";
 
 const mapStateToProps = (state, ownProps) => ({
     label: "Trunk Length",
     value: state.trunkLength,
-    minValue: 10,
-    maxValue: 500,
+    min: 10,
+    max: 500,
+    step: 10,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -16,4 +17,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Input)
+)(NumberInput)

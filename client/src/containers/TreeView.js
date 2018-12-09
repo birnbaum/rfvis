@@ -13,6 +13,7 @@ class TreeView extends React.Component {
         trunkLength: PropTypes.number.isRequired,
         branchColor: PropTypes.string.isRequired,
         leafColor: PropTypes.string.isRequired,
+        selectedLeaf: PropTypes.number,
 
         hoverBranch: PropTypes.func.isRequired,
         hoverLeaf: PropTypes.func.isRequired,
@@ -35,17 +36,6 @@ class TreeView extends React.Component {
         return null;
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (nextState.displayNode.impurityDrop === this.state.displayNode.impurityDrop &&
-            nextProps.displayDepth === this.props.displayDepth &&
-            nextProps.trunkLength === this.props.trunkLength &&
-            nextProps.branchColor === this.props.branchColor &&
-            nextProps.leafColor === this.props.leafColor) {
-            return false;
-        }
-        return true;
-    }
-
     render() {
         if (!this.state.displayNode) {
             return <span>Loading...</span>;
@@ -63,6 +53,7 @@ class TreeView extends React.Component {
                           trunkLength={this.props.trunkLength}
                           branchColor={this.props.branchColor}
                           leafColor={this.props.leafColor}
+                          selectedLeaf={this.props.selectedLeaf}
                           width={treeSvgWidth}
                           height={treeSvgHeight}
                           renderSubtree={this.renderSubtree}
@@ -101,6 +92,7 @@ const mapStateToProps = (state, ownProps) => {
         trunkLength: state.trunkLength,
         branchColor: state.branchColor,
         leafColor: state.leafColor,
+        selectedLeaf: state.colorTabIndex === 1 ? state.selectedLeaf : null
     }
 };
 

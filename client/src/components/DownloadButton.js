@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 export default class DownloadButton extends React.Component {
     static propTypes = {
         filename: PropTypes.string.isRequired,
-        svgId: PropTypes.any.isRequired,
+        svgId: PropTypes.string.isRequired,
     };
 
     render() {

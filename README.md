@@ -4,129 +4,190 @@
 [![Dependency Status](https://david-dm.org/birnbaum/rfvis.svg)](https://david-dm.org/birnbaum/rfvis)
 [![devDependency Status](https://david-dm.org/birnbaum/rfvis/dev-status.svg)](https://david-dm.org/birnbaum/rfvis#info=devDependencies)
 
-A tool for visualizing the structure and performance of Random Forests.
+A tool for visualizing the structure and performance of Random Forests (and other ensemble methods based on decision trees).
 
 ![Tree](images/tree.png)
 
 ## Getting Started 
 
-As a prerequisite you need [Node.js](https://nodejs.org/en/download/) v8 or higher. To install RFVis run:
+Install and update RFVis via [pip](https://pip.pypa.io/en/stable/quickstart/):
+
 ```
-$ npm install -g rfvis
+$ pip install rfvis
 ```
 
+This will allow you interactively visualize a fitted Random Forest (RF) in your
+browser. To directly generate SVG files from your model you also need to install
+[NodeJS](https://nodejs.org/en/download/), see [Command Line Interface](#command-line-interface) for more information.
 
-The tool offers a command line interface to either generate SVG files directly from your input data (`rfvis cli <data>`) or to spin up a web-based GUI for a more interactive analysis (`rfvis gui <data>`).
+
+## How To Use
+
+RFVis offers a command line tool to either generate SVG files directly from
+your input data (`rfvis cli <data>`) or to spin up a web-based GUI for a more
+interactive analysis (`rfvis gui <data>`).
 
 To see all available commands run:
 ```
-$ node rfvis
+$ rfvis --help
+Usage: rfvis [OPTIONS] COMMAND [ARGS]...
 
-rfvis [command]
-
-Commands:
-  rfvis cli <data>  Command line interface to generate SVGs
-  rfvis gui <data>  Graphical User Interface
+  A tool for visualizing the structure and performance of Random Forests
 
 Options:
-  --help     Show help                                                 [boolean]
-  --version  Show version number                                       [boolean]
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  cli  Command line interface to generate SVGs.
+  gui  Web-based graphical user interface.
 ```
 
-## The Graphical User Interface
+### Graphical User Interface
+
 To interactively analyze your forest with the web-based GUI run:
 ```
 $ rfvis gui /path/to/data
-Starting server
-GUI running at http://localhost:8080
+ * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
 ```
 You can now open up your browser at <http://localhost:8080> to see something like this:
 
 ![Tree](images/screenshot.png)
 
-Note: The web-based GUI is currently only tested on Google Chrome.
 
+### Command Line Interface
 
-
-## The Command Line Interface
-To use the command line interface and generate SVG files for each tree in the input data, run:
+To use the Command Line Interface (CLI) you need to have
+[NodeJS](https://nodejs.org/en/download/) v8+ installed on your system. This
+is a technical limitation due to the fact that the rendering is written in
+Javascript. You do not need to install any other package though, the CLI
+integrates into the command line tool you already installed via pip:
 ```
-$ rfvis cli /path/to/data --out result
->> Exported "/dev/random-forest-visualization/result/tree-0.svg"
->> Exported "/dev/random-forest-visualization/result/tree-1.svg"
->> Exported "/dev/random-forest-visualization/result/tree-2.svg"
->> Exported "/dev/random-forest-visualization/result/tree-3.svg"
+$ rfvis cli /path/to/data
+>> Exported "/dev/random-forest-visualization/tree-0.svg"
+>> Exported "/dev/random-forest-visualization/tree-1.svg"
+>> Exported "/dev/random-forest-visualization/tree-2.svg"
+>> Exported "/dev/random-forest-visualization/tree-3.svg"
 ...
 ```
 
 Get a full list of available options with `--help`:
 ```
-$ rfvis --help
-rfvis cli <data>
+$ rfvis cli --help
+Usage: rfvis cli [OPTIONS] FOREST_JSON
 
-Command line interface to generate SVGs
+  Web-based graphical user interface.
 
-Positionals:
-  data  Folder containing the forest data                             [required]
+  As Python is unable to render React components, we make a subprocess call to a small
+  Node.js application which will do the rendering and also store the created SVG
+  files. This command requires that NodeJS is installed on your system!
+
+  FOREST_JSON: Path to the JSON file that contains the forest's data.
 
 Options:
-  --help               Show help                                       [boolean]
-  --version            Show version number                             [boolean]
-  --out, -o            Output folder for the SVG files. If omitted the current
-                       working directory is used.
-  --width, -w          Width of the SVG                  [number] [default: 800]
-  --height, -h         Height of the SVG                 [number] [default: 800]
-  --trunk-length, -t   Length of the trunk which influences the entire tree size
-                                                         [number] [default: 100]
-  --depth, -d          Depth of the tree rendering. Cut of leaves are visualized
-                       as pie chart consolidation nodes.                [number]
-  --leaf-color         Color of the leaves. Either the leaf impurity or the
-                       class assigned to the leaf.
-                            [choices: "impurity", "class"] [default: "impurity"]
-  --branch-color       Color of the branches. Either the node impurity or the
-                       node drop-of-impurity.
-                    [choices: "impurity", "impurity-drop"] [default: "impurity"]
+  -o, --out PATH                  Output path of the SVG files.  [default: (current
+                                  working directory)]
+  -w, --width INTEGER             Width of the SVG.  [default: 800]
+  -h, --height INTEGER            Height of the SVG.  [default: 800]
+  --trunk-length INTEGER          Length of the trunk which influences the overall tree
+                                  size.  [default: 100]
+  --display-depth INTEGER         Maximum depth of the tree rendering. Cut of leaves are
+                                  visualized as pie chart consolidation nodes.
+  --branch-color [Impurity]       Coloring of the branches.  [default: Impurity]
+  --leaf-color [Impurity|Best Class]
+                                  Coloring of the leaves.  [default: Impurity]
+  --help                          Show this message and exit.
 ```
+
 
 ## Input Data
 
-TODO
+Note: I am currently working a Python interface to RFVis which will allow
+you to start the application programmatically via a fitted scikit-learn
+[RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html).
 
-The input data is expected to come in text files in the following folder structure:
-- `./forest.txt`: A text file containing the correlation matrix, tree strengths and overall forest strength
-- `./tree_<index>.txt`: One text file per tree in the forest with semicolon-separated values in the following format:
-    - `Internal nodes`: height;  -; 0; size; impurity; drop of impurity; splitting grade; list of used feature IDs; fusion ID; path prediction, split point def; list of score IDs
-    - `Leaf nodes`: height; ID; 1; size; impurity; class frequency
+Currently all input data must be available on your filesystem as a JSON file
+for the forest and additionally one CSV file per tree. Both data formats will
+be extended with properties in the future, this is just the minimal set.
+
+You can find a working example under `examples/PolSAR`!
+
+
+#### Forest JSON
+
+The main `forest.json` holds all information about the ensemble model:
+
+- **name** (string): Name of your forest, will be displayed in the GUI
+- **error** (float): The error (e.g. the out-of-bag or validation error) of the 
+    entire ensemble model, will be displayed in the GUI
+- **n_samples** (int): Number of samples the model was trained on
+- **correlationMatrix** (float[][]): Correlation between the single trees within
+    the model. Has dimensions `NxN` where `N` is the number of trees.
+    This will be used to compute the forest map. 
+- **classes**: The output classes
+    - **name** (string): Name of the class
+    - **color** (int, int, int): RGB values in the range of 0-255 which
+        determine the color of the class in the visualization
+- **trees**: The trees in the forest
+    - **error** (float): The error (again could be either the out-of-bag or
+        validation error) of the single tree
+    - **data** (string): Relative path to the CSV file containing the tree data
+
+
+#### Tree CSV
+
+For each tree specified in the `forest.json` RFVis expects a CSV file where one
+entry represents one node in the tree. An entry has the following format:
+
+- **id** (int): ID of the node
+- **depth** (int) Depth of the node in the tree (starting at `0`)
+- **n_node_samples** (int): Number of training samples reaching the node
+- **impurity** (float): Impurity of the node (`0`-`1`)
+- **value** (int[]): Class distribution within the node, i.e. every entry 
+    represents the amount of samples within the node that respond to a specific 
+    class. The index corresponds to the indices in `forest.classes`.
 
 
 ## Development
 
-TODO
+The repository contains a `Pipfile` for conveniently creating a virtualenv
+for development. Just install [pipenv](https://pipenv.readthedocs.io/en/latest/)
+and run:
 
-To build and use the project locally just run `npm run build` and `npm link`.
+```
+$ pipenv install
+```
 
-In order to make development more convenient (which means not having to run `npm run build` after every change) you can run watchers on the source files. The recommended setup for development is to open two terminal processes and run:
-1. `npm run watch:frontend` to automatically build any changes in the frontend related JS or SCSS files
-2. `npm run watch:backend` to automatically build any changes in the command line interface or the server related JS files
+You can now e.g. start the server on the default port 8080 via:
 
-Note that many files are used by the frontend _and_ backend, e.g. the logic for constructing and drawing the trees. A change to `./src/draw_tree.js` will therefore trigger both watchers.
+```
+$ pipenv run rfvis gui <path_to_forest_json>
+```
 
+Note that you need to build the frontend bundle first before you can
+actually see the application working on `http://localhost:8080`.
 
-## Built With
+To build the frontend you need Node.js installed. First install all 
+dev-dependencies by running the following 
+from within the `./client` directory:
 
-TODO
+```
+$ npm install
+```
 
-* [D3.js](https://d3js.org/) - Data Visualization Library
-* [Yargs](https://github.com/yargs/yargs) - Command Line Parsing Library
-* [Bulma](https://bulma.io/) - Lightweight CSS Framework
-* [Express](https://expressjs.com/) - Web Application Framework
-* [rollup.js](https://rollupjs.org/) - Module Bundler / Build Tool
+Now you can build a production-ready bundle via:
 
+```
+$ npm run build
+```
 
-## TODOs
+If you have the Python server running you should now be able to see the
+application at `http://localhost:8080`.
 
-TODO
+For developing on the frontend more conveniently run:
 
-* Simplify and document input data format
-* Provide scripts to export RFVis-readable data for the most common Random Forest implementations, e.g. [sklearn.ensemble.RandomForestClassifier](http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
-* Refactor the project to use a proper frontend lib instead of jQuery to be able to add more features in the future
+```
+$ npm start
+```
+
+To start a development server with hot reloading at `http://localhost:3000`.

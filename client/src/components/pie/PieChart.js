@@ -2,7 +2,7 @@
  * Original source: https://github.com/toomuchdesign/react-minimal-pie-chart
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Path from './PieChartPath';
 import {getLeafNodes, leafColor} from "../../logic/tree_utils";
@@ -57,20 +57,20 @@ const makeSegments = (data, props) => {
 
 /**
  * Computes a histogram over the samples contained the leaf nodes of a sub branch
- * @param node {InternalNode} - Base node of the sub branch
+ * @param node {TreeNode} - Base node of the sub branch
  * @param type {string} - Type of property over which the histogram shall be computed.
  *      Can be either IMPURITY or BEST_CLASS.
  * @param weighted {boolean} - If false al leafs have the same cardinality. If true the leafs are weighted by the number
  *      of contained samples.
- * @returns {{value: number, color: string, sortKey: (number|string)}[]} - See drawPie() for more information
+ * @returns {{value: number, color: string, value: (number|string)}[]} - See drawPie() for more information
  */
 const getHistogram = (node, type, weighted = true) => {
-    const leafNodes = getLeafNodes(node);
     const histObj = {};
     if (type === LEAF_COLORS.IMPURITY) {
+        const leafNodes = getLeafNodes(node);
         for (const leafNode of leafNodes) {
             const impurity = leafNode.impurity.toFixed(1); // Converting all impurities to strings with two decimal places
-            const n = weighted ? leafNode.samples : 1;
+            const n = weighted ? leafNode.n_node_samples : 1;
             if (impurity in histObj) {
                 histObj[impurity] += n;
             } else {
@@ -84,38 +84,21 @@ const getHistogram = (node, type, weighted = true) => {
         });
         return ordered;
     } else if (type === LEAF_COLORS.BEST_CLASS) {
-        for (const leafNode of leafNodes) {
-            const n = weighted ? leafNode.bestClass.count : 1;
-            if (leafNode.bestClass.name in histObj) {
-                histObj[leafNode.bestClass.name][0] += n
-            } else {
-                histObj[leafNode.bestClass.name] = [n];
-            }
-            histObj[leafNode.bestClass.name][1] = leafNode.bestClass.color;
+        return node.classDistribution;
+    } else if (type === LEAF_COLORS.BLACK) {
+        return [{title: "1", color: "rgb(0, 0, 0)", value: 1}]
+    } else if (type === "PATH") {
+        if (node.selectedPathElement) {
+            return [{title: "1", color: "rgb(255, 0, 0)", value: 1}]
+        } else {
+            return [{title: "1", color: "rgba(0, 0, 0, 0.5)", value: 1}];
         }
-        const ordered = [];
-        Object.keys(histObj).sort().forEach(key => {
-            const color = leafColor(type, {bestClass: {color: histObj[key][1]}});
-            ordered.push({title: String(histObj[key][0]), color: color, value: histObj[key][0]});
-        });
-        return ordered;
     } else {
         throw Error(`Unknown leaf color type "${type}" for bunch`);
     }
-
-    /*
-    // TODO
-    if (type === "PATH") {
-        return [
-            {value: 1,
-                color: "rgba(0, 0, 0, 0.5)",
-                sortKey: "0"}
-                ]
-    ]
-    } */
 };
 
-export default class PieChart extends PureComponent {
+export default class PieChart extends React.PureComponent {
     static propTypes = {
         bunch: PropTypes.any.isRequired,
         radius: PropTypes.number.isRequired,
@@ -124,17 +107,19 @@ export default class PieChart extends PureComponent {
         segmentsStyle: PropTypes.objectOf(
             PropTypes.oneOfType([PropTypes.number, PropTypes.string])
         ),
-        onMouseOver: PropTypes.func,
-        onMouseOut: PropTypes.func,
         onClick: PropTypes.func,
+        onMouseEnter: PropTypes.func,
+        onMouseLeave: PropTypes.func,
     };
 
     render() {
-        const data = getHistogram(this.props.bunch.baseNode, this.props.leafColorType);
-        const normalizedData = evaluateDegreesFromValues(
-            data,
-            this.props.totalValue,
+        const histogram = getHistogram(this.props.bunch.baseNode, this.props.leafColorType);
+        const normalizedData = evaluateDegreesFromValues(histogram, this.props.totalValue);
+        return (
+            <g onMouseEnter={() => this.props.onMouseEnter(this.props.bunch)}
+               onMouseLeave={this.props.onMouseLeave}>
+                {makeSegments(normalizedData, this.props)}
+            </g>
         );
-        return makeSegments(normalizedData, this.props, this.hideSegments);
     }
 }

@@ -1,0 +1,4 @@
+include README.md
+include LICENSE
+graft client/build
+graft examples

@@ -12,16 +12,22 @@ export const getMaxDepth = createSelector(
     [getForest, getCurrentTreeId],
     (forest, currentTreeId) => {
         const tree = forest.trees[currentTreeId];
-        let maxDepth = 0;
-        function findMaxDepth(node) {
-            if (node.children) {
-                findMaxDepth(node.children[0]);
-                findMaxDepth(node.children[1]);
-            } else if (node.depth > maxDepth) {
-                maxDepth = node.depth;
-            }
-        }
-        findMaxDepth(tree.baseNode);
-        return maxDepth + 1;
+        return tree.nodes.reduce((acc, node) => Math.max(acc, node.depth), 0);
+    }
+);
+
+/**
+ * Returns all leaf nodes in the currently selected tree
+ * @param {Tree} tree
+ * @returns {number}
+ */
+export const getLeafIds = createSelector(
+    [getForest, getCurrentTreeId],
+    (forest, currentTreeId) => {
+        const tree = forest.trees[currentTreeId];
+        return tree.nodes
+            .filter(node => node.isLeaf())
+            .map(node => node.id)
+            .sort();
     }
 );

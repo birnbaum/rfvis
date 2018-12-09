@@ -1,10 +1,11 @@
-import {LeafNode, InternalNode} from "./TreeNodes";
+import TreeNode from "./TreeNode";
+import Papa from "papaparse";
 
-
+// TODO This is obsolete
 /**
  * Internal representation of a binary decision tree
  * @typedef {Object} Tree
- * @property {number} oobError - Out-of-bad error of the tree. Between 0 and 1
+ * @property {number} error - Out-of-bad error of the tree. Between 0 and 1
  * @property {InternalNode} baseNode - X coordinate of the tree. Between 0 and N
  */
 
@@ -20,81 +21,52 @@ import {LeafNode, InternalNode} from "./TreeNodes";
 /**
  * Reads and parses the provided txt files and returns an internal representation of the data TODO
  *
- * @param {Object} rawData - Raw content of input files
+ * @param {Object} forest - Raw content of input files
  * @returns {Forest}
  */
-export default function createForest(rawData) {
-    const forestDataParts = rawData.forestFileContent.split('\n\n');
+export default function createForest(forest) {
+    forest.trees.forEach(tree => {
+        const nodes = Papa.parse(tree.data, {
+            dynamicTyping: true,
+            header: true,
+            skipEmptyLines: true,
+        }).data.map(node => {
+            const class_distribution = node.value
+                .slice(1, -1)
+                .split(",")
+                .map(el => Number.parseInt(el));
+            node.classDistribution = forest.classes.map((c, i) => {
+                return Object.assign({}, c, {value: class_distribution[i]})
+            });
+            delete node.value;
+            return new TreeNode(node);
+        });
+        delete tree.data;
 
-    const correlationMatrix = parseCorrelationMatrix(forestDataParts[0]);
-    const treeOobErrors = forestDataParts[1].split('\n').map(Number.parseFloat);
-    const error = Number.parseFloat(forestDataParts[2]);
+        const baseNode = nodes.shift();
 
-    const trees = rawData.treeFileContents.map((treeFileContent, index) => {
-        return {
-            oobError: treeOobErrors[index],
-            baseNode: parseStatisticsContent(treeFileContent)
+        let stack = [baseNode];
+        for (const node of nodes) {
+            let latest = stack[stack.length - 1];
+
+            if (node.depth === latest.depth + 1) {  // Child Node
+                // Do nothing
+            } else if (node.depth === latest.depth) {  // Sibling Node
+                stack.pop();
+            } else if (node.depth < latest.depth) {
+                stack = stack.slice(0, node.depth)
+            } else {
+                throw new Error("Malformed statistics content");
+            }
+
+            latest = stack[stack.length - 1];
+            latest.addChild(node);
+            stack.push(node);
         }
+
+        tree.baseNode = baseNode;
+        tree.nodes = nodes;
     });
 
-    return {
-        error: error,
-        totalSamples: trees[0].baseNode.samples,
-        correlationMatrix: correlationMatrix,
-        trees: trees
-    };
-}
-
-/**
- * Parses a given correlation matrix text to a two-dimensional array of floats
- * @param {string} text - correlation matrix text
- * @returns {number[][]}
- */
-function parseCorrelationMatrix(text) {
-    text = text.replace(/\[|\]/g, '');  // Remove [] brackets from string
-    return text.split(';\n').map(line =>
-        line.split(',').map(Number.parseFloat)
-    );
-}
-
-/**
- * Parses a given tree statistics text file content into an internal Node representation
- * @param {string} text - tree statistics text
- * @returns {InternalNode}
- */
-function parseStatisticsContent(text) {
-    const lines = text.trim().split('\n').slice(2);
-    const nodes = lines.map(line => {
-        const fields = line.split(';');
-        if (fields.length === 11) {
-            return new InternalNode(fields)
-        } else if (fields.length === 6) {
-            return new LeafNode(fields)
-        } else {
-            throw new Error("Unknown tree file format");
-        }
-    });
-
-    const baseNode = nodes.shift();
-
-    let stack = [baseNode];
-    for (const node of nodes) {
-        let latest = stack[stack.length - 1];
-
-        if (node.depth === latest.depth + 1) {  // Child Node
-            // Do nothing
-        } else if (node.depth === latest.depth) {  // Sibling Node
-            stack.pop();
-        } else if (node.depth < latest.depth) {
-            stack = stack.slice(0, node.depth)
-        } else {
-            throw new Error("Malformed statistics content");
-        }
-
-        latest = stack[stack.length - 1];
-        latest.add(node);
-        stack.push(node);
-    }
-
-    return baseNode;
+    return forest;
 }

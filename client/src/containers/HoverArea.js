@@ -25,7 +25,7 @@ export class DefaultTable extends React.Component {
                     </tr>
                     <tr>
                         <td>Number of Samples</td>
-                        <td>{this.props.forest.totalSamples}</td>
+                        <td>{this.props.forest.n_samples}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -34,11 +34,11 @@ export class DefaultTable extends React.Component {
                     <tbody>
                     <tr>
                         <td>ID</td>
-                        <td>#{this.props.currentTreeId + 1}</td>
+                        <td>{this.props.currentTreeId + 1}</td>
                     </tr>
                     <tr>
-                        <td>Out-of-bag Error</td>
-                        <td>{this.props.forest.trees[this.props.currentTreeId].oobError}</td>
+                        <td>Error</td>
+                        <td>{this.props.forest.trees[this.props.currentTreeId].error}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -54,22 +54,21 @@ export class TreeTable extends React.Component {
 
     render() {
         return (
-            <table className="table is-fullwidth">
-                <tbody>
-                <tr>
-                    <td style={{fontWeight: "bold"}}>Tree</td>
-                    <td />
-                </tr>
-                <tr>
-                    <td>Tree</td>
-                    <td>#{this.props.tree.id}</td>
-                </tr>
-                <tr>
-                    <td>Out-of-bag Error</td>
-                    <td>{this.props.tree.oobError}</td>
-                </tr>
-                </tbody>
-            </table>
+            <div>
+                <label className="label is-small">Tree</label>
+                <table className="table is-fullwidth is-narrow is-bordered is-striped">
+                    <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>{this.props.tree.treeId}</td>
+                    </tr>
+                    <tr>
+                        <td>Error</td>
+                        <td>{this.props.tree.error}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         )
     }
 }
@@ -81,30 +80,30 @@ export class BranchTable extends React.Component {
 
     render() {
         return (
-            <table className="table is-fullwidth is-narrow is-bordered is-striped">
-                <tbody>
-                <tr>
-                    <td style={{fontWeight: "bold"}}>Branch</td>
-                    <td />
-                </tr>
-                <tr>
-                    <td>Depth</td>
-                    <td>{this.props.branch.depth}</td>
-                </tr>
-                <tr>
-                    <td>Impurity</td>
-                    <td>{this.props.branch.impurity}</td>
-                </tr>
-                <tr>
-                    <td>Drop of Impurity</td>
-                    <td>{this.props.branch.impurityDrop}</td>
-                </tr>
-                <tr>
-                    <td>Number of Samples</td>
-                    <td>{this.props.branch.samples}</td>
-                </tr>
-                </tbody>
-            </table>
+            <div>
+                <label className="label is-small">Branch</label>
+                <table className="table is-fullwidth is-narrow is-bordered is-striped">
+                    <tbody>
+                    <tr>
+                        <td>ID</td>
+                        <td>{this.props.branch.id}</td>
+                    </tr>
+                    <tr>
+                        <td>Depth</td>
+                        <td>{this.props.branch.depth}</td>
+                    </tr>
+                    <tr>
+                        <td>Impurity</td>
+                        <td>{this.props.branch.impurity}</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Samples</td>
+                        <td>{this.props.branch.n_node_samples}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <ClassDistributionTable classDistribution={this.props.branch.classDistribution} />
+            </div>
         )
     }
 }
@@ -124,7 +123,7 @@ export class LeafTable extends React.Component {
                             <tbody>
                             <tr>
                                 <td>ID</td>
-                                <td>#{this.props.leaf.leafId}</td>
+                                <td>{this.props.leaf.id}</td>
                             </tr>
                             <tr>
                                 <td>Depth</td>
@@ -132,21 +131,13 @@ export class LeafTable extends React.Component {
                             </tr>
                             <tr>
                                 <td>Impurity</td>
-                                <td>{this.props.leaf.impurity}</td>
+                                <td>{Number.parseFloat(this.props.leaf.impurity.toFixed(5))}</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
-                    {/*
-                    <div className="leaf-info__right">
-                        <div style="width: 80px; height: 80px; background: #eee;">
-                            <img src="{window.location.origin}/patches/${leaf.leafId}.png">
-                        </div>
-                    </div>
-                    */}
                 </div>
-                <div className="space" />
-                <ClassDistributionTable classes={this.props.leaf.classes} />
+                <ClassDistributionTable classDistribution={this.props.leaf.classDistribution} />
             </div>
         );
     }
@@ -161,24 +152,20 @@ export class BunchTable extends React.Component {
     render() {
         return (
             <div>
-                <table className="table is-fullwidth">
+                <label className="label is-small">Consolidation Node</label>
+                <table className="table is-fullwidth is-narrow is-bordered is-striped">
                     <tbody>
                     <tr>
-                        <td style={{fontWeight: "bold"}}>Consolidation Node</td>
-                        <td />
-                    </tr>
-                    <tr>
                         <td>Depth</td>
-                        <td>{this.props.bunch.displayNode.depth}</td>
+                        <td>{this.props.bunch.baseNode.depth}</td>
                     </tr>
                     <tr>
                         <td>Samples</td>
-                        <td>{this.props.bunch.samples}</td>
+                        <td>{this.props.bunch.n_node_samples}</td>
                     </tr>
                     </tbody>
                 </table>
-                <div className="space" />
-                <ClassDistributionTable classes={this.props.bunch.classes} />
+                <ClassDistributionTable classDistribution={this.props.bunch.classDistribution} />
             </div>
         )
     }
@@ -187,20 +174,19 @@ export class BunchTable extends React.Component {
 
 export class ClassDistributionTable extends React.Component {
     static propTypes = {
-        classes: PropTypes.any.isRequired  // TODO improve prop type
+        classDistribution: PropTypes.any.isRequired
     };
 
     render() {
-        const tableRows = this.props.classes.map((cls, i) => {
-            const patchStyle = {background: `rgb(${cls.color}`};
+        const tableRows = this.props.classDistribution.map((cls, i) => {
             return (
                 <tr key={i}>
                     <td>
                         <div className="class-distribution-table__color-patch"
-                             style={patchStyle} />
+                             style={{background: cls.color}} />
                     </td>
                     <td>{cls.name}</td>
-                    <td>{cls.count}</td>
+                    <td>{cls.value}</td>
                 </tr>
             );
         });
@@ -209,7 +195,9 @@ export class ClassDistributionTable extends React.Component {
             <div>
                 <label className="label is-small">Class Distribution</label>
                 <table className="class-distribution-table table is-fullwidth is-narrow">
-                    {tableRows}
+                    <tbody>
+                        {tableRows}
+                    </tbody>
                 </table>
             </div>
         )
@@ -223,21 +211,23 @@ class HoverArea extends React.Component {
         hoverData: PropTypes.any,
         forest: PropTypes.any.isRequired,
         currentTreeId: PropTypes.number.isRequired,
+        classHistogram: PropTypes.any,
     };
 
     render() {
         switch (this.props.hoverType) {
             case "TREE":
-                return <TreeTable tree={this.props.hoverData}/>;
+                return <TreeTable tree={this.props.hoverData} />;
             case "BRANCH":
-                return <BranchTable branch={this.props.hoverData}/>;
+                return <BranchTable branch={this.props.hoverData} />;
             case "LEAF":
-                return <LeafTable leaf={this.props.hoverData}/>;
-            // case "BUNCH":
-            //     return <BunchTable bunch={} classHistogram={}/>;
+                return <LeafTable leaf={this.props.hoverData} />;
+            case "BUNCH":
+                return <BunchTable bunch={this.props.hoverData.bunch}
+                                   classHistogram={this.props.hoverData.histogram}/>;
             default:
                 return <DefaultTable forest={this.props.forest}
-                                     currentTreeId={this.props.currentTreeId}/>;
+                                     currentTreeId={this.props.currentTreeId} />;
         }
     }
 }

@@ -8,7 +8,7 @@ import Vector from "./Vector.js";
 /**
  * Object returned by computeTreePositions()
  * @typedef {Object} TreePosition
- * @property {number} oobError - Out-of-bag error of the tree. Between 0 and 1
+ * @property {number} error - Out-of-bag error of the tree. Between 0 and 1
  * @property {number} x - X coordinate of the tree. Between 0 and N
  * @property {number} y - Y coordinate of the tree. Between 0 and N
  */
@@ -99,7 +99,7 @@ export default function computeTreePositions(forest) {
 
     return forest.trees.map((tree, i) => {
         return {
-            oobError: tree.oobError,
+            error: tree.error,
             x: pixelCoordinated[i].x,
             y: pixelCoordinated[i].y
         };

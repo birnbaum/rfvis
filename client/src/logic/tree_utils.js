@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import {LeafNode, InternalNode} from "./TreeNodes";
 import {LEAF_COLORS, BRANCH_COLORS} from "../constants";
 
 export {
@@ -22,7 +21,7 @@ export {
  * @param minBranchLength {number} - Minimum branch length
  * @returns {{branches: Array, leafs: Array, bunches: Array}}
  */
-function generateTreeElements(baseNode, displayDepth, width, height, trunkLength, pathLeafID,
+function generateTreeElements(baseNode, displayDepth, width, height, trunkLength, selectedLeaf = null,
     maxShorteningFactor = 0.9, minBranchLength = 4) {
     // TODO Improvement: These lists shouldn't contain new objects but pointers to the tree data structure nodes
     const branches = [];
@@ -34,28 +33,26 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
 
         branches.push(node);
 
-        if (node.depth === displayDepth) {
-            bunches.push({
-                x: node.x2,
-                y: node.y2,
-                baseNode: node,
-                samples: node.samples,
-            });
-            return;  // End of recursion
-        }
-
-        if (node instanceof LeafNode) {
+        if (node.isLeaf()) {
             leafs.push({
                 x: node.x2,
                 y: node.y2,
                 impurity: node.impurity,
-                samples: node.samples,
-                leafId: node.leafId,
+                n_node_samples: node.n_node_samples,
+                id: node.id,
                 depth: node.depth,
-                noClasses: node.noClasses,
-                classes: node.classes,
+                classDistribution: node.classDistribution,
                 bestClass: node.bestClass,
                 selectedPathElement: node.selectedPathElement,
+            });
+            return;  // End of recursion
+        } else if (displayDepth != null && node.depth === displayDepth) {
+            bunches.push({
+                x: node.x2,
+                y: node.y2,
+                baseNode: node,
+                classDistribution: node.classDistribution,
+                n_node_samples: node.n_node_samples,
             });
             return;  // End of recursion
         }
@@ -63,11 +60,11 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
         const leftChild = node.children[0];
         const rightChild = node.children[1];
 
-        const length1 = Math.max(Math.min(leftChild.samples / node.samples, maxShorteningFactor) * node.length, minBranchLength);
-        const length2 = Math.max(Math.min(rightChild.samples / node.samples, maxShorteningFactor) * node.length, minBranchLength);
+        const length1 = Math.max(Math.min(leftChild.n_node_samples / node.n_node_samples, maxShorteningFactor) * node.length, minBranchLength);
+        const length2 = Math.max(Math.min(rightChild.n_node_samples / node.n_node_samples, maxShorteningFactor) * node.length, minBranchLength);
 
-        const angle1 = node.angle - Math.abs(leftChild.samples / node.samples - 1);
-        const angle2 = node.angle + Math.abs(rightChild.samples / node.samples - 1);
+        const angle1 = node.angle - Math.abs(leftChild.n_node_samples / node.n_node_samples - 1);
+        const angle2 = node.angle + Math.abs(rightChild.n_node_samples / node.n_node_samples - 1);
 
         if (leftChild !== undefined) {
             branch(addBranchInformation(leftChild, node.x2, node.y2, angle1, length1, node.depth + 1));
@@ -79,15 +76,15 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
 
     const extendedBaseNode = addBranchInformation(baseNode, width/ 2, height, 0, trunkLength, 0);
 
-    if (pathLeafID !== null) {
-        // this.markPathElements([pathLeafID], displayNode);
+    if (selectedLeaf !== null) {
+        markPathElements([selectedLeaf], baseNode);
     }
 
     branch(extendedBaseNode);
 
     const sortBySamples = (a,b) => {
-        if (a.samples > b.samples) return -1;
-        if (a.samples < b.samples) return 1;
+        if (a.n_node_samples > b.n_node_samples) return -1;
+        if (a.n_node_samples < b.n_node_samples) return 1;
         return 0;
     };
     leafs.sort(sortBySamples);
@@ -98,12 +95,12 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
 
 /**
  * Walks down a tree (depth first) and applies a function to each node
- * @param {InternalNode | LeafNode} node - Base node
+ * @param {TreeNode} node - Base node
  * @param {function} fn - function which shall be executed on each node
  */
 function walkAndApply(node, fn) {
     fn(node);
-    if (node instanceof InternalNode) {
+    if (!node.isLeaf()) {
         walkAndApply(node.children[0], fn);
         walkAndApply(node.children[1], fn);
     }
@@ -114,16 +111,16 @@ function walkAndApply(node, fn) {
  * This function works in-place.
  *
  * @param {number[]} leafIds - List of leaf IDs
- * @param {InternalNode} tree - Tree on which the marking shall be performed
+ * @param {TreeNode} baseNode - Tree on which the marking shall be performed
  */
-function markPathElements(leafIds, tree) {
-    // Reset current tree
-    walkAndApply(tree, (node => {
+function markPathElements(leafIds, baseNode) {
+    // Reset current baseNode
+    walkAndApply(baseNode, (node => {
         node.selectedPathElement = false;
     }));
 
-    const leafs = this.getLeafNodes(tree)
-        .filter(leaf => leafIds.includes(leaf.leafId));
+    const leafs = getLeafNodes(baseNode)
+        .filter(leaf => leafIds.includes(leaf.id));
 
     function walkUpAndApply(node, fn) {
         fn(node);
@@ -171,12 +168,12 @@ function branchColor(type, branch) {
     throw new Error(`Unsupported branch color type "${type}"`);
 }
 
-function branchThickness(branch, totalSamples) {
+function branchThickness(branch, n_samples) {
     // Linear scale that maps the number of samples in a branch to a certain number of pixels
     return d3.scaleLinear()
-        .domain([1, totalSamples])
+        .domain([1, n_samples])
         .range([1, 15])
-        (branch.samples) + 'px';
+        (branch.n_node_samples) + 'px';
 }
 
 function leafColor(type, leaf) {
@@ -187,7 +184,7 @@ function leafColor(type, leaf) {
             (leaf.impurity);
     }
     if (type === LEAF_COLORS.BEST_CLASS) {
-        return d3.rgb(...leaf.bestClass.color);
+        return leaf.bestClass.color;
     }
     if (type === LEAF_COLORS.BLACK) {
         return "black";
@@ -204,9 +201,9 @@ function leafColor(type, leaf) {
     throw new Error(`Unsupported leaf color type "${type}"`);
 }
 
-function leafSize(leaf, totalSamples) {
-    const maxRadius = Math.sqrt(totalSamples / Math.PI);
-    const radius = Math.sqrt(leaf.samples / Math.PI);
+function leafSize(leaf, n_samples) {
+    const maxRadius = Math.sqrt(n_samples / Math.PI);
+    const radius = Math.sqrt(leaf.n_node_samples / Math.PI);
     return d3.scaleLinear()
         .domain([1, maxRadius])
         .range([1, 100])
@@ -228,13 +225,14 @@ function addBranchInformation(treeNode, x, y, angle, length, depth) {
 
 /**
  * Walks the entire tree and returns all leaf nodes
- * @param node {InternalNode} - Base node of the tree
- * @returns {LeafNode[]} - List of all lead nodes of the tree
+ * @param node {TreeNode} - Base node of the tree
+ * @returns {TreeNode[]} - List of all lead nodes of the tree
  */
+// TODO This can be implemented easier on the list data structure
 export function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {
-        if (node instanceof LeafNode) {
+        if (node.isLeaf()) {
             leafNodes.push(node);
         } else {
             searchLeafs(node.children[0]);
