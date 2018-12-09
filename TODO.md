@@ -1,13 +1,12 @@
 TODOS
 - Rename and fix color constants (uppercase)
 - Publish on pip
+- Adapt all docstrings
 
 BUGS
 - ForestView Tree hover info misses tree id
 - Hover information tables partially broken
 - Drop-of-impurity missing
-- Bunches and Path Coloring is broken
-- Bunches and Best Class is broken
 
 DATA
 - scikit learn export

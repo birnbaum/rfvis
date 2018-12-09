@@ -62,12 +62,12 @@ const makeSegments = (data, props) => {
  *      Can be either IMPURITY or BEST_CLASS.
  * @param weighted {boolean} - If false al leafs have the same cardinality. If true the leafs are weighted by the number
  *      of contained samples.
- * @returns {{value: number, color: string, sortKey: (number|string)}[]} - See drawPie() for more information
+ * @returns {{value: number, color: string, value: (number|string)}[]} - See drawPie() for more information
  */
 const getHistogram = (node, type, weighted = true) => {
-    const leafNodes = getLeafNodes(node);
     const histObj = {};
     if (type === LEAF_COLORS.IMPURITY) {
+        const leafNodes = getLeafNodes(node);
         for (const leafNode of leafNodes) {
             const impurity = leafNode.impurity.toFixed(1); // Converting all impurities to strings with two decimal places
             const n = weighted ? leafNode.n_node_samples : 1;
@@ -84,35 +84,18 @@ const getHistogram = (node, type, weighted = true) => {
         });
         return ordered;
     } else if (type === LEAF_COLORS.BEST_CLASS) {
-        for (const leafNode of leafNodes) {
-            const n = weighted ? leafNode.bestClass.count : 1;
-            if (leafNode.bestClass.name in histObj) {
-                histObj[leafNode.bestClass.name][0] += n
-            } else {
-                histObj[leafNode.bestClass.name] = [n];
-            }
-            histObj[leafNode.bestClass.name][1] = leafNode.bestClass.color;
+        return node.classDistribution;
+    } else if (type === LEAF_COLORS.BLACK) {
+        return [{title: "1", color: "rgb(0, 0, 0)", value: 1}]
+    } else if (type === "PATH") {
+        if (node.selectedPathElement) {
+            return [{title: "1", color: "rgb(255, 0, 0)", value: 1}]
+        } else {
+            return [{title: "1", color: "rgba(0, 0, 0, 0.5)", value: 1}];
         }
-        const ordered = [];
-        Object.keys(histObj).sort().forEach(key => {
-            const color = leafColor(type, {bestClass: {color: histObj[key][1]}});
-            ordered.push({title: String(histObj[key][0]), color: color, value: histObj[key][0]});
-        });
-        return ordered;
     } else {
         throw Error(`Unknown leaf color type "${type}" for bunch`);
     }
-
-    /*
-    // TODO
-    if (type === "PATH") {
-        return [
-            {value: 1,
-                color: "rgba(0, 0, 0, 0.5)",
-                sortKey: "0"}
-                ]
-    ]
-    } */
 };
 
 export default class PieChart extends React.PureComponent {

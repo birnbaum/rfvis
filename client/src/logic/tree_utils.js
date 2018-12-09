@@ -46,7 +46,7 @@ function generateTreeElements(baseNode, displayDepth, width, height, trunkLength
                 selectedPathElement: node.selectedPathElement,
             });
             return;  // End of recursion
-        } else if (displayDepth && node.depth === displayDepth) {
+        } else if (displayDepth != null && node.depth === displayDepth) {
             bunches.push({
                 x: node.x2,
                 y: node.y2,
@@ -183,7 +183,7 @@ function leafColor(type, leaf) {
             (leaf.impurity);
     }
     if (type === LEAF_COLORS.BEST_CLASS) {
-        return d3.rgb(...leaf.bestClass.color);
+        return leaf.bestClass.color;
     }
     if (type === LEAF_COLORS.BLACK) {
         return "black";

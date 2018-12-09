@@ -38,23 +38,23 @@
   "classes": [
     {
       "name": "city",
-      "color": [0,0,255]
+      "color": "rgb(0,0,255)"
     },
     {
       "name": "streets",
-      "color": [255,0,0]
+      "color": "rgb(255,0,0)"
     },
     {
       "name": "forest",
-      "color": [0,128,0]
+      "color": "rgb(0,128,0)"
     },
     {
       "name": "field",
-      "color": [0,255,255]
+      "color": "rgb(0,255,255)"
     },
     {
       "name": "shrubland",
-      "color": [0,255,0]
+      "color": "rgb(0,255,0)"
     }
  ],
   "trees": [
