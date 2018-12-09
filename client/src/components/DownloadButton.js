@@ -20,8 +20,6 @@ export default class DownloadButton extends React.Component {
 
     /**
      * Downloads the provided SVG DOM element as an SVG file
-     * @param {Object} svgElement - SVG DOM element
-     * @param {string} filename - Name of the output file
      */
     downloadSvg = () => {
         console.log(this.props);

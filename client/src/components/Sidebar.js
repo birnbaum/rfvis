@@ -8,9 +8,6 @@ export default function Sidebar() {
         <div className="Sidebar">
             <ForestView />
             <TreeNavigation />
-
-            <div className="space" />
-
             <HoverArea />
         </div>
     );

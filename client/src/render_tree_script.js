@@ -1,3 +1,13 @@
+/**
+ * Utility script for rendering a SVG tree.
+ * This is called by the `rfvis cli <forest_json>` command to directly generate SVGs via the command line.
+ *
+ * USAGE: node render_tree_script.js <options>
+ *
+ * Where <options> is a escaped JSON which specifies the rendering options including the outpath.
+ * The data is fed in via `stdin` and directly written to disc after being processed.
+ * */
+
 import fs from "fs";
 import path from "path";
 
@@ -5,7 +15,7 @@ import React from "react";
 import ReactDOMServer from 'react-dom/server';
 import Tree from "./components/Tree";
 
-import createForest from "./logic/parser"
+import createForest from "./utils/parser"
 
 const options = JSON.parse(process.argv[2]);
 const outpath = process.argv[3];

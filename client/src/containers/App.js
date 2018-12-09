@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import {setCurrentTreeId, setForest} from "../actions";
 import {connect} from "react-redux";
 
-import createForest from "../logic/parser"
+import createForest from "../utils/parser"
 
 class App extends React.Component {
     static propTypes = {
@@ -23,7 +23,7 @@ class App extends React.Component {
     async componentDidMount() {
         // TODO Improve error messages
         try {
-            const response = await fetch(window.location.origin + "/data")
+            const response = await fetch(window.location.origin + "/data");
             if (!response.ok) {
                 throw new Error(response.statusText);
             }

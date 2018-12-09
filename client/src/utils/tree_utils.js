@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import {scaleLinear} from "d3-scale";
 import {LEAF_COLORS, BRANCH_COLORS} from "../constants";
 
 export {
@@ -17,13 +17,14 @@ export {
  * @param height {number} - Height of the SVG
  * @param trunkLength {number} - Length of the trunk which resembles the base node. All other branch lengths depend on
  *      this length.
- * @param maxShorteningFactor {number} - Maximum shortening factor of the branch length of two successive branches
- * @param minBranchLength {number} - Minimum branch length
+ * @param [selectedLeaf] {number} - ID of the leaf that is selected if in PATH mode
+ * @param [maxShorteningFactor] {number} - Maximum shortening factor of the branch length of two successive branches
+ * @param [minBranchLength] {number} - Minimum branch length
  * @returns {{branches: Array, leafs: Array, bunches: Array}}
  */
 function generateTreeElements(baseNode, displayDepth, width, height, trunkLength, selectedLeaf = null,
     maxShorteningFactor = 0.9, minBranchLength = 4) {
-    // TODO Improvement: These lists shouldn't contain new objects but pointers to the tree data structure nodes
+
     const branches = [];
     const leafs = [];
     const bunches = [];
@@ -142,13 +143,13 @@ function markPathElements(leafIds, baseNode) {
 function branchColor(type, branch) {
     if (type === BRANCH_COLORS.IMPURITY) {
         // Linear scale that maps impurity values from 0 to 1 to colors from "green" to "brown"
-        return d3.scaleLinear()
+        return scaleLinear()
             .domain([0, 1])
             .range(["green", "brown"])
             (branch.impurity);
     }
     if (type === BRANCH_COLORS.DROP_OF_IMPURITY) {
-        return d3.scaleLinear()
+        return scaleLinear()
             .domain([0, 1])
             .range(["red", "green"])
             (branch.impurityDrop);
@@ -156,13 +157,11 @@ function branchColor(type, branch) {
     if (type === BRANCH_COLORS.BLACK) {
         return "black";
     }
-    if (type === "PATH") {  // TODO
+    if (type === "PATH") {
         if (branch.selectedPathElement) {
-            return d3.rgb(255, 0, 0);
+            return "rgb(255,0,0)";
         } else {
-            const c = d3.rgb(0, 0, 0);
-            c.opacity = 0.5;
-            return c;
+            return "rgba(0,0,0,0.5)";
         }
     }
     throw new Error(`Unsupported branch color type "${type}"`);
@@ -170,7 +169,7 @@ function branchColor(type, branch) {
 
 function branchThickness(branch, n_samples) {
     // Linear scale that maps the number of samples in a branch to a certain number of pixels
-    return d3.scaleLinear()
+    return scaleLinear()
         .domain([1, n_samples])
         .range([1, 15])
         (branch.n_node_samples) + 'px';
@@ -178,7 +177,7 @@ function branchThickness(branch, n_samples) {
 
 function leafColor(type, leaf) {
     if (type === LEAF_COLORS.IMPURITY) {
-        return d3.scaleLinear()
+        return scaleLinear()
             .domain([0, 0.5, 1])
             .range(["green", "red", "red"])
             (leaf.impurity);
@@ -189,13 +188,11 @@ function leafColor(type, leaf) {
     if (type === LEAF_COLORS.BLACK) {
         return "black";
     }
-    if (type === "PATH") {  // TODO
+    if (type === "PATH") {
         if (leaf.selectedPathElement) {
-            return d3.rgb(255, 0, 0);
+            return "rgb(255,0,0)";
         } else {
-            const c = d3.rgb(0, 0, 0);
-            c.opacity = 0.5;
-            return c;
+            return "rgba(0,0,0,0.5)";
         }
     }
     throw new Error(`Unsupported leaf color type "${type}"`);
@@ -204,7 +201,7 @@ function leafColor(type, leaf) {
 function leafSize(leaf, n_samples) {
     const maxRadius = Math.sqrt(n_samples / Math.PI);
     const radius = Math.sqrt(leaf.n_node_samples / Math.PI);
-    return d3.scaleLinear()
+    return scaleLinear()
         .domain([1, maxRadius])
         .range([1, 100])
         (radius)
@@ -228,7 +225,6 @@ function addBranchInformation(treeNode, x, y, angle, length, depth) {
  * @param node {TreeNode} - Base node of the tree
  * @returns {TreeNode[]} - List of all lead nodes of the tree
  */
-// TODO This can be implemented easier on the list data structure
 export function getLeafNodes(node) {
     const leafNodes = [];
     function searchLeafs(node) {

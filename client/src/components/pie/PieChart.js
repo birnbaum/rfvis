@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Path from './PieChartPath';
-import {getLeafNodes, leafColor} from "../../logic/tree_utils";
+import {getLeafNodes, leafColor} from "../../utils/tree_utils";
 import {LEAF_COLORS} from "../../constants";
 
 const sumValues = data =>

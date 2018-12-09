@@ -1,7 +1,5 @@
 TODOS
-- Rename and fix color constants (uppercase)
 - Publish on pip
-- Adapt all docstrings
 
 DATA
 - scikit learn export
@@ -10,12 +8,8 @@ DATA
     - Drop-of-impurity
 
 NICE TO HAVE
-- Solve TODOs
 - keyboard navigation
-- remove "space" divs
-- Refactor component structure (Forest, ForestView, compute_coordinates)
-- Reduce unneeded fontawesome/d3 dependencies
-- refactor utility
+- Refactor component structure (Forest, ForestView)
 - Dynamic Trunk length
 - Python API for starting a interactive view from sklearn.ensemble.RandomForestClassifier
 - Python API for plotting in Jupyter notebooks
@@ -23,6 +17,7 @@ NICE TO HAVE
 - Refactor/Cleanup "PATH" functionality
 - Travis build pipeline
 - Minify & Tree shake renderer dependencies
+- Rename and fix color constants (uppercase)
 
 OTHER IDEAS
 - Do not draw bunches/leafs

@@ -1,4 +1,4 @@
-import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize} from "../logic/tree_utils";
+import {branchColor, branchThickness, generateTreeElements, leafColor, leafSize} from "../utils/tree_utils";
 import PropTypes from "prop-types";
 import React from "react";
 import PieChart from "./pie/PieChart";
@@ -86,7 +86,8 @@ export default class Tree extends React.Component {
             );
         } else {
             return (
-                <svg className="Tree"
+                <svg id="tree"
+                     className="Tree"
                      style={{
                          width: this.props.width + "px",
                          height: this.props.height + "px",

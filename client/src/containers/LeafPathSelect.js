@@ -7,8 +7,8 @@ const mapStateToProps = (state, ownProps) => ({
     label: "Color Path to LeafID",
     value: state.selectedLeaf,
     options: getLeafIds(state).reduce((acc, cur) => {
-      acc[cur] = cur;
-      return acc;
+        acc[cur] = cur;
+        return acc;
     }, {}),
 });
 
