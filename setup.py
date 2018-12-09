@@ -28,8 +28,7 @@ if __name__ == "__main__":
             "Bug Tracker": "https://github.com/birnbaum/rfvis/issues",
         },
         packages=["rfvis"],
-        license="ISC",
-        # python_requires=">=3.5",
+        license="MIT",
         install_requires=[
             "click",
             "flask",
@@ -40,6 +39,23 @@ if __name__ == "__main__":
             ]
         },
         classifiers=[
-            "TODO"
+            "Development Status :: 4 - Beta",
+            "Environment :: Console",
+            "Environment :: Web Environment",
+            "Intended Audience :: Education",
+            "Intended Audience :: Science/Research",
+            "License :: OSI Approved :: MIT License",
+            "Operating System :: OS Independent",
+            "Programming Language :: JavaScript",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.4",
+            "Programming Language :: Python :: 3.5",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Topic :: Education",
+            "Topic :: Scientific/Engineering :: Visualization",
         ],
     )

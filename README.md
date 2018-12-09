@@ -18,7 +18,7 @@ $ pip install rfvis
 
 This will allow you interactively visualize a fitted Random Forest (RF) in your
 browser. To directly generate SVG files from your model you also need to install
-[NodeJS](https://nodejs.org/en/download/), see [Command Line Interface](#command-line-interface) for more information.
+[Node.js](https://nodejs.org/en/download/), see [Command Line Interface](#command-line-interface) for more information.
 
 
 ## How To Use
@@ -58,7 +58,7 @@ You can now open up your browser at <http://localhost:8080> to see something lik
 ### Command Line Interface
 
 To use the Command Line Interface (CLI) you need to have
-[NodeJS](https://nodejs.org/en/download/) v8+ installed on your system. This
+[Node.js](https://nodejs.org/en/download/) v8+ installed on your system. This
 is a technical limitation due to the fact that the rendering is written in
 Javascript. You do not need to install any other package though, the CLI
 integrates into the command line tool you already installed via pip:
@@ -80,7 +80,7 @@ Usage: rfvis cli [OPTIONS] FOREST_JSON
 
   As Python is unable to render React components, we make a subprocess call to a small
   Node.js application which will do the rendering and also store the created SVG
-  files. This command requires that NodeJS is installed on your system!
+  files. This command requires that Node.js is installed on your system!
 
   FOREST_JSON: Path to the JSON file that contains the forest's data.
 

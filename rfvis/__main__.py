@@ -45,7 +45,7 @@ def cli(forest_json, out, width, height, trunk_length, display_depth, branch_col
     """Command line interface to generate SVGs.
 
     As Python is unable to render React components, we make a subprocess call to a small Node.js application which
-    will do the rendering and also store the created SVG files. This command requires that NodeJS is installed on your
+    will do the rendering and also store the created SVG files. This command requires that Node.js is installed on your
     system!
 
     FOREST_JSON: Path to the JSON file that contains the forest's data.
@@ -63,7 +63,6 @@ def cli(forest_json, out, width, height, trunk_length, display_depth, branch_col
     })
 
     try:
-        # TODO make path relative
         abs_path = os.path.normpath(os.path.join(__file__, "../../client/build/render_tree_script.js"))
         process = subprocess.Popen(["node", abs_path, config, out],
                                    stdin=subprocess.PIPE,

@@ -13,22 +13,14 @@ export default class Menu extends React.Component {
         return (
             <div className="Menu">
                 <div className="Menu-header">
-                    <h3 className="Menu-title">rfvis</h3>
+                    <h3 className="Menu-title">RFVis</h3>
                     <h6 className="Menu-subtitle">{this.props.title}</h6>
                 </div>
 
                 <div className="Menu-content">
-
-                    <div className="space" />
-
                     <TreeDepthInput />
-
                     <TrunkLengthInput />
-
-                    <div className="space" />
-
                     <MenuTabs />
-
                 </div>
             </div>
         );

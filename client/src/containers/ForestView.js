@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as d3 from "d3";
+import {scaleLinear} from "d3-scale";
 import DownloadButton from "../components/DownloadButton";
 
-import computeTreePositions from "../logic/compute_coordinates";
+import computeTreePositions from "../utils/compute_coordinates";
 import {connect} from "react-redux";
 import {setCurrentTreeId, setHoverState, unsetHoverState} from "../actions";
 
@@ -69,7 +69,7 @@ class ForestView extends React.Component {
 }
 
 function treeColor(tree) {
-    const scale = d3.scaleLinear()
+    const scale = scaleLinear()
         .domain([1, 0.5, 0.05, 0])
         .range(["red", "red", "green", "green"]);
     return scale(tree.error);
@@ -77,7 +77,7 @@ function treeColor(tree) {
 
 function treeSize(tree, maxRadius) {
     const radius = area => Math.sqrt(area / Math.PI);
-    const scale =  d3.scaleLinear()
+    const scale = scaleLinear()
         .domain([0, radius(0.6), radius(1)])
         .range([maxRadius / 2, maxRadius / 2, maxRadius]);
     return scale(radius(1 - tree.error));

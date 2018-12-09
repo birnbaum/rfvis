@@ -17,7 +17,8 @@ class MenuTabs extends React.Component {
         return (
             <Tabs selectedIndex={this.props.colorTabIndex}
                   onSelect={this.props.changeColorTabIndex}
-                  selectedTabClassName="is-active">
+                  selectedTabClassName="is-active"
+                  className="MenuTabs">
                 <div className="tabs">
                     <TabList>
                         <Tab><a>Color</a></Tab>
