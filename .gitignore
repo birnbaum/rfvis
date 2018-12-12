@@ -18,7 +18,7 @@ yarn-error.log*
 rfvis.egg-info
 dist
 build
-client/**/*.css
+*.css
 
 # misc
 .DS_Store

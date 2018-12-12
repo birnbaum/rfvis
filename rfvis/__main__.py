@@ -63,8 +63,8 @@ def cli(forest_json, out, width, height, trunk_length, display_depth, branch_col
     })
 
     try:
-        abs_path = os.path.normpath(os.path.join(__file__, "../../client/build/render_tree_script.js"))
-        process = subprocess.Popen(["node", abs_path, config, out],
+        script_path = os.path.join(os.path.dirname(__file__), "client", "build", "render_tree_script.js")
+        process = subprocess.Popen(["node", script_path, config, out],
                                    stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE)
         output = process.communicate(json.dumps(data).encode("utf8"))

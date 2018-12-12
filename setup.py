@@ -28,6 +28,7 @@ if __name__ == "__main__":
             "Bug Tracker": "https://github.com/birnbaum/rfvis/issues",
         },
         packages=["rfvis"],
+        package_data={"rfvis": ["client/build/*", "client/build/static/**/*"]},
         license="MIT",
         install_requires=[
             "click",

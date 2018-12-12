@@ -169,7 +169,7 @@ actually see the application working on `http://localhost:8080`.
 
 To build the frontend you need Node.js installed. First install all 
 dev-dependencies by running the following 
-from within the `./client` directory:
+from within the `./rfvis/client` directory:
 
 ```
 $ npm install
