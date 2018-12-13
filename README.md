@@ -1,12 +1,9 @@
-# RFVis
-
-[![npm version](https://badge.fury.io/js/rfvis.svg)](https://www.npmjs.com/package/rfvis)
-[![Dependency Status](https://david-dm.org/birnbaum/rfvis.svg)](https://david-dm.org/birnbaum/rfvis)
-[![devDependency Status](https://david-dm.org/birnbaum/rfvis/dev-status.svg)](https://david-dm.org/birnbaum/rfvis#info=devDependencies)
+# RFVis [![PyPI version fury.io](https://badge.fury.io/py/rfvis.svg)](https://pypi.org/project/rfvis/) [![Supported versions](https://img.shields.io/pypi/pyversions/rfvis.svg)](https://pypi.org/project/rfvis/) [![License](https://img.shields.io/pypi/l/rfvis.svg)](https://pypi.org/project/rfvis/)
 
 A tool for visualizing the structure and performance of Random Forests (and other ensemble methods based on decision trees).
 
 ![Tree](images/tree.png)
+
 
 ## Getting Started 
 
@@ -42,6 +39,7 @@ Commands:
   cli  Command line interface to generate SVGs.
   gui  Web-based graphical user interface.
 ```
+
 
 ### Graphical User Interface
 
@@ -102,15 +100,16 @@ Options:
 
 ## Input Data
 
-Note: I am currently working a Python interface to RFVis which will allow
-you to start the application programmatically via a fitted scikit-learn
-[RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html).
-
 Currently all input data must be available on your filesystem as a JSON file
 for the forest and additionally one CSV file per tree. Both data formats will
 be extended with properties in the future, this is just the minimal set.
 
 You can find a working example under `examples/PolSAR`!
+
+Note: A Python interface to RFVis, which will allow you to start the application programmatically via a fitted
+scikit-learn [RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html),
+is on the roadmap.
+
 
 
 #### Forest JSON
