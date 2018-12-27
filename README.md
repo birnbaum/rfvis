@@ -4,6 +4,8 @@ A tool for visualizing the structure and performance of Random Forests (and othe
 
 ![Tree](images/tree.png)
 
+RFVis offers a [Command Line API](#command-line-api) and a [Python API](#python-api) which works on a [sklearn.ensemble.RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html).
+
 
 ## Getting Started 
 
@@ -18,7 +20,7 @@ browser. To directly generate SVG files from your model you also need to install
 [Node.js](https://nodejs.org/en/download/), see [Command Line Interface](#command-line-interface) for more information.
 
 
-## How To Use
+## Command Line API
 
 RFVis offers a command line tool to either generate SVG files directly from
 your input data (`rfvis cli <data>`) or to spin up a web-based GUI for a more
@@ -98,18 +100,13 @@ Options:
 ```
 
 
-## Input Data
+### Input Data
 
-Currently all input data must be available on your filesystem as a JSON file
+The data for the Command Line API must be available on your filesystem as a JSON file
 for the forest and additionally one CSV file per tree. Both data formats will
 be extended with properties in the future, this is just the minimal set.
 
-You can find a working example under `examples/PolSAR`!
-
-Note: A Python interface to RFVis, which will allow you to start the application programmatically via a fitted
-scikit-learn [RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html),
-is on the roadmap.
-
+You can find a working example under `examples/PolSAR`.
 
 
 #### Forest JSON
@@ -145,6 +142,32 @@ entry represents one node in the tree. An entry has the following format:
 - **value** (int[]): Class distribution within the node, i.e. every entry 
     represents the amount of samples within the node that respond to a specific 
     class. The index corresponds to the indices in `forest.classes`.
+
+
+## Python API
+
+RFVis also offers a Python API which works directly on a scikit-learn RandomForestClassifier.
+You can find a working example under `examples/scikit_learn.py`.
+
+```python
+gui(model, data=None, target=None, name=None, class_names=None, class_colors=None, port=8080)
+```
+
+Args:
+
+- model ([sklearn.ensemble.RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)):
+    The model to visualize.
+- data (array-like, shape=(n_samples, n_features)): The training input samples that were used to fit the model.
+    Used to compute the out-of-bag error and correlation of the individual trees.
+    If not provided, the forest view will have no significance.
+- target (array-like, shape=n_samples): The target values (class labels) that were used to fit the model.
+    Used to compute the out-of-bag error and correlation of the individual trees.
+    If not provided, the forest view will have no significance.
+- name (str): Optional name of the model which will be displayed in the frontend.
+- class_names (List[str]): Optional list of names of the target classes
+- class_colors (List[str]): Optional list of browser interpretable colors for the target classes.
+    See https://developer.mozilla.org/en-US/docs/Web/CSS/color_value.
+- port (int): Port on which the frontend will run on. Defaults to 8080.
 
 
 ## Development
