@@ -1,0 +1,41 @@
+{
+  "name": "grid-20k-1",
+  "error": 0.184957,
+  "n_samples": 13329,
+  "correlationMatrix": [
+    [1,  0.17805152, 0.17206705],
+    [0.17805152, 1, 0.19855596]
+  ],
+  "classes": [
+    {
+      "name": "city",
+      "color": "rgb(0,0,255)"
+    },
+    {
+      "name": "streets",
+      "color": "rgb(255,0,0)"
+    },
+    {
+      "name": "forest",
+      "color": "rgb(0,128,0)"
+    },
+    {
+      "name": "field",
+      "color": "rgb(0,255,255)"
+    },
+    {
+      "name": "shrubland",
+      "color": "rgb(0,255,0)"
+    }
+ ],
+  "trees": [
+    {
+      "error": 0.278413,
+      "data": "./tree-0.csv"
+    },
+    {
+      "error": 0.246076,
+      "data": "./tree-1.csv"
+    }
+  ]
+}

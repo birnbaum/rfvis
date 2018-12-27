@@ -1,5 +1,7 @@
 import json
 import os
+import tarfile
+import tempfile
 from subprocess import CalledProcessError
 
 import click
@@ -71,21 +73,44 @@ def cli(forest_data, out, width, height, trunk_length, display_depth, branch_col
                                    stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE)
         output = process.communicate(json.dumps(data).encode("utf8"))
-    except CalledProcessError:
+    except FileNotFoundError:
         raise ClickException("Please make sure that you have a recent version of Node.js installed on your system.\n"
                              "See: https://github.com/birnbaum/rfvis#command-line-interface")
     print(output[0].decode())
 
 
-def _read_data(forest_json):
+def _read_data(forest_data):
+    """Reads forest data from the filesystem
+
+    Args:
+        forest_data (str): Either the path a folder or .tar.gz that contains a file called "forest.json" or the path
+            to the forest JSON file itself.
+    Returns:
+        (dict) Forest data
+    """
+    if not os.path.isdir(forest_data) and tarfile.is_tarfile(forest_data):
+        tmpdir = tempfile.TemporaryDirectory().name
+        with tarfile.open(forest_data) as tar:
+            tar.extractall(tmpdir)
+            forest_data = tmpdir
+
+    if os.path.isdir(forest_data):
+        forest_json = os.path.join(forest_data, "forest.json")
+        if not os.path.exists(forest_json):
+            raise ClickException("The provided directory \"{}\" does not contain a file called \"forest.json\""
+                                 .format(forest_data))
+    else:
+        forest_json = forest_data
+        forest_data = os.path.dirname(forest_json)
+
     with open(forest_json, "r") as f:
         try:
             forest = json.load(f)
         except json.decoder.JSONDecodeError:
-            raise ClickException("The file \"{}\" is not a valid JSON.".format(forest_json))
+            raise ClickException("The file \"{}\" is not a valid JSON.".format(forest_data))
 
     for tree in forest["trees"]:
-        tree_csv_path = os.path.join(os.path.dirname(forest_json), tree["data"])
+        tree_csv_path = os.path.join(forest_data, tree["data"])
         try:
             with open(tree_csv_path, "r") as f:
                 tree["data"] = f.read()
