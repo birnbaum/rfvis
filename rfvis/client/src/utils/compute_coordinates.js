@@ -73,7 +73,7 @@ export default function computeTreePositions(forest) {
         }
         oldError = newError;
     }
-
+/*
     // get mininmal distance
     let minimalDistance = 1;
     for (let i = 0; i < coordinates.length; i++) {
@@ -94,7 +94,7 @@ export default function computeTreePositions(forest) {
         }
     }
     console.log("final error after scaling to min dist: " + calculateError(D, DStar));
-
+*/
     const pixelCoordinated = centerWorld(coordinates);
 
     return forest.trees.map((tree, i) => {
@@ -128,30 +128,28 @@ function arrangeInitial(numberOfTrees, minDist = 1) {
     return coordinates;
 }
 
-function centerWorld(coordinates, pixel = 100, border = 5) {
+function centerWorld(coordinates, pixel = 100, border = 8) {
     let minX = Number.MAX_SAFE_INTEGER;
     let minY = Number.MAX_SAFE_INTEGER;
     let maxX = Number.MIN_SAFE_INTEGER;
     let maxY = Number.MIN_SAFE_INTEGER;
-    let maxRadius = 0;
-
-    // get the bounding
     for (const coordinate of coordinates) {
         minX = Math.min( minX, coordinate.x);
         minY = Math.min( minY, coordinate.y);
         maxX = Math.max( maxX, coordinate.x);
         maxY = Math.max( maxY, coordinate.y);
+    }
+    const center = new Vector((minX + maxX) / 2, (minY + maxY) / 2);
+    const centeredCoordinates = coordinates.map(coordinate => coordinate.subtract(center));
+
+    let maxRadius = 0;
+    for (const coordinate of centeredCoordinates) {
         maxRadius = Math.max(maxRadius, coordinate.getLength());
     }
-
-    const center = new Vector((minX + maxX) / 2, (minY + maxY) / 2);
-    const factor = ((pixel - border) / maxRadius) / 2;
+    const scaleFactor = ((pixel - border) / maxRadius) / 2;
 
     // center and calculate new size
-    return coordinates.map(coordinate => {
-        return coordinate
-            .subtract(center)
-            .multiply(factor)
-            .add(new Vector(50, 50));
-    });
+    return centeredCoordinates.map(coordinate => coordinate
+        .multiply(scaleFactor)
+        .add(new Vector(50, 50)));
 }

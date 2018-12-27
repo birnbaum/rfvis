@@ -17,18 +17,20 @@ def main():
 
 
 @main.command()
-@click.argument("forest_json", type=click.Path(exists=True), nargs=1)
+@click.argument("forest_data", type=click.Path(exists=True), nargs=1)
 @click.option("--port", "-p", default=8080, show_default=True, help="Port on which the GUI will run on.")
-def gui(forest_json, port):
+def gui(forest_data, port):
     """Web-based graphical user interface.
 
-    FOREST_JSON: Path to the JSON file that contains the forest's data.
+    FOREST_DATA: Path to the JSON file that contains the forest's data. Can also take a directory or tar file which
+        contains the JSON.
     """
-    start_server(_read_data(forest_json), port=port, debug=False, use_reloader=False)
+    data = _read_data(forest_data)
+    start_server(data, port=port, debug=False, use_reloader=False)
 
 
 @main.command()
-@click.argument("forest_json", type=click.Path(exists=True), nargs=1)
+@click.argument("forest_data", type=click.Path(exists=True), nargs=1)
 @click.option("--out", "-o", default=os.getcwd(), show_default="current working directory",
               type=click.Path(exists=True), help="Output path of the SVG files.")
 @click.option("--width", "-w", default=800, show_default=True, help="Width of the SVG.")
@@ -41,17 +43,18 @@ def gui(forest_json, port):
               help="Coloring of the branches.")
 @click.option("--leaf-color", default="Impurity", show_default=True, type=click.Choice(["Impurity", "Best Class"]),
               help="Coloring of the leaves.")
-def cli(forest_json, out, width, height, trunk_length, display_depth, branch_color, leaf_color):
+def cli(forest_data, out, width, height, trunk_length, display_depth, branch_color, leaf_color):
     """Command line interface to generate SVGs.
 
     As Python is unable to render React components, we make a subprocess call to a small Node.js application which
     will do the rendering and also store the created SVG files. This command requires that Node.js is installed on your
     system!
 
-    FOREST_JSON: Path to the JSON file that contains the forest's data.
+    FOREST_DATA: Path to the JSON file that contains the forest's data. Can also take a directory or tar file which
+        contains the JSON.
     """
     import subprocess
-    data = _read_data(forest_json)
+    data = _read_data(forest_data)
     out = os.path.abspath(out)
     config = json.dumps({
         "width": width,
