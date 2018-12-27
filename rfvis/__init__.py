@@ -1,11 +1,8 @@
+import multiprocessing
 import os
 import string
-import numpy as np
-from sklearn.ensemble.forest import _generate_unsampled_indices
-from sklearn.tree.tree import DTYPE
-from sklearn.utils import check_array
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 
 DEFAULT_COLORS = [
     "#1f77b4",
@@ -22,9 +19,10 @@ DEFAULT_COLORS = [
 
 
 def gui(model, data=None, target=None, name=None, class_names=None, class_colors=None, port=8080):
-    """Starts a RFVis server for visualizing a scikit-learn RandomForestClassifier instance
+    """Starts a RFVis GUI web server in a new process
 
-    The server will be available at 127.0.0.1:<port>.
+    This function visualizes a fitted RandomForestClassifier in a web based graphical user interface.
+    The server runs in a separate process and is available at http://localhost:<port>.
 
     Args:
         model (sklearn.ensemble.RandomForestClassifier): The model to visualize.
@@ -39,7 +37,15 @@ def gui(model, data=None, target=None, name=None, class_names=None, class_colors
         class_colors (List[str]): Optional list of browser interpretable colors for the target classes.
             See https://developer.mozilla.org/en-US/docs/Web/CSS/color_value.
         port (int): Port on which the frontend will run on. Defaults to 8080.
+
+    Returns:
+        process (multiprocessing.Process): Subprocess that runs the server. Can be terminated with
+            [process.terminate()](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process.terminate).
     """
+    import numpy as np
+    from sklearn.tree.tree import DTYPE
+    from sklearn.utils import check_array
+
     data = check_array(data, dtype=DTYPE, accept_sparse="csr")
     if len(target.shape) == 2:
         target = target[0]
@@ -56,21 +62,27 @@ def gui(model, data=None, target=None, name=None, class_names=None, class_colors
     classes = [{"name": name, "color": color} for name, color in zip(class_names, class_colors)]
 
     preds_and_indices = _oob_predictions_and_indices(model.estimators_, data)
-    oob_scores = [np.mean(target[oob_indices] == predictions, axis=0) for predictions, oob_indices in preds_and_indices]
+    oob_scores = [np.mean(target[oob_indices] == predictions[oob_indices], axis=0)
+                  for predictions, oob_indices
+                  in preds_and_indices]
     correlation_matrix = _correlation_matrix(preds_and_indices)
     trees = _trees(model.estimators_, oob_scores)
 
-    _start_server({
+    forest = {
         "name": name,
         "error": error,
         "n_samples": n_samples,
         "correlationMatrix": correlation_matrix,
         "classes": classes,
         "trees": trees
-    }, port)
+    }
+
+    server_process = multiprocessing.Process(name="RFVis Server", target=start_server, args=(forest, port))
+    server_process.start()
+    return server_process
 
 
-def _start_server(data, port=8080, debug=False, use_reloader=False, **kwargs):
+def start_server(data, port=8080, debug=False, use_reloader=False, **kwargs):
     """Starts a web server that serves the RFVis frontend"""
     from flask import Flask, send_from_directory, jsonify
     app = Flask(__name__, static_folder="client/build")
@@ -88,8 +100,8 @@ def _start_server(data, port=8080, debug=False, use_reloader=False, **kwargs):
     def serve_data():
         return jsonify(data)
 
-    os.environ["WERKZEUG_RUN_MAIN"] = "true"
-    app.run(port=port, debug=debug, use_reloader=use_reloader, **kwargs)
+    # os.environ["WERKZEUG_RUN_MAIN"] = "true"
+    app.run("localhost", port, debug=debug, use_reloader=use_reloader, **kwargs)
 
 
 def _oob_predictions_and_indices(estimators, data):
@@ -102,6 +114,9 @@ def _oob_predictions_and_indices(estimators, data):
     Returns:
         List[Tuple[np.array, np.array]]: A tuple of out-of-bag indices and predictions for each provided estimator.
     """
+    import numpy as np
+    from sklearn.ensemble.forest import _generate_unsampled_indices
+
     n_samples = data.shape[0]
     oob_predictions_and_indices = []
     for estimator in estimators:
@@ -122,6 +137,8 @@ def _correlation_matrix(oob_predictions_and_indices):
     Returns:
         np.array, shape=(n_estimators, n_estimators): Correlation matrix of the estimators of the ensemble model.
     """
+    import numpy as np
+
     correlation_matrix = []
     for i in oob_predictions_and_indices:
         for j in oob_predictions_and_indices:
@@ -146,6 +163,8 @@ def _trees(estimators, oob_scores):
             - error (float): The out-of-bag error
             - data (str): Tree nodes in CSV format as required by the frontend
     """
+    import numpy as np
+
     trees = []
     for estimator, oob_score in zip(estimators, oob_scores):
         n_nodes = estimator.tree_.node_count

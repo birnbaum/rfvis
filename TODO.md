@@ -17,3 +17,4 @@ OTHER IDEAS
 - Python API for plotting in Jupyter notebooks
 - Do not draw bunches/leafs
 - Color select
+- Best class for branches

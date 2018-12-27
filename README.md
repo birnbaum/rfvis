@@ -149,26 +149,32 @@ entry represents one node in the tree. An entry has the following format:
 RFVis also offers a Python API which works directly on a scikit-learn RandomForestClassifier.
 You can find a working example under `examples/scikit_learn.py`.
 
+The function `rfvis.gui()` visualizes a fitted RandomForestClassifier in a web based graphical user interface.
+The server runs in a separate process and is available at `http://localhost:<port>`.
+
 ```python
 gui(model, data=None, target=None, name=None, class_names=None, class_colors=None, port=8080)
 ```
 
 Args:
 
-- model ([sklearn.ensemble.RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)):
+- **model** ([sklearn.ensemble.RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)):
     The model to visualize.
-- data (array-like, shape=(n_samples, n_features)): The training input samples that were used to fit the model.
+- **data** (array-like, shape=(n_samples, n_features)): The training input samples that were used to fit the model.
     Used to compute the out-of-bag error and correlation of the individual trees.
     If not provided, the forest view will have no significance.
-- target (array-like, shape=n_samples): The target values (class labels) that were used to fit the model.
+- **target** (array-like, shape=n_samples): The target values (class labels) that were used to fit the model.
     Used to compute the out-of-bag error and correlation of the individual trees.
     If not provided, the forest view will have no significance.
-- name (str): Optional name of the model which will be displayed in the frontend.
-- class_names (List[str]): Optional list of names of the target classes
-- class_colors (List[str]): Optional list of browser interpretable colors for the target classes.
+- **name** (str): Optional name of the model which will be displayed in the frontend.
+- **class_names** (List[str]): Optional list of names of the target classes
+- **class_colors** (List[str]): Optional list of browser interpretable colors for the target classes.
     See https://developer.mozilla.org/en-US/docs/Web/CSS/color_value.
-- port (int): Port on which the frontend will run on. Defaults to 8080.
+- **port** (int): Port on which the frontend will run on. Defaults to 8080.
 
+Returns:
+- **process** (multiprocessing.Process): Subprocess that runs the server. Can be terminated with
+    [process.terminate()](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process.terminate).
 
 ## Development
 

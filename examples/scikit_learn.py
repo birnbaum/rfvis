@@ -17,7 +17,7 @@ def main():
     model.fit(X, y)
 
     # Start the RFVis GUI
-    gui(model, X, y)
+    return gui(model, X, y)
 
 
 if __name__ == "__main__":

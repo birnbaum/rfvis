@@ -2,13 +2,11 @@ import json
 import os
 import tarfile
 import tempfile
-from subprocess import CalledProcessError
 
 import click
 from click import ClickException
 
-from rfvis import __version__
-from rfvis.server import start_server
+from rfvis import __version__, start_server
 
 
 @click.group(context_settings=dict(max_content_width=90))
