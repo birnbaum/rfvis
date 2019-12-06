@@ -219,3 +219,9 @@ $ npm start
 ```
 
 To start a development server with hot reloading at `http://localhost:3000`.
+
+
+## Publications
+
+If you are using RFVis in your research, please cite the following paper:
+- Ronny Hänsch, Philipp Wiesner, Sophie Wendler, and Olaf Hellwich. "[Colorful Trees: Visualizing Random Forests for Analysis and Interpretation](https://ieeexplore.ieee.org/abstract/document/8658566)" In 2019 *IEEE Winter Conference on Applications of Computer Vision (WACV)*, pp. 294-302. IEEE, 2019.
