@@ -43,7 +43,7 @@ def gui(model, data=None, target=None, name=None, class_names=None, class_colors
             [process.terminate()](https://docs.python.org/3/library/multiprocessing.html#multiprocessing.Process.terminate).
     """
     import numpy as np
-    from sklearn.tree.tree import DTYPE
+    from sklearn.tree._tree import DTYPE
     from sklearn.utils import check_array
 
     data = check_array(data, dtype=DTYPE, accept_sparse="csr")
@@ -115,7 +115,6 @@ def _oob_predictions_and_indices(estimators, data):
         List[Tuple[np.array, np.array]]: A tuple of out-of-bag indices and predictions for each provided estimator.
     """
     import numpy as np
-    from sklearn.ensemble.forest import _generate_unsampled_indices
 
     n_samples = data.shape[0]
     oob_predictions_and_indices = []
@@ -198,3 +197,24 @@ def _trees(estimators, oob_scores):
             "data": "\n".join(csv_lines)
         })
     return trees
+
+def _generate_unsampled_indices(random_state, n_samples):
+    """Adapted from sklearn.ensemble.forest"""
+    import numpy as np
+
+    sample_indices = _generate_sample_indices(random_state, n_samples)
+    sample_counts = np.bincount(sample_indices, minlength=n_samples)
+    unsampled_mask = sample_counts == 0
+    indices_range = np.arange(n_samples)
+    unsampled_indices = indices_range[unsampled_mask]
+
+    return unsampled_indices
+
+def _generate_sample_indices(random_state, n_samples):
+    """Adapted from sklearn.ensemble.forest"""
+    from sklearn.utils import check_random_state
+
+    random_instance = check_random_state(random_state)
+    sample_indices = random_instance.randint(0, n_samples)
+
+    return sample_indices
