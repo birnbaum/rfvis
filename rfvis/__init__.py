@@ -2,7 +2,7 @@ import multiprocessing
 import os
 import string
 
-__version__ = "0.3.0"
+__version__ = "0.3.3"
 
 DEFAULT_COLORS = [
     "#1f77b4",
@@ -119,7 +119,7 @@ def _oob_predictions_and_indices(estimators, data):
     n_samples = data.shape[0]
     oob_predictions_and_indices = []
     for estimator in estimators:
-        indices = _generate_unsampled_indices(estimator.random_state, n_samples)
+        indices = _generate_unsampled_indices(estimator.random_state, n_samples, n_samples)
         predictions = np.zeros(n_samples)
         predictions[indices] = estimator.predict(data[indices, :])
         oob_predictions_and_indices.append((predictions, indices))
@@ -198,23 +198,24 @@ def _trees(estimators, oob_scores):
         })
     return trees
 
-def _generate_unsampled_indices(random_state, n_samples):
+def _generate_sample_indices(random_state, n_samples, n_samples_bootstrap):
+    """Adapted from sklearn.ensemble.forest"""
+    from sklearn.utils import check_random_state
+
+    random_instance = check_random_state(random_state)
+    sample_indices = random_instance.randint(0, n_samples, n_samples_bootstrap)
+
+    return sample_indices
+
+
+def _generate_unsampled_indices(random_state, n_samples, n_samples_bootstrap):
     """Adapted from sklearn.ensemble.forest"""
     import numpy as np
 
-    sample_indices = _generate_sample_indices(random_state, n_samples)
+    sample_indices = _generate_sample_indices(random_state, n_samples, n_samples_bootstrap)
     sample_counts = np.bincount(sample_indices, minlength=n_samples)
     unsampled_mask = sample_counts == 0
     indices_range = np.arange(n_samples)
     unsampled_indices = indices_range[unsampled_mask]
 
     return unsampled_indices
-
-def _generate_sample_indices(random_state, n_samples):
-    """Adapted from sklearn.ensemble.forest"""
-    from sklearn.utils import check_random_state
-
-    random_instance = check_random_state(random_state)
-    sample_indices = random_instance.randint(0, n_samples)
-
-    return sample_indices
